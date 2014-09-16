@@ -25,6 +25,7 @@ using System.Common;
 using System.Xml.Serialization;
 using System.Reflection;
 using System.IO;
+using libral;
 
 namespace X11.Widgets
 {
@@ -41,7 +42,7 @@ namespace X11.Widgets
 		protected Display    	m_pDisplay;
 		protected Color	   		m_colBackground;
 		protected Color			m_colBorder;
-		protected TRectangle 	m_xRectangle;
+		protected Rectangle 	m_xRectangle;
 		protected string 	   	m_strTitle;
 		protected bool			m_bHaveFocus;
 		protected string 		m_strIconPath;
@@ -76,7 +77,7 @@ namespace X11.Widgets
 			set { m_colBorder = value; }
 		}
 		[XmlAttribute("Rectangle", typeof(TRectangle))]
-		public TRectangle		Rectangle
+		public Rectangle		Rectangle
 		{
 			get { return m_xRectangle; }
 			set { SetRectangle(value); }
@@ -249,8 +250,8 @@ namespace X11.Widgets
 		internal Window()
 		{
 		}
-		public Window (string strDisplay, string strName, Color pBackgroundColor,TRectangle Rectangle, 
-			string strTitle = "LibX# Window", EventMask eEventMask = EventMask.All,
+		public Window (string strDisplay, string strName, Color pBackgroundColor,Rectangle Rectangle, 
+			string strTitle = "LibX# Window", EventMask eEventMask = EventMask.ButtonPressMask| EventMask.KeyPressMask,
 			uint iBorderWidth = 0, bool bIsResizeable = true, bool bShowCursor = true, string strIconPath = null, 
 			Window pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
 			: base(strName)
@@ -276,13 +277,11 @@ namespace X11.Widgets
 		}
 		protected virtual bool OnCreate(XEventArgs args)
 		{
-			CallHandler("Created", args);
-			return true;
+			return CallHandler("Created", args);
 		}
 		protected virtual bool OnDestroy(XEventArgs  args)
 		{
-			CallHandler("Destroyed", args);
-			return true;
+			return CallHandler("Destroyed", args);
 		}
 		protected virtual bool OnClientMessage(XEventArgs args)
 		{
@@ -295,70 +294,9 @@ namespace X11.Widgets
 				return false;
 			}
 					
-			CallHandler("ClientMessage", args);
-			return true;
+			return CallHandler("ClientMessage", args);
 		}
-		protected virtual bool OnShow(XEventArgs args)
-		{
-			CallHandler("Showed", args);
-			return true;
-		}
-		protected virtual bool OnHide(XEventArgs args)
-		{
-			CallHandler("Hidded", args);
-			return true;
-		}
-		protected virtual bool OnExpose(XEventArgs args)
-		{
-			CallHandler("Expose", args);
-			return true;
-		}
-		protected virtual bool OnButtonPress(XEventArgs args)
-		{
-			CallHandler("MouseKeyPress", args);
-			return true;
-		}
-		protected virtual bool OnButtonRelease(XEventArgs args)
-		{
-			CallHandler("MouseKeyRelease", args);
-			return true;
-		}
-		protected virtual bool OnKeyPress(XEventArgs args)
-		{
-			CallHandler("KeyPress", args);
-			return true;
-		}
-		protected virtual bool OnKeyRelease(XEventArgs args)
-		{
-			CallHandler("KeyRelease", args);
-			return true;
-		}
-		protected virtual bool OnMouseEnter(XEventArgs args)
-		{
-			CallHandler("MouseEnter", args);
-			return true;
-		}
-		protected virtual bool OnMouseLeave(XEventArgs args)
-		{
-			CallHandler("MouseLeave", args);
-			return true;
-		}
-		protected virtual bool OnMouseMove(XEventArgs args)
-		{
-			CallHandler("MouseMove", args);
-			return true;
-		}
-		protected virtual bool OnGotFocus(XEventArgs args)
-		{
-			m_bHaveFocus = true;
-			CallHandler("Focus", args);
-			return true;
-		}
-		protected virtual bool OnLostFocus(XEventArgs args)
-		{
-			CallHandler("Focus", args);
-			return true;
-		}
+
 		protected virtual bool OnConfigureNotify(XEventArgs args)
 		{
 			if (m_xRectangle.Width != (int)args.Event.ConfigureEvent.width ||
@@ -436,46 +374,44 @@ namespace X11.Widgets
 			if (window != null)
 				return window.HandleEvent(xevent);
 			else
-				return false;
+				return true;
 		}
 		protected virtual bool HandleEvent(XEvent xevent)
 		{
-
-
-			switch (xevent.type )
+			if (xevent.type == XEventName.ClientMessage)
 			{
-				case XEventName.KeyPress:
-					return OnKeyPress(new XEventArgs(xevent));
-				case XEventName.KeyRelease:
-					return OnKeyRelease(new XEventArgs(xevent));
-				case XEventName.ClientMessage:
-					return OnClientMessage(new XEventArgs(xevent));
-				case XEventName.ButtonPress:
-					return OnButtonPress(new XEventArgs(xevent));
-				case XEventName.ButtonRelease:
-					return OnButtonRelease(new XEventArgs(xevent));
-				case XEventName.MotionNotify:
-					return OnMouseMove(new XEventArgs(xevent));
-				case XEventName.EnterNotify:
-					return OnMouseEnter(new XEventArgs(xevent));
-				case XEventName.LeaveNotify:
-					return OnMouseLeave(new XEventArgs(xevent));
-				case XEventName.FocusIn:
-					return OnGotFocus(new XEventArgs(xevent));
-				case XEventName.FocusOut:
-					return OnLostFocus(new XEventArgs(xevent));
-				case XEventName.MapNotify:
-					return OnShow(new XEventArgs(xevent));
-				case XEventName.UnmapNotify:
-					return OnHide(new XEventArgs(xevent));
-				case XEventName.ConfigureNotify:
-					return OnConfigureNotify(new XEventArgs(xevent));
-				default:
-					Console.WriteLine("Not Handled Event: {0}", xevent.type);
-					return true;
-			}
-		}
+				IntPtr protocolsAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_PROTOCOLS", false);
+				IntPtr deleteWindowAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_DELETE_WINDOW", false);
 
+				if (xevent.ClientMessageEvent.message_type == protocolsAtom &&
+				    xevent.ClientMessageEvent.ptr1 == deleteWindowAtom)
+				{
+					CallHandler(xevent.type.ToString(), new XEventArgs(xevent));
+					return false;
+				}
+			}
+			else if (xevent.type == XEventName.FocusOut)
+			{
+				m_bHaveFocus = false;
+			}
+			else if (xevent.type == XEventName.FocusIn)
+			{
+				m_bHaveFocus = true;
+			}
+			else if (xevent.type == XEventName.ConfigureNotify)
+			{
+				if (m_xRectangle.Width != (int)xevent.ConfigureEvent.width ||
+				     m_xRectangle.Height != (int)xevent.ConfigureEvent.height)
+				{
+					m_xRectangle.Width = (int)xevent.ConfigureEvent.width;
+					m_xRectangle.Height = (int)xevent.ConfigureEvent.height;
+
+					return CallHandler("Resize", new XEventArgs(xevent));
+				}
+			}
+
+			return CallHandler(xevent.type.ToString(), new XEventArgs(xevent));
+		}
 
 		void SetTitle(string value)
 		{
@@ -486,7 +422,7 @@ namespace X11.Widgets
 			m_strTitle = value;
 		}
 
-		void SetRectangle(TRectangle value)
+		void SetRectangle(Rectangle value)
 		{
 			if (m_bIsCreated)
 			{
@@ -522,7 +458,21 @@ namespace X11.Widgets
 			else
 				m_handler.Add(eventName, name);
 		}
-		protected abstract void CallHandler(string eventName, XEventArgs args);
+		protected virtual bool CallHandler(string eventName, XEventArgs args)
+		{
+
+			if (m_handler.ContainsKey(eventName))
+			{
+				Type calcType = this.GetType();
+				return (bool)calcType.InvokeMember(m_handler[eventName],
+					BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+					null, this, new object[] { this, args });
+			}
+			#if DEBUG
+			Console.WriteLine("Not Handled {0}", eventName);
+			#endif
+			return true;
+		}
 	}
 }
 

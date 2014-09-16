@@ -96,6 +96,14 @@ namespace System.Common
 			B = blue;
 			A = alpha;
 		}	
+		public Color(string hexstring)
+		{
+			var cal = Colors.FromString(hexstring);
+			R = cal.R;
+			G = cal.G;
+			B = cal.B;
+			A = cal.A;
+		}
 		public override bool Equals (object obj)
 		{
 			if (!(obj is Color))

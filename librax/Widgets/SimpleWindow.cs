@@ -23,6 +23,7 @@ using X11._internal;
 using System.Common;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using libral;
 
 namespace X11.Widgets
 {
@@ -42,7 +43,7 @@ namespace X11.Widgets
 		protected SimpleWindow()
 		{
 		}
-		public SimpleWindow(string strDisplay, string strName, Color pBackgroundColor,TRectangle Rectangle,  string strTitle = "LibX# Window",  
+		public SimpleWindow(string strDisplay, string strName, Color pBackgroundColor, Rectangle Rectangle,  string strTitle = "LibX# Window",  
 			EventMask eEventMask = EventMask.All,
 			uint iBorderWidth = 0, bool bIsResizeable = true, bool bShowCursor = true, string strIconPath = "", 
 			Window pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
@@ -57,10 +58,10 @@ namespace X11.Widgets
 			int posY = 0;
 			if (null != m_pParentWindow)
 			{
-				posX = Rectangle.Position.X;
-				posY = Rectangle.Position.Y;
+				posX = Rectangle.X;
+				posY = Rectangle.Y;
 			}
-			TPixel borderPixel = X11._internal.Lib.XBlackPixel(m_pDisplay.RawHandle, (TInt)m_pDisplay.Screen.ScreenNumber);
+			var borderPixel = m_colBorder.ToXColor(m_pDisplay);
 
 			var backgroundPixel = m_colBackground.ToXColor(m_pDisplay);
 
@@ -75,7 +76,7 @@ namespace X11.Widgets
 					(TUint)Rectangle.Width, 
 					(TUint)Rectangle.Height, 
 					(TUint)m_iBorderWidth, 
-					borderPixel, 
+					borderPixel.pixel, 
 					backgroundPixel.pixel);
 			}
 			else
@@ -88,7 +89,7 @@ namespace X11.Widgets
 					(TUint)Rectangle.Width, 
 					(TUint)Rectangle.Height, 
 					(TUint)0, 
-					borderPixel, 
+					borderPixel.pixel, 
 					backgroundPixel.pixel);
 			}	
 			// Set default window name
@@ -103,6 +104,8 @@ namespace X11.Widgets
 				throw new XStringListToTextPropertyException(121, "Create");
 
 			}
+
+
 			// Set Size Hints
 			X11._internal.Lib.XSizeHints sizeHints = new Lib.XSizeHints();
 			sizeHints.flags = Lib.XSizeHintFlags.PPosition | Lib.XSizeHintFlags.PSize;
@@ -195,25 +198,21 @@ namespace X11.Widgets
 			if (null != m_pParentWindow)
 			{
 				m_id = RegisterChild(this);
-					OnCreate(new XEventArgs());
 			}
-			else
-			{
-					OnCreate(new XEventArgs());
-			}
-
+			CallHandler("Created", new XEventArgs());
 
 			base.Create();
 		}
 		public override void Show()
 		{
-			//Lib.XSelectInput(m_pDisplay.RawHandle, m_pHandle, m_iEventMask);
 			Lib.XMapWindow(m_pDisplay.RawHandle, m_pHandle);
+			Lib.XSelectInput(m_pDisplay.RawHandle, m_pHandle, m_iEventMask);
+
 			if (null == m_pParentWindow)
 			{
 				Lib.XMoveWindow(m_pDisplay.RawHandle, m_pHandle, (TInt)m_xRectangle.X, (TInt)m_xRectangle.Y);
 			}
-			OnShow(new XEventArgs());
+
 			Lib.XFlush(m_pDisplay.RawHandle);
 
 			if (null == m_pParentWindow)
@@ -226,7 +225,6 @@ namespace X11.Widgets
 		}
 		public override void Hide()
 		{
-			OnHide(new XEventArgs());
 			if (null == m_pParentWindow)
 			{
 				foreach (var item in m_Windows)
@@ -266,16 +264,7 @@ namespace X11.Widgets
 			Lib.XUndefineCursor(m_pDisplay.RawHandle, m_pHandle);
 			Lib.XDestroyWindow(m_pDisplay.RawHandle, m_pHandle);
 		}
-		protected override void CallHandler(string eventName, XEventArgs args)
-		{
-			if (m_handler.ContainsKey(eventName))
-				{
-					Type calcType = this.GetType();
-					calcType.InvokeMember(m_handler[eventName],
-						BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
-						null, this, new object[] { this, args });
-				}
-		}
+
 
 		[DllImport("libX11.so")]
 		private static extern void XSetWMNormalHints (IntPtr display, IntPtr w, ref X11._internal.Lib.XSizeHints hints);

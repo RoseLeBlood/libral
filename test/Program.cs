@@ -25,6 +25,7 @@ using X11.Widgets;
 using System.Common;
 using System.Reflection;
 using System.Xml.Serialization;
+using libral;
 
 namespace test
 {
@@ -32,31 +33,35 @@ namespace test
 	[XmlRoot(ElementName = "Window")]
 	public class TestWindow : SimpleWindow
 	{
-		public TestWindow() : base()
-		{
-		}
-		public TestWindow(string strDisplay, string name)
-			: base(strDisplay, name, Colors.SteelBlue, new TRectangle(0,0,320,320))
+		public TestWindow() : base(":0", "frmMainWindow", Colors.SteelBlue, new Rectangle("10,320"))
 		{
 			Namespace = "test";
 			ClassName = "TestWindow";
 			Created = "frmMainWindow_Created";
+			KeyPress = "frmMainWindow_KeyPressed";
 			Title = "Hallo LibX#";
 		}
-		protected void frmMainWindow_Created(Object sender, XEventArgs args)
+		protected bool frmMainWindow_Created(Object sender, XEventArgs args)
 		{
 			Console.WriteLine("Window Created");
+			return true;
 		}
-	}
-	class MainClass
-	{
+		protected bool frmMainWindow_KeyPressed(Object sender, XEventArgs args)
+		{
+			if (((Keys)(args.Event.KeyEvent.keycode)) == Keys.Escape)
+			{
+				Console.WriteLine("Naja das war der Escape cheat bye bye ...");
+				return false;
+			}
+			return true;
+		}
 
 		public static void Main (string[] args)
 		{
 			Application.Init("test.MainClass");
-			new Display(string.Format(":{0}", "0"));
+			new Display(":0");
 
-			TestWindow wnd = new TestWindow(":0", "frmMainWindow");
+			TestWindow wnd = new TestWindow();
 			wnd.Create();
 
 			Application.Current.MainWindow = "frmMainWindow";
