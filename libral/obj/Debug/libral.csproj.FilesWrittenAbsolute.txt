@@ -1,0 +1,5 @@
+/home/annasophia/rasLinux/libral/obj/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/home/annasophia/rasLinux/libral/bin/Debug/libral.dll.mdb
+/home/annasophia/rasLinux/libral/bin/Debug/libral.dll
+/home/annasophia/rasLinux/libral/obj/Debug/libral.dll
+/home/annasophia/rasLinux/libral/obj/Debug/libral.dll.mdb

@@ -505,8 +505,16 @@ namespace X11.Widgets
 				x.Serialize(stream, wnd);
 			}
 		}
-		/*MethodInfo[] methodInfos = Type.GetType(selectedObjcClass) .GetMethods(BindingFlags.Public | BindingFlags.Instance);*/
-
+		public static T OpenFromXml<T>(string name) where T : Window
+		{
+			T window = null;
+			using (FileStream stream = new FileStream(name + ".xml", FileMode.Open))
+			{
+					XmlSerializer x = new XmlSerializer(typeof(T));
+					window =  (T)x.Deserialize(stream);
+			}
+			return window;
+		}
 		internal void SetHandler(string name, string eventName)
 		{
 			if (m_handler.ContainsKey(eventName))
@@ -515,15 +523,6 @@ namespace X11.Widgets
 				m_handler.Add(eventName, name);
 		}
 		protected abstract void CallHandler(string eventName, XEventArgs args);
-		/*{
-			if (m_handler.ContainsKey(eventName))
-			{
-				Type calcType = Application.Current.GetHandle<Window>(Name).GetType();
-				calcType.InvokeMember(m_handler[eventName],
-					BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public,
-					null, Application.Current.GetHandle<Window>(Name), new object[] { this, args });
-			}
-		}*/
 	}
 }
 

@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Background="#4682B4FF" 
+	Border="#B0C4DEFF" Rectangle="X11._internal.TRectangle" Title="Hallo LibX#" ShowCursor="true" EventMask="All" 
+	ClassName="TestWindow" BorderWidth="0" Namespace="test" Created="frmMainWindow_Created" />
