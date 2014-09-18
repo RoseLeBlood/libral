@@ -516,7 +516,7 @@ namespace X11._internal
 			PBaseSize = (1 << 8),
 			PWinGravity = (1 << 9)
 		}
-		[CLSCompliant(false)]
+
 		public enum XKeySym : uint
 		{
 			BackSpace = 0xFF08,

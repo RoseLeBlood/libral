@@ -35,6 +35,7 @@ namespace X11.Widgets
 		private SortedDictionary<string, Handle>		m_handles;
 		private string									m_strNainWindow;
 		private string									m_strNamespace;
+		private Display									m_currentDisplay;
 
 		protected Application()
 		{
@@ -44,6 +45,7 @@ namespace X11.Widgets
 			m_look = new object();
 			m_strNamespace = _namespace;
 			m_handles = new SortedDictionary<string, Handle>();
+
 		}
 		[XmlIgnore]
 		public static Application Current
@@ -126,6 +128,9 @@ namespace X11.Widgets
 		public static void Init (string _namespace)
 		{
 			m_current = new Application(_namespace);
+			m_current.m_currentDisplay = new Display(":0");
+
+			Xkb.IsSupported(m_current.m_currentDisplay.RawHandle);
 		}
 		public static void Run()
 		{

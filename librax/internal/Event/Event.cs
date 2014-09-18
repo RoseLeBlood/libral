@@ -461,7 +461,7 @@ namespace X11._internal
 		public int state;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
+	[StructLayout(LayoutKind.Sequential)]/* must be first element */
 	public struct XCreateWindowEvent
 	{
 		public XEventName type;
