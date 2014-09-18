@@ -34,7 +34,7 @@ namespace X11
 		protected IntPtr m_pHandle;
 
 		[XmlAttribute("Name")]
-		public string Name { get { return m_strName; } }
+		public virtual string Name { get { return m_strName; } set { m_strName = value; } }
 		[XmlIgnore]
 		public IntPtr RawHandle { get { return m_pHandle; } }
 

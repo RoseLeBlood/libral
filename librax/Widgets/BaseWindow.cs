@@ -26,6 +26,7 @@ using System.Xml.Serialization;
 using System.Reflection;
 using System.IO;
 using libral;
+using System.ComponentModel;
 
 namespace X11.Widgets
 {
@@ -36,7 +37,6 @@ namespace X11.Widgets
 		public XEventArgs(XEvent xevent) { Event = xevent; }
 	}
 	[Serializable]
-	[XmlRoot(ElementName = "Window")]
 	public abstract class BaseWindow : XHandle, IHandle
 	{
 		protected Display    	m_pDisplay;
@@ -62,28 +62,51 @@ namespace X11.Widgets
 
 		internal SortedDictionary<string /*name */, string /* function */> CallHandlers { get { return m_handler; } }
 
+		[XmlAttribute("Name")]
+		public override string Name
+		{
+			get { return base.Name; }
+			set { base.Name = value; }
+		}
 		[XmlIgnore]
 		public Display			Display
 		{
 			get { return m_pDisplay; }
 		}
-		[XmlAttribute("Background", typeof(Color))]
-		public Color			Background
+		[XmlAttribute("Background")]
+		public string			strBackground
+		{
+			get { return m_colBackground.ToString(); }
+			set { setBackground(value); }
+		}
+		[XmlAttribute("Border")]
+		public string			strBorder
+		{
+			get { return m_colBorder.ToString(); }
+			set { m_colBorder = new Color(value); }
+		}
+		[XmlIgnore]
+		public Color		Background
 		{
 			get { return m_colBackground; }
-			set { m_colBackground = value; }
+			set { m_colBackground = value; setBackground(m_colBackground.ToString()); }
 		}
-		[XmlAttribute("Border", typeof(Color))]
-		public Color			Border
+		[XmlIgnore]
+		public Color		Border
 		{
 			get { return m_colBorder; }
-			set { m_colBorder = value; }
+			set { m_colBorder = value; setBorder(m_colBorder.ToString()); }
 		}
-		[XmlAttribute("Rectangle", typeof(TRectangle))]
+		[XmlAttribute("Rectangle")]
+		public string		strRectangle
+		{
+			get { return m_xRectangle.ToString(); }
+			set { SetRectangle(value); }
+		}
+		[XmlIgnore]
 		public Rectangle		Rectangle
 		{
 			get { return m_xRectangle; }
-			set { SetRectangle(value); }
 		}
 		[XmlAttribute("Title")]
 		public string			Title
@@ -106,7 +129,7 @@ namespace X11.Widgets
 		public bool 				ShowCursor
 		{
 			get { return m_bShowCursor; }
-			set { }
+			set { m_bShowCursor = value;}
 		}
 		[XmlAttribute("EventMask")]
 		public EventMask			EventMask
@@ -129,7 +152,7 @@ namespace X11.Widgets
 		public int					BorderWidth
 		{
 			get { return m_iBorderWidth; }
-			set { BorderWidth = value; }
+			set { m_iBorderWidth = value; }
 		}
 		[XmlAttribute("Parent")]
 		public string				Parent
@@ -245,10 +268,16 @@ namespace X11.Widgets
 			get { return m_pEventHandler; }
 			set { m_pEventHandler = value; }
 		}
-
+		[XmlAttribute("Resizeable")]
+		public bool Resizeable
+		{
+			get { return m_bIsResizeable; }
+			set { m_bIsResizeable = value; }
+		}
 
 		public virtual void Create()
 		{
+
 			m_bIsCreated = true;
 		}
 		public virtual void Destroy()
@@ -258,8 +287,26 @@ namespace X11.Widgets
 		public abstract void Show();
 		public abstract void Hide();
 
-		internal BaseWindow()
+		internal BaseWindow(string strDisplay)
 		{
+			m_pDisplay = Application.Current.GetHandle<Display>(strDisplay);
+			if (m_pDisplay == null)
+				throw new NULLPtrConnectionException("IWindow.cs", 294, "Window::Window(string,string)");
+
+			m_Windows = new List<BaseWindow>();
+			m_handler = new SortedDictionary<string, string>();
+			m_xRectangle = new Rectangle(0,0,320,320);
+			m_colBackground = Colors.LightBlue;
+			m_colBorder = Colors.LightSteelBlue;
+			m_strIconPath = null;
+			m_bShowCursor = true;
+			m_iEventMask = 0;
+			m_pParentWindow = null;
+			m_id = -1;
+			m_strClassName = ClassName;
+			m_bIsResizeable = true;
+			m_handler = new SortedDictionary<string, string>();
+			m_iBorderWidth = 0;
 		}
 		public BaseWindow (string strDisplay, string strName, Color pBackgroundColor,Rectangle Rectangle, IEventHandler pEventHandler,
 			string strTitle = "LibX# Window", EventMask eEventMask = EventMask.ButtonPressMask| EventMask.KeyPressMask,
@@ -269,7 +316,7 @@ namespace X11.Widgets
 		{
 			m_pDisplay = Application.Current.GetHandle<Display>(strDisplay);
 			if (m_pDisplay == null)
-				throw new NULLPtrConnectionException("IWindow.cs", 87, "Window::Window(string,string)");
+				throw new NULLPtrConnectionException("IWindow.cs", 320, "Window::Window(string,string)");
 
 			m_xRectangle = Rectangle;
 			m_colBackground = pBackgroundColor;
@@ -285,10 +332,12 @@ namespace X11.Widgets
 			m_bIsResizeable = bIsResizeable;
 			m_handler = new SortedDictionary<string, string>();
 			m_pEventHandler = pEventHandler;
+			m_iBorderWidth = 0;
 
 		}
 		protected virtual bool OnCreate(XEventArgs args)
 		{
+
 			return m_pEventHandler.CallHandler("Created", args, this);
 		}
 		protected virtual bool OnDestroy(XEventArgs  args)
@@ -326,11 +375,7 @@ namespace X11.Widgets
 			m_pEventHandler.CallHandler("Resize", args, this);
 			return true;
 		}
-
-		internal void NextEvent(ref XEvent xevent)
-		{
-			Lib.XNextEvent(m_pDisplay.RawHandle, ref xevent);
-		}
+			
 		public int RegisterChild(BaseWindow pWindow)
 		{
 			if (null == pWindow)
@@ -361,6 +406,20 @@ namespace X11.Widgets
 					m_id = -1;
 				}
 			}
+		}
+		public void SetWindowOpacity(float value)
+		{
+			if (value > 1.0f) value = 1.0f;
+			if (value < 0.0f) value = 0.0f;
+
+			m_colBackground.Alpha = value;
+			uint opacity = (uint)(((double)value) * 0xffffffff);
+
+
+			IntPtr atom = Lib.XInternAtom(m_pDisplay.RawHandle, "_NET_WM_WINDOW_OPACITY", false);
+			Lib.XChangeProperty(m_pDisplay.RawHandle, m_pHandle, atom,
+				Lib.AtomType.CARDINAL, (TInt)32, Lib.PropMode.Replace, ref opacity, (TInt)1);
+
 		}
 		internal bool Event(XEvent xevent)
 		{
@@ -397,20 +456,43 @@ namespace X11.Widgets
 			m_strTitle = value;
 		}
 
-		void SetRectangle(Rectangle value)
+		private void SetRectangle(string value)
 		{
+			m_xRectangle = new libral.Rectangle(value);
 			if (m_bIsCreated)
 			{
-				Lib.XMoveResizeWindow(m_pDisplay.RawHandle, m_pHandle, (TInt)Rectangle.X, (TInt)Rectangle.Y, 
-					(TUint)Rectangle.Width, 
-					(TUint)Rectangle.Height);
+					Lib.XMoveResizeWindow(m_pDisplay.RawHandle, m_pHandle, (TInt)m_xRectangle.X, (TInt)m_xRectangle.Y, 
+						(TUint)m_xRectangle.Width, 
+						(TUint)m_xRectangle.Height);
 			}
-			m_xRectangle = value;
+
 		}
 
+		private void setBorder(string str)
+		{
+			if(m_colBorder.ToString() != str)
+				m_colBorder = new Color(str);
+			if (m_bIsCreated)
+			{
+			}
+		}
+
+		private void setBackground(string color)
+		{
+			if(m_colBackground.ToString() != color)
+				m_colBackground = new Color(color);
+			if (m_bIsCreated)
+			{
+				SetWindowOpacity(m_colBackground.Alpha);
+			}
+		}
 		public static void SaveAsXml(BaseWindow wnd)
 		{
-			using (FileStream stream = new FileStream(wnd.Name + ".xml", FileMode.Create))
+			string name = wnd.Name + ".xml";
+			if (File.Exists(name))
+				File.Delete(name);
+
+			using(FileStream stream = new FileStream(wnd.Name + ".xml", FileMode.CreateNew))
 			{
 				XmlSerializer x = new XmlSerializer(wnd.GetType());
 				x.Serialize(stream, wnd);
@@ -419,10 +501,14 @@ namespace X11.Widgets
 		public static T OpenFromXml<T>(string name) where T : BaseWindow
 		{
 			T window = null;
-			using (FileStream stream = new FileStream(name + ".xml", FileMode.Open))
+			FileStream stream = new FileStream(name + ".xml", FileMode.Open, 
+				FileAccess.Read, 
+				FileShare.None);
 			{
-					XmlSerializer x = new XmlSerializer(typeof(T));
+				XmlSerializer x = new XmlSerializer(typeof(T));
 					window =  (T)x.Deserialize(stream);
+				
+					
 			}
 			return window;
 		}

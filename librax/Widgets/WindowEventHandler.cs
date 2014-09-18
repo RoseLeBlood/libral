@@ -56,18 +56,35 @@ namespace X11.Widgets
 			else if (xevent.type == XEventName.ConfigureNotify)
 			{
 				if (wnd.Rectangle.Width != (int)xevent.ConfigureEvent.width ||
-				     wnd.Rectangle.Height != (int)xevent.ConfigureEvent.height)
+				    wnd.Rectangle.Height != (int)xevent.ConfigureEvent.height)
 				{
 					wnd.Rectangle.Width = (int)xevent.ConfigureEvent.width;
 					wnd.Rectangle.Height = (int)xevent.ConfigureEvent.height;
+					
+					int x = 0, y = 0;
+					IntPtr child = IntPtr.Zero;
 
-							return CallHandler("Resize", new XEventArgs(xevent), wnd);
+					X11._internal.Lib.XWindowAttributes xwa = new Lib.XWindowAttributes();
+
+					var root = X11._internal.Lib.XRootWindow(wnd.Display.RawHandle, (TInt)wnd.Display.Screen.ScreenNumber);
+					X11._internal.Lib.XTranslateCoordinates(wnd.Display.RawHandle, wnd.RawHandle, root, 0, 0, 
+						ref x, ref y, ref child);
+					X11._internal.Lib.XGetWindowAttributes(wnd.Display.RawHandle, wnd.RawHandle, ref xwa);
+
+					wnd.Rectangle.X = x - (int)xwa.x;
+					wnd.Rectangle.Y = y - (int)xwa.y;
+
+					return CallHandler("Resize", new XEventArgs(xevent), wnd);
 				}
 			}
 			return CallHandler(xevent.type.ToString(), new XEventArgs(xevent), wnd);
 		}
 		public virtual bool CallHandler(string eventName, XEventArgs args, BaseWindow wnd)
 		{
+			#if DEBUG
+			Console.WriteLine("Handled {0}", eventName);
+			#endif
+
 			if (wnd.CallHandlers.ContainsKey(eventName))
 			{
 				Type calcType = wnd.GetType();
@@ -75,9 +92,7 @@ namespace X11.Widgets
 					BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
 						null, wnd, new object[] { wnd, args });
 			}
-			#if DEBUG
-			Console.WriteLine("Not Handled {0}", eventName);
-			#endif
+
 			return true;
 		}
 	}

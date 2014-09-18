@@ -91,29 +91,22 @@ namespace libral
 			string[] rect = rectstring.Split(',');
 			if (rect.Length == 4)
 			{
-				var _bottom = 0;
-				var _right = 0;
+
 				int.TryParse(rect[0], out m_iY); // Top
 				int.TryParse(rect[1], out m_iX); // Left
-				int.TryParse(rect[2], out _bottom); // Bottom = m_iY + m_iHeight; 
-				int.TryParse(rect[3], out _right); // Right = m_iX + m_iWidth;
+				int.TryParse(rect[2], out m_iWidth); 
+				int.TryParse(rect[3], out m_iHeight); 
 
-				m_iHeight = _bottom - m_iY;
-				m_iWidth = _right - m_iX;
 			}
 			else if (rect.Length == 2)
 			{
-				var _bottom = 0;
-				var _right = 0;
+
 				int.TryParse(rect[0], out m_iY); // Top
 				int.TryParse(rect[0], out m_iX); // Left
-				int.TryParse(rect[1], out _bottom); // Bottom = m_iY + m_iHeight; 
-				int.TryParse(rect[1], out _right); // Right = m_iX + m_iWidth;
+				int.TryParse(rect[1], out m_iWidth); 
+				int.TryParse(rect[1], out m_iHeight); 
 
-				m_iHeight = _bottom - m_iY;
-				m_iWidth = _right - m_iX;
 			}
-			Console.WriteLine(this.ToString());
 		}
 		public Rectangle Inflate (int leftRight, int topBottom)
 		{
@@ -127,7 +120,14 @@ namespace libral
 		public override string ToString()
 		{
 			return string.Format("{0},{1},{2},{3}", 
-				Top, Left, Bottom, Right);
+				Top, Left, Width, Height);
+		}
+
+
+		public static implicit operator Rectangle(string strRect) 
+		{
+			Rectangle d = new Rectangle(strRect);  
+			return d;
 		}
 	}
 }

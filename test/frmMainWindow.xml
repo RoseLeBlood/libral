@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	Background="#4682B4FF" Border="#B0C4DEFF" Rectangle="10,10,546,842" Title="Hallo LibX#" ShowCursor="true" 
-	EventMask="All" ClassName="TestWindow" BorderWidth="0" Namespace="test" 
-	KeyPress="frmMainWindow_KeyPressed" Created="frmMainWindow_Created" />

@@ -24,6 +24,7 @@ using System.Common;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using libral;
+using System.Xml;
 
 namespace X11.Widgets
 {
@@ -40,7 +41,7 @@ namespace X11.Widgets
 	[Serializable]
 	public abstract class SimpleWindow : BaseWindow
 	{
-		protected SimpleWindow()
+		protected SimpleWindow(string strDisplay) : base(strDisplay)
 		{
 		}
 		public SimpleWindow(string strDisplay, string strName, Color pBackgroundColor, Rectangle Rectangle,  
@@ -54,13 +55,9 @@ namespace X11.Widgets
 		}
 		public override void Create()
 		{
-			int posX = 0;
-			int posY = 0;
-			if (null != m_pParentWindow)
-			{
-				posX = Rectangle.X;
-				posY = Rectangle.Y;
-			}
+			int posX = m_xRectangle.X;
+			int posY = m_xRectangle.Y;
+
 			var borderPixel = m_colBorder.ToXColor(m_pDisplay);
 
 			var backgroundPixel = m_colBackground.ToXColor(m_pDisplay);
@@ -73,8 +70,8 @@ namespace X11.Widgets
 					X11._internal.Lib.XRootWindow(m_pDisplay.RawHandle, (TInt)m_pDisplay.Screen.ScreenNumber), 
 					(TInt)posX, 
 					(TInt)posY, 
-					(TUint)Rectangle.Width, 
-					(TUint)Rectangle.Height, 
+					(TUint)m_xRectangle.Width, 
+					(TUint)m_xRectangle.Height, 
 					(TUint)m_iBorderWidth, 
 					borderPixel.pixel, 
 					backgroundPixel.pixel);
@@ -86,8 +83,8 @@ namespace X11.Widgets
 					m_pParentWindow.RawHandle, 
 					(TInt)posX, 
 					(TInt)posY, 
-					(TUint)Rectangle.Width, 
-					(TUint)Rectangle.Height, 
+					(TUint)m_xRectangle.Width, 
+					(TUint)m_xRectangle.Height, 
 					(TUint)0, 
 					borderPixel.pixel, 
 					backgroundPixel.pixel);
@@ -109,19 +106,19 @@ namespace X11.Widgets
 			// Set Size Hints
 			X11._internal.Lib.XSizeHints sizeHints = new Lib.XSizeHints();
 			sizeHints.flags = Lib.XSizeHintFlags.PPosition | Lib.XSizeHintFlags.PSize;
-			sizeHints.x = Rectangle.X;
-			sizeHints.y = Rectangle.Y;
-			sizeHints.width = Rectangle.Width;
-			sizeHints.height = Rectangle.Height;
+			sizeHints.x = m_xRectangle.X;
+			sizeHints.y = m_xRectangle.Y;
+			sizeHints.width = m_xRectangle.Width;
+			sizeHints.height = m_xRectangle.Height;
 			if (!m_bIsResizeable)
 			{
 				// Min and max width and height are set to prevent window's resizing. In addition,
 				// this hides the 'restore' button on the title bar of the window.
 				sizeHints.flags = sizeHints.flags | Lib.XSizeHintFlags.PMinSize | Lib.XSizeHintFlags.PMaxSize;
-				sizeHints.min_width = Rectangle.Width;
-				sizeHints.min_height = Rectangle.Height;
-				sizeHints.max_width = Rectangle.Width;
-				sizeHints.max_height = Rectangle.Height;
+					sizeHints.min_width = m_xRectangle.Width;
+					sizeHints.min_height = m_xRectangle.Height;
+					sizeHints.max_width = m_xRectangle.Width;
+					sizeHints.max_height = m_xRectangle.Height;
 			}
 			//Lib.XSetWMNormalHints(m_pDisplay.RawHandle, m_pHandle, ref sizeHints ); -- geht net ???? Execption DLL NotFound ....
 			XSetWMNormalHints(m_pDisplay.RawHandle, m_pHandle, ref sizeHints);
@@ -199,6 +196,16 @@ namespace X11.Widgets
 			{
 				m_id = RegisterChild(this);
 			}
+			if (m_pEventHandler == null)
+				m_pEventHandler = WindowEventHandler.BaseEvent;
+
+			uint opacity = (uint)(((double)m_colBackground.Alpha) * 0xffffffff);
+
+			Lib.XChangeProperty(m_pDisplay.RawHandle, m_pHandle, Lib.XInternAtom(m_pDisplay.RawHandle, "_NET_WM_WINDOW_OPACITY", false),
+				Lib.AtomType.CARDINAL, (TInt)32, Lib.PropMode.Replace, ref opacity, (TInt)1);
+
+
+
 			m_pEventHandler.CallHandler("Created", new XEventArgs(), this);
 			base.Create();
 		}
@@ -263,7 +270,6 @@ namespace X11.Widgets
 			Lib.XUndefineCursor(m_pDisplay.RawHandle, m_pHandle);
 			Lib.XDestroyWindow(m_pDisplay.RawHandle, m_pHandle);
 		}
-
 
 		[DllImport("libX11.so")]
 		private static extern void XSetWMNormalHints (IntPtr display, IntPtr w, ref X11._internal.Lib.XSizeHints hints);

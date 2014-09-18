@@ -21,10 +21,12 @@
 using System;
 using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace System.Common
 {
 	[Serializable]
+	[TypeConverter(typeof (ColorConverter))]
 	public class Color : IFormattable, IEquatable<Color>
 	{
 		private float[] m_colors = new float[4] { 0, 0, 0, 0 };
@@ -96,7 +98,7 @@ namespace System.Common
 			B = blue;
 			A = alpha;
 		}	
-		public Color(string hexstring)
+		public  Color(string hexstring)
 		{
 			var cal = Colors.FromString(hexstring);
 			R = cal.R;
@@ -191,6 +193,16 @@ namespace System.Common
 			this.Alpha = n.Alpha;
 		}
 
+		/*public static explicit operator Color(string hex) 
+		{
+			Color d = new Color(hex); 
+			return d;
+		}*/
+		public static implicit operator Color(string hex) 
+		{
+			Color d = new Color(hex);  
+			return d;
+		}
 
 		public static Color	Negate(Color c)											
 		{

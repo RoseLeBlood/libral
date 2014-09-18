@@ -134,7 +134,8 @@ namespace X11.Widgets
 			MainWindow.Show();
 			while (Application.Current.MainWindow != null)
 			{
-				MainWindow.NextEvent(ref xevent);
+				Lib.XNextEvent(MainWindow.Display.RawHandle, ref xevent);
+				
 				if (MainWindow.Event(xevent) == false)
 					break;
 			}
