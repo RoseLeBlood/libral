@@ -37,7 +37,7 @@ namespace X11.Widgets
 	}
 	[Serializable]
 	[XmlRoot(ElementName = "Window")]
-	public abstract class Window : XHandle, IHandle
+	public abstract class BaseWindow : XHandle, IHandle
 	{
 		protected Display    	m_pDisplay;
 		protected Color	   		m_colBackground;
@@ -49,15 +49,18 @@ namespace X11.Widgets
 		protected bool 			m_bHasParent;
 		protected bool 			m_bShowCursor;
 		protected EventMask     m_iEventMask;
-		protected Window		m_pParentWindow;
-		protected List<Window>	m_Windows;
+		protected BaseWindow		m_pParentWindow;
+		protected List<BaseWindow>	m_Windows;
 		protected SortedDictionary<string /*name */, string /* function */> m_handler;
 		protected int			m_id;
 		protected string		m_strClassName;
 		protected bool			m_bIsResizeable;
 		protected int 			m_iBorderWidth;
+		protected IEventHandler m_pEventHandler;
 		private   bool			m_bIsCreated;
 		private   string		m_strNamespace;
+
+		internal SortedDictionary<string /*name */, string /* function */> CallHandlers { get { return m_handler; } }
 
 		[XmlIgnore]
 		public Display			Display
@@ -132,7 +135,7 @@ namespace X11.Widgets
 		public string				Parent
 		{
 			get {  return (m_pParentWindow != null) ? m_pParentWindow.Name : null; }
-			set { m_pParentWindow = Application.Current.GetHandle<Window>(value); }
+			set { m_pParentWindow = Application.Current.GetHandle<BaseWindow>(value); }
 		}
 		[XmlAttribute("Namespace")]
 		public string Namespace
@@ -236,6 +239,14 @@ namespace X11.Widgets
 			get { return m_handler.ContainsKey("Resize") ? m_handler["Resize"] : null; }
 			set { SetHandler(value, "Resize"); }
 		}
+		[XmlIgnore]
+		public IEventHandler EventHandler
+		{
+			get { return m_pEventHandler; }
+			set { m_pEventHandler = value; }
+		}
+
+
 		public virtual void Create()
 		{
 			m_bIsCreated = true;
@@ -247,13 +258,13 @@ namespace X11.Widgets
 		public abstract void Show();
 		public abstract void Hide();
 
-		internal Window()
+		internal BaseWindow()
 		{
 		}
-		public Window (string strDisplay, string strName, Color pBackgroundColor,Rectangle Rectangle, 
+		public BaseWindow (string strDisplay, string strName, Color pBackgroundColor,Rectangle Rectangle, IEventHandler pEventHandler,
 			string strTitle = "LibX# Window", EventMask eEventMask = EventMask.ButtonPressMask| EventMask.KeyPressMask,
 			uint iBorderWidth = 0, bool bIsResizeable = true, bool bShowCursor = true, string strIconPath = null, 
-			Window pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
+			BaseWindow pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
 			: base(strName)
 		{
 			m_pDisplay = Application.Current.GetHandle<Display>(strDisplay);
@@ -268,20 +279,21 @@ namespace X11.Widgets
 			m_bShowCursor = bShowCursor;
 			m_iEventMask = eEventMask;
 			m_pParentWindow = pParentWindow;
-			m_Windows = new List<Window>();
+			m_Windows = new List<BaseWindow>();
 			m_id = -1;
 			m_strClassName = ClassName;
 			m_bIsResizeable = bIsResizeable;
 			m_handler = new SortedDictionary<string, string>();
+			m_pEventHandler = pEventHandler;
 
 		}
 		protected virtual bool OnCreate(XEventArgs args)
 		{
-			return CallHandler("Created", args);
+			return m_pEventHandler.CallHandler("Created", args, this);
 		}
 		protected virtual bool OnDestroy(XEventArgs  args)
 		{
-			return CallHandler("Destroyed", args);
+			return m_pEventHandler.CallHandler("Destroyed", args, this);
 		}
 		protected virtual bool OnClientMessage(XEventArgs args)
 		{
@@ -294,7 +306,7 @@ namespace X11.Widgets
 				return false;
 			}
 					
-			return CallHandler("ClientMessage", args);
+			return m_pEventHandler.CallHandler("ClientMessage", args, this);
 		}
 
 		protected virtual bool OnConfigureNotify(XEventArgs args)
@@ -311,7 +323,7 @@ namespace X11.Widgets
 		}
 		protected virtual bool OnResize(XEventArgs args)
 		{
-			CallHandler("Resize", args);
+			m_pEventHandler.CallHandler("Resize", args, this);
 			return true;
 		}
 
@@ -319,7 +331,7 @@ namespace X11.Widgets
 		{
 			Lib.XNextEvent(m_pDisplay.RawHandle, ref xevent);
 		}
-		public int RegisterChild(Window pWindow)
+		public int RegisterChild(BaseWindow pWindow)
 		{
 			if (null == pWindow)
 			{
@@ -352,10 +364,10 @@ namespace X11.Widgets
 		}
 		internal bool Event(XEvent xevent)
 		{
-			Window window = null;
+			BaseWindow window = null;
 			if (xevent.AnyEvent.window == m_pHandle)
 			{
-				window = this;
+					window = this;
 			}
 			else
 			{
@@ -371,48 +383,11 @@ namespace X11.Widgets
 					}
 				}
 			}
-			if (window != null)
-				return window.HandleEvent(xevent);
+			if (m_pParentWindow == null)
+				return m_pEventHandler.WndProc(xevent, this);
 			else
-				return true;
+				return m_pParentWindow.Event(xevent);
 		}
-		protected virtual bool HandleEvent(XEvent xevent)
-		{
-			if (xevent.type == XEventName.ClientMessage)
-			{
-				IntPtr protocolsAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_PROTOCOLS", false);
-				IntPtr deleteWindowAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_DELETE_WINDOW", false);
-
-				if (xevent.ClientMessageEvent.message_type == protocolsAtom &&
-				    xevent.ClientMessageEvent.ptr1 == deleteWindowAtom)
-				{
-					CallHandler(xevent.type.ToString(), new XEventArgs(xevent));
-					return false;
-				}
-			}
-			else if (xevent.type == XEventName.FocusOut)
-			{
-				m_bHaveFocus = false;
-			}
-			else if (xevent.type == XEventName.FocusIn)
-			{
-				m_bHaveFocus = true;
-			}
-			else if (xevent.type == XEventName.ConfigureNotify)
-			{
-				if (m_xRectangle.Width != (int)xevent.ConfigureEvent.width ||
-				     m_xRectangle.Height != (int)xevent.ConfigureEvent.height)
-				{
-					m_xRectangle.Width = (int)xevent.ConfigureEvent.width;
-					m_xRectangle.Height = (int)xevent.ConfigureEvent.height;
-
-					return CallHandler("Resize", new XEventArgs(xevent));
-				}
-			}
-
-			return CallHandler(xevent.type.ToString(), new XEventArgs(xevent));
-		}
-
 		void SetTitle(string value)
 		{
 			if (m_bIsCreated)
@@ -433,7 +408,7 @@ namespace X11.Widgets
 			m_xRectangle = value;
 		}
 
-		public static void SaveAsXml(Window wnd)
+		public static void SaveAsXml(BaseWindow wnd)
 		{
 			using (FileStream stream = new FileStream(wnd.Name + ".xml", FileMode.Create))
 			{
@@ -441,7 +416,7 @@ namespace X11.Widgets
 				x.Serialize(stream, wnd);
 			}
 		}
-		public static T OpenFromXml<T>(string name) where T : Window
+		public static T OpenFromXml<T>(string name) where T : BaseWindow
 		{
 			T window = null;
 			using (FileStream stream = new FileStream(name + ".xml", FileMode.Open))
@@ -457,21 +432,6 @@ namespace X11.Widgets
 				m_handler[eventName] = name;
 			else
 				m_handler.Add(eventName, name);
-		}
-		protected virtual bool CallHandler(string eventName, XEventArgs args)
-		{
-
-			if (m_handler.ContainsKey(eventName))
-			{
-				Type calcType = this.GetType();
-				return (bool)calcType.InvokeMember(m_handler[eventName],
-					BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
-					null, this, new object[] { this, args });
-			}
-			#if DEBUG
-			Console.WriteLine("Not Handled {0}", eventName);
-			#endif
-			return true;
 		}
 	}
 }

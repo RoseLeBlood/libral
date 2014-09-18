@@ -1,14 +1,6 @@
-﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="librax/Widgets/Colormap.cs">
-    <Files>
-      <File FileName="librax/Widgets/IWindow.cs" Line="79" Column="3" />
-      <File FileName="librax/Widgets/SimpleWindow.cs" Line="49" Column="4" />
-      <File FileName="test/Program.cs" Line="37" Column="46" />
-      <File FileName="librax/Widgets/Colormap.cs" Line="53" Column="4" />
-      <File FileName="librax/Widgets/Application.cs" Line="126" Column="4" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+﻿<Properties GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/home/annasophia/rasLinux/librax/Widgets/Color.cs" line="365" column="1" />

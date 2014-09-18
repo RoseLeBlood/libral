@@ -33,7 +33,8 @@ namespace test
 	[XmlRoot(ElementName = "Window")]
 	public class TestWindow : SimpleWindow
 	{
-		public TestWindow() : base(":0", "frmMainWindow", Colors.SteelBlue, new Rectangle("10,320"))
+		public TestWindow() : base(":0", "frmMainWindow", Colors.SteelBlue, new Rectangle("10,320"),
+			WindowEventHandler.BaseEvent)
 		{
 			Namespace = "test";
 			ClassName = "TestWindow";
@@ -68,7 +69,7 @@ namespace test
 			Application.Run();
 
 			Application.SaveAsXml(Application.Current);
-			Window.SaveAsXml(wnd);
+			BaseWindow.SaveAsXml(wnd);
 		}
 	}
 }

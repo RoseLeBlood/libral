@@ -58,7 +58,6 @@
     <Compile Include="internal\Xpm\Xpm.cs" />
     <Compile Include="Contracts.cs" />
     <Compile Include="Type.cs" />
-    <Compile Include="Widgets\IWindow.cs" />
     <Compile Include="Widgets\Exception.cs" />
     <Compile Include="Widgets\EventHandler.cs" />
     <Compile Include="Widgets\Screen.cs" />
@@ -73,6 +72,9 @@
     <Compile Include="Widgets\Colormap.cs" />
     <Compile Include="Widgets\SimpleWindow.cs" />
     <Compile Include="Widgets\CommandLine.cs" />
+    <Compile Include="Widgets\IEventHandler.cs" />
+    <Compile Include="Widgets\WindowEventHandler.cs" />
+    <Compile Include="Widgets\BaseWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libral\libral.csproj">

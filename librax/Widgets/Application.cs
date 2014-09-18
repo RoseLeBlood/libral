@@ -130,7 +130,7 @@ namespace X11.Widgets
 		public static void Run()
 		{
 			XEvent xevent = new XEvent();
-			var MainWindow = Application.Current.GetHandle<Window>(Application.Current.MainWindow) as Window;
+			var MainWindow = Application.Current.GetHandle<BaseWindow>(Application.Current.MainWindow);
 			MainWindow.Show();
 			while (Application.Current.MainWindow != null)
 			{

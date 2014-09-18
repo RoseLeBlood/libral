@@ -38,16 +38,16 @@ namespace X11.Widgets
 
 	}
 	[Serializable]
-	public abstract class SimpleWindow : Window
+	public abstract class SimpleWindow : BaseWindow
 	{
 		protected SimpleWindow()
 		{
 		}
-		public SimpleWindow(string strDisplay, string strName, Color pBackgroundColor, Rectangle Rectangle,  string strTitle = "LibX# Window",  
-			EventMask eEventMask = EventMask.All,
+		public SimpleWindow(string strDisplay, string strName, Color pBackgroundColor, Rectangle Rectangle,  
+			IEventHandler pEventHandler, string strTitle = "LibX# Window", EventMask eEventMask = EventMask.All,
 			uint iBorderWidth = 0, bool bIsResizeable = true, bool bShowCursor = true, string strIconPath = "", 
-			Window pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
-			: base(strDisplay, strName, pBackgroundColor, Rectangle,strTitle, eEventMask, iBorderWidth,
+			BaseWindow pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
+			: base(strDisplay, strName, pBackgroundColor, Rectangle, pEventHandler, strTitle, eEventMask, iBorderWidth,
 				bIsResizeable, bShowCursor, strIconPath, pParentWindow, ClassName)
 		{
 
@@ -199,8 +199,7 @@ namespace X11.Widgets
 			{
 				m_id = RegisterChild(this);
 			}
-			CallHandler("Created", new XEventArgs());
-
+			m_pEventHandler.CallHandler("Created", new XEventArgs(), this);
 			base.Create();
 		}
 		public override void Show()
