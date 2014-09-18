@@ -81,7 +81,6 @@ namespace test
 		{
 			Application.Init("test");
 			Application.SaveAsXml(Application.Current);
-			new Display(":0");
 
 			#if CREATENEW
 			TestWindow wnd = new TestWindow();
