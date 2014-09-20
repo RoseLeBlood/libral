@@ -127,7 +127,7 @@ namespace X11
 		Dot = 60,
 		Sub = 61,
 		ShiftR = 62,
-		NoKey = UInt32.MaxValue,
+		NoKey,
 	}
 
 	public enum MouseButton : uint

@@ -31,7 +31,7 @@ namespace X11.Widgets
 		public WindowEventHandler() : base("WindowEventHandler")
 		{
 		}
-		public bool WndProc(XEvent xevent, BaseWindow wnd)
+		public virtual bool WndProc(XEvent xevent, BaseWindow wnd)
 		{
 			if (xevent.type == XEventName.ClientMessage)
 			{

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libral", "libral\libral.csproj", "{897E6333-D6C4-4BDA-B51E-5575A17E5291}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "liboRg", "liboRg\liboRg.csproj", "{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{897E6333-D6C4-4BDA-B51E-5575A17E5291}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{897E6333-D6C4-4BDA-B51E-5575A17E5291}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{897E6333-D6C4-4BDA-B51E-5575A17E5291}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2CEBFB6-661B-42EE-8F66-4F78E0A1639B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D2CEBFB6-661B-42EE-8F66-4F78E0A1639B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2CEBFB6-661B-42EE-8F66-4F78E0A1639B}.Release|Any CPU.ActiveCfg = Release|Any CPU

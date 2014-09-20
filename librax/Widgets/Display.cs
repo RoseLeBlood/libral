@@ -54,7 +54,6 @@ namespace X11.Widgets
 	public class Display : XHandle
 	{
 		private Screen	m_pScreen;
-
 		public virtual int ScreensCount  { get { return m_iScreensCount; } }
 
 		public virtual string ServerName { get { return X11._internal.Lib.XDisplayString(m_pHandle); } }
@@ -77,6 +76,7 @@ namespace X11.Widgets
 			}
 			m_iScreensCount = X11._internal.Lib.XScreenCount(m_pHandle);
 			m_pScreen = new Screen(X11._internal.Lib.XDefaultScreenOfDisplay(m_pHandle), this);
+
 			Register();
 
 			#if DEBUG

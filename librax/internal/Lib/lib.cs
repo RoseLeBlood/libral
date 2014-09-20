@@ -897,9 +897,21 @@ namespace X11._internal
 			Lib.PropMode mode, ref uint data, TInt nelements);
 		[DllImport("libX11.so")]
 		public static extern int XChangeWindowAttributes (IntPtr x11display, IntPtr x11window, WindowAttributeMask valuemask, ref XWindowAttributes xwa);
+		[DllImport("libX11.so")]
+		public static extern  void XLockDisplay(IntPtr display);
+		[DllImport("libX11.so")]
+		public static extern  void XUnlockDisplay(IntPtr display);
+		[DllImport("libX11")] 
+		public static extern void XQueryKeymap(IntPtr display, TChar[] keys); 
 
 		[DllImport("libX11.so")]
 		public static extern void XSetWMNormalHints (IntPtr display, IntPtr w, ref X11._internal.Lib.XSizeHints hints);
+
+		public delegate bool CheckEventPredicate(IntPtr display, ref XEvent event_return, IntPtr arg);
+		[DllImport("libX11.so")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool XCheckIfEvent(IntPtr display, ref XEvent event_return,
+			/*[MarshalAs(UnmanagedType.FunctionPtr)] */ CheckEventPredicate predicate, /*XPointer*/ IntPtr arg);
 	}
 }
 

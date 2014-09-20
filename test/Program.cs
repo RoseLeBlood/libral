@@ -44,7 +44,6 @@ namespace test
 		#else
 		public TestWindow() : base(":0")
 		{
-
 		}
 		#endif
 		protected bool frmMainWindow_Created(Object sender, XEventArgs args)
@@ -69,6 +68,7 @@ namespace test
 				this.SetWindowOpacity(Background.Alpha - 0.01f);
 
 			}
+
 			return true;
 		}
 		protected bool frmMainWindpw_Resize(Object sender, XEventArgs args)

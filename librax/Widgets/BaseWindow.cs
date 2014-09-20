@@ -220,6 +220,12 @@ namespace X11.Widgets
 			get { return m_handler.ContainsKey("MouseKeyRelease") ? m_handler["MouseKeyRelease"] : null; }
 			set { SetHandler(value, "MouseKeyRelease"); }
 		}
+		[XmlAttribute("UserEvents")]
+		public string UserEvents
+		{
+			get { return m_handler.ContainsKey("UserEvents") ? m_handler["UserEvents"] : null; }
+			set { SetHandler(value, "UserEvents"); }
+		}
 		[XmlAttribute("Expose")]
 		public string Expose
 		{
@@ -273,6 +279,11 @@ namespace X11.Widgets
 		{
 			get { return m_bIsResizeable; }
 			set { m_bIsResizeable = value; }
+		}
+		[XmlIgnore]
+		public bool IsOpen
+		{
+			get { return m_bIsCreated; }
 		}
 
 		public virtual void Create()

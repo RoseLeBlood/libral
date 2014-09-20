@@ -39,6 +39,9 @@ namespace X11.Widgets
 
 		protected Application()
 		{
+			m_look = new object();
+			m_strNamespace = "";
+			m_handles = new SortedDictionary<string, Handle>();
 		}
 		protected Application(string _namespace)
 		{
@@ -52,12 +55,24 @@ namespace X11.Widgets
 		{
 			get { return m_current; }
 		}
+		[XmlIgnore]
+		public Display Display
+		{
+			get { return m_current.m_currentDisplay; }
+		}
 		[XmlAttribute("MainWindow")]
 		public string MainWindow
 		{
 			get { return m_strNainWindow; }
 			set { m_strNainWindow = value; }
 		}
+		[XmlAttribute("DisplayName")]
+		public string strDisplay
+		{
+			get { return m_current.m_currentDisplay.Name; }
+			set { m_current.m_currentDisplay = Current.GetHandle<Display>( value); }
+		}
+
 		[XmlAttribute("Namespace")]
 		public string Namespace
 		{
@@ -137,15 +152,25 @@ namespace X11.Widgets
 			XEvent xevent = new XEvent();
 			var MainWindow = Application.Current.GetHandle<BaseWindow>(Application.Current.MainWindow);
 			MainWindow.Show();
-			while (Application.Current.MainWindow != null)
+			bool m_bOpen = true;
+
+			while (m_bOpen)
 			{
-				Lib.XNextEvent(MainWindow.Display.RawHandle, ref xevent);
-				
-				if (MainWindow.Event(xevent) == false)
-					break;
+				while (Lib.XCheckIfEvent(MainWindow.Display.RawHandle, 
+					       ref xevent, CheckEvent, MainWindow.RawHandle))
+				{
+					m_bOpen = MainWindow.Event(xevent);
+				}
+				MainWindow.EventHandler.CallHandler("UserEvents", null, MainWindow);
 			}
 			MainWindow.Destroy();
 		}
+
+		static bool CheckEvent(IntPtr display, ref XEvent xevent, IntPtr userData)
+		{
+			return xevent.AnyEvent.window ==  userData;
+		}
+
 		public static void SaveAsXml(Application app, string file = "app.xml")
 		{
 			using (FileStream stream = new FileStream(file, FileMode.Create))

@@ -79,6 +79,7 @@
     <Compile Include="Widgets\BaseWindow.cs" />
     <Compile Include="internal\XInput\XInput.cs" />
     <Compile Include="internal\Xkb\Xkb.cs" />
+    <Compile Include="Widgets\Xlock.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libral\libral.csproj">
