@@ -31,7 +31,6 @@ namespace libral
 
 		public Size(int m_iWidth, int m_iHeight)
 		{
-			throw new NotImplementedException();
 		}
 	}
 }

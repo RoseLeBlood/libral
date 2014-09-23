@@ -268,6 +268,12 @@ namespace X11.Widgets
 			get { return m_handler.ContainsKey("Resize") ? m_handler["Resize"] : null; }
 			set { SetHandler(value, "Resize"); }
 		}
+		[XmlAttribute("Move")]
+		public string Move
+		{
+			get { return m_handler.ContainsKey("Move") ? m_handler["Move"] : null; }
+			set { SetHandler(value, "Move"); }
+		}
 		[XmlIgnore]
 		public IEventHandler EventHandler
 		{

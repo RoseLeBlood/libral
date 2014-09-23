@@ -24,73 +24,21 @@ using System.Common;
 using System.Reflection;
 using X11;
 using X11.Widgets;
+using liboRg;
 
 namespace test
 {
-	[Serializable]
-	public class TestWindow : SimpleWindow
+	public class Programm
 	{
-		#if CREATENEW
-		public TestWindow() : base(":0", "frmMainWindow", "#4682B4CC", "32,500,800,600",
-			WindowEventHandler.BaseEvent, "Hallo SimpleWindow")
-		{
-			Namespace = "test";
-			ClassName = "TestWindow";
-			Created = "frmMainWindow_Created";
-			KeyPress = "frmMainWindow_KeyPressed";
-			Resize = "frmMainWindpw_Resize";
-			Title = "Hallo LibX#";
-		}
-		#else
-		public TestWindow() : base(":0")
-		{
-		}
-		#endif
-		protected bool frmMainWindow_Created(Object sender, XEventArgs args)
-		{
-			Console.Write(Background.Alpha);
-			return true;
-		}
-		protected bool frmMainWindow_KeyPressed(Object sender, XEventArgs args)
-		{
-			if (((Keys)(args.Event.KeyEvent.keycode)) == Keys.Escape)
-			{
-				Console.WriteLine("Naja das war der Escape cheat bye bye ...");
-				return false;
-			}
-			else if (((Keys)(args.Event.KeyEvent.keycode)) == Keys.Num_Add)
-			{
-				this.SetWindowOpacity(Background.Alpha + 0.01f);
-				
-			}
-			else if (((Keys)(args.Event.KeyEvent.keycode)) == Keys.Num_Sub)
-			{
-				this.SetWindowOpacity(Background.Alpha - 0.01f);
-
-			}
-
-			return true;
-		}
-		protected bool frmMainWindpw_Resize(Object sender, XEventArgs args)
-		{
-			Console.WriteLine(Rectangle.ToString());
-			return true;
-		}
-
 		public static void Main (string[] args)
 		{
 			Application.Init("test");
-			Application.SaveAsXml(Application.Current);
 
-			#if CREATENEW
-			TestWindow wnd = new TestWindow();
-			BaseWindow.SaveAsXml(wnd);
-			#else
-			var wnd = BaseWindow.OpenFromXml<TestWindow>("frmMainWindow");
-			#endif
-			wnd.Create();
+			Game game = new Game(":0", new libral.Size(320, 320), "Welt", WindowStyle.Resize);
+			game.Init();
 
-			Application.Current.MainWindow = "frmMainWindow";
+
+			Application.Current.MainWindow = "GameWindow";
 			Application.Run();
 
 
