@@ -20,18 +20,30 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using libral;
+using X11.Widgets;
+
 
 namespace liboRg
 {
 	public class Game
 	{
-		private Rectangle m_rectBounds;
 		private BaseGameWindow m_pGameWindow;
+		internal string		   m_strDisplay;
 
-		public Game(string strDisplay, string strGameTitle, int sizeX, int sizeY)
+		public Display		   Display { get { return m_pGameWindow.Display; } }
+		public Rectangle	   Bounds { get { return m_pGameWindow.Rectangle; } }
+		public BaseGameWindow  Window { get { return m_pGameWindow; } }
+
+
+		public Game(string strDisplay, Size size, string title, WindowStyle style)
 		{
-			m_rectBounds = new Rectangle(0, 0, sizeX, sizeY);
-			m_pGameWindow = new BaseGameWindow(strDisplay, this);
+			m_strDisplay = strDisplay;
+			m_pGameWindow = new BaseGameWindow(this, size, title, style );
+		}
+
+		public void Init()
+		{
+			m_pGameWindow.Create();
 		}
 
 		protected virtual void Create()
@@ -50,9 +62,23 @@ namespace liboRg
 		{
 			return true;
 		}
-		protected virtual void OnResize(Rectangle newSize)
+		public virtual void OnResize(Rectangle newSize)
 		{
+			Console.Write("\rNew Size: {0}", newSize);
+		}
 
+		public void OnMove(Rectangle position)
+		{
+			Console.Write("\rNew Size: {0}", position);
+		}
+
+		internal bool drawing()
+		{
+			if (Move() == true)
+				Draw();
+
+			// SwappBuffer
+			return true;
 		}
 	}
 }

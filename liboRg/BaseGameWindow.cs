@@ -22,33 +22,45 @@ using System;
 using X11.Widgets;
 using System.Common;
 using X11;
+using libral;
+using X11._internal;
 
 namespace liboRg
 {
 	public class BaseGameWindow : SimpleWindow
 	{
-		public BaseGameWindow(string strDisplay, Game pGame)
-			: base(strDisplay, "GameWindow", Colors.SteelBlue, new 	libral.Rectangle(0,0,320,320), 
+		private Game m_pGame;
+
+		public BaseGameWindow(Game pGame, Size size, string title, WindowStyle style )
+			: base(pGame.m_strDisplay, "GameWindow", Colors.SteelBlue, new 	libral.Rectangle(0,0,320,320), 
 				new GameWindowHandler(), "Game Window")
 		{
-			Namespace = "test";
-			ClassName = "TestWindow";
+			m_pGame = pGame;
+			Namespace = "liboRg";
+			ClassName = "BaseGameWindow";
+
+			if (style == (style & WindowStyle.NoResize))
+				Resizeable = false;
+			else if(style == (style & WindowStyle.Resize))
+				Resizeable = true;
+
+			this.EventMask = EventMask.FocusChangeMask | EventMask.ButtonPressMask | EventMask.ButtonReleaseMask |
+				EventMask.ButtonMotionMask | EventMask.PointerMotionMask | EventMask.KeyPressMask | 
+				EventMask.KeyReleaseMask | EventMask.StructureNotifyMask | EventMask.EnterWindowMask | 
+				EventMask.LeaveWindowMask;
+
 			Created = "BaseGameWindow_Created";
 			KeyPress = "BaseGameWindow_KeyPressed";
 			Resize = "BaseGameWindow_Resize";
 			UserEvents = "BaseGameWindow_UserEvents";
+			Move = "BaseGameWindow_Move";
 		}
 
 
 		protected bool BaseGameWindow_UserEvents(Object sender, XEventArgs args)
 		{
-			// Game Draw logic
-			return true;
+			return m_pGame.drawing();
 		}
-
-
-
-
 
 		protected bool BaseGameWindow_Created(Object sender, XEventArgs args)
 		{
@@ -65,6 +77,12 @@ namespace liboRg
 		}
 		protected bool BaseGameWindow_Resize(Object sender, XEventArgs args)
 		{
+			m_pGame.OnResize(this.Rectangle);
+			return true;
+		}
+		protected bool BaseGameWindow_Move(Object sender, XEventArgs args)
+		{
+			m_pGame.OnMove(this.Rectangle);
 			return true;
 		}
 	}
