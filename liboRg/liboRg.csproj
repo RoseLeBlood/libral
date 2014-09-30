@@ -17,6 +17,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -25,20 +26,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Gamepad.cs" />
-    <Compile Include="Keyboard.cs" />
-    <Compile Include="Mouse.cs" />
-    <Compile Include="BaseGameWindow.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="GameWindowHandler.cs" />
-    <Compile Include="GameApplication.cs" />
-    <Compile Include="WindowStyle.cs" />
+    <Compile Include="Context\IContext.cs" />
+    <Compile Include="Context\X11Context.cs" />
+    <Compile Include="Input\IState.cs" />
+    <Compile Include="Input\InputState.cs" />
+    <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="Input\IInputDevice.cs" />
+    <Compile Include="Window\GameResolution.cs" />
+    <Compile Include="Window\BaseGameWindow.cs" />
+    <Compile Include="Window\WindowStyle.cs" />
+    <Compile Include="Window\GameWindowHandler.cs" />
+    <Compile Include="Screens.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -51,4 +57,18 @@
       <Name>libral</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Context\" />
+    <Folder Include="Input\" />
+    <Folder Include="Window\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

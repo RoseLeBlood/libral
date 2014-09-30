@@ -20,12 +20,36 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 
 namespace X11._internal
 {
 	public class XRandR
 	{
+		[StructLayout (LayoutKind.Sequential)]
+		public struct XRRScreenSize
+		{
+			public int Width, Height;
+			public int MWidth, MHeight;
+		};
+		[StructLayout (LayoutKind.Sequential)]
+		public struct XRRScreenConfiguration
+		{
+			IntPtr screen; /* the root window in GetScreenInfo */
+			XRRScreenSize sizes;
+			IntPtr rotations;
+			IntPtr current_rotation;
+			int nsizes;
+			int current_size;
+			short current_rate;
+			IntPtr timestamp;
+			IntPtr config_timestamp;
+			int subpixel_order;   /* introduced in randr v0.1 */
+			short rates;         /* introduced in randr v1.1 */
+			int nrates;
+		};
+
 		[StructLayout (LayoutKind.Sequential)]
 		public struct XErrorEvent
 		{
@@ -136,10 +160,10 @@ namespace X11._internal
 		public static extern void XRRFreeOutputInfo (IntPtr outputInfo);
 
 		[DllImport("libXrandr")]
-		public static extern IntPtr XRRGetCrtcInfo (IntPtr dpy, IntPtr resources, int crtc_id);
+		public static extern XRRCrtcInfo XRRGetCrtcInfo (IntPtr dpy, IntPtr resources, int crtc_id);
 
 		[DllImport("libXrandr")]
-		public static extern void XRRFreeCrtcInfo (IntPtr crtcInfo);
+		public static extern void XRRFreeCrtcInfo (XRRCrtcInfo crtcInfo);
 
 		[DllImport("libXrandr")]
 		public static extern int XRRSetCrtcConfig (IntPtr dpy,
@@ -156,6 +180,35 @@ namespace X11._internal
 		public static extern void XRRSetScreenSize (IntPtr dpy, IntPtr window,
 			int width, int height,
 			int mmWidth, int mmHeight);
+
+		[DllImport("libXrandr")]
+		public static extern IntPtr XRRSizes(IntPtr dpy, int screen, out int nsizes);
+
+		[DllImport("libXrandr")]
+		public static extern IntPtr XRRGetScreenInfo(IntPtr dpy, IntPtr draw);
+
+		[DllImport("libXrandr")]
+		public static extern IntPtr XRRConfigSizes(IntPtr config, out int nsizes);
+
+		public static List<XRRScreenSize> ConfigSizes(IntPtr config, out int nsizes)
+		{
+			int indexes = 0;
+			IntPtr screen_ptr = XRRConfigSizes(config, out indexes);
+			List<XRRScreenSize> screens = new List<XRRScreenSize>(indexes);
+			nsizes = indexes;
+
+			unsafe
+			{
+				XRRScreenSize* ptr = (XRRScreenSize*)screen_ptr;
+				while (--indexes >= 0)
+					{
+						screens.Add(*ptr);
+						ptr++;
+					}
+			}
+
+			return screens;
+		}
 	}
 }
 

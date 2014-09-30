@@ -1,5 +1,5 @@
 ﻿//
-//  Size.cs
+//  GameResolution.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,57 +19,41 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using libral;
+using X11.Widgets;
+using X11._internal;
+using X11;
 
-namespace libral
+namespace liboRg.Window
 {
-	[Serializable]
-	public class Size
+	public class GameResolution
 	{
-		private int m_iWidth;
-		private int m_iHeight;
+		private MonitorMode 	m_pMonitorMode;
+		private int 			m_iBpp;
+		private bool 			m_bVSync;
+		private WindowStyle		m_eWindowStyle;
 
-		public int Width
+		public Size Size
 		{
-			get { return m_iWidth; }
-			set { m_iWidth = value; }
+			get { return m_pMonitorMode.Size; }
 		}
-		public int Height
+		public int BitsPerPixel
 		{
-			get { return m_iHeight; }
-			set { m_iHeight = value; }
+			get { return m_iBpp; }
+			internal set { m_iBpp = value; }
 		}
-
-		public Size() : this(0,0)
+		public double RefreshRate
 		{
+			get { return m_pMonitorMode.Rate; }
 		}
-		public Size(int iWh) : this(iWh, iWh)
+		public GameResolution(MonitorMode pMonitorMode, int iBpp)
 		{
-		}
-		public Size(int iWidth, int iHeight)
-		{
-			m_iWidth = iWidth;
-			m_iHeight = iHeight;
-		}
-		public Size(string sizestring)
-		{
-			string[] rect = sizestring.Split('x');
-			if (rect.Length == 2)
-			{
-				int.TryParse(rect[0], out m_iWidth); // Left
-				int.TryParse(rect[1], out m_iHeight); 
-			}
+			m_pMonitorMode = pMonitorMode;
+			m_iBpp = iBpp;
 		}
 		public override string ToString()
 		{
-			return string.Format("{0}x{1}", 
-				Width, Height);
-		}
-
-
-		public static implicit operator Size(string strSize) 
-		{
-			Size d = new Size(strSize);  
-			return d;
+			return String.Format("{0} {1} Bpp", m_pMonitorMode, m_iBpp);
 		}
 	}
 }

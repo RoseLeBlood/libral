@@ -1,5 +1,5 @@
 ﻿//
-//  Size.cs
+//  Keyboard.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,57 +19,36 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using X11;
 
-namespace libral
+namespace liboRg.Input
 {
-	[Serializable]
-	public class Size
+	public class Keyboard : Handle, IInputDevice
 	{
-		private int m_iWidth;
-		private int m_iHeight;
+		private InputState	m_pState;
 
-		public int Width
+		public Keyboard() : base("STD_KEYBOARD")
 		{
-			get { return m_iWidth; }
-			set { m_iWidth = value; }
-		}
-		public int Height
-		{
-			get { return m_iHeight; }
-			set { m_iHeight = value; }
+			m_pState = new InputState();
+			Register();
 		}
 
-		public Size() : this(0,0)
+		public IState GetState()
 		{
+			return m_pState;
 		}
-		public Size(int iWh) : this(iWh, iWh)
+		public bool IsKeyPress(Keys key)
 		{
-		}
-		public Size(int iWidth, int iHeight)
-		{
-			m_iWidth = iWidth;
-			m_iHeight = iHeight;
-		}
-		public Size(string sizestring)
-		{
-			string[] rect = sizestring.Split('x');
-			if (rect.Length == 2)
-			{
-				int.TryParse(rect[0], out m_iWidth); // Left
-				int.TryParse(rect[1], out m_iHeight); 
-			}
-		}
-		public override string ToString()
-		{
-			return string.Format("{0}x{1}", 
-				Width, Height);
+			return m_pState[key];
 		}
 
-
-		public static implicit operator Size(string strSize) 
+		internal void SetPress(Keys key)
 		{
-			Size d = new Size(strSize);  
-			return d;
+			m_pState[key] = true;
+		}
+		internal void SetRelease(Keys key)
+		{
+			m_pState[key] = false;
 		}
 	}
 }

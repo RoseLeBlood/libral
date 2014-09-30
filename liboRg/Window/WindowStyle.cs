@@ -1,5 +1,5 @@
 ﻿//
-//  Xlock.cs
+//  WindowStyle.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -20,20 +20,14 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace X11.Widgets
+namespace liboRg.Window
 {
-	public class Xlock : XHandle
+	[Flags()]
+	public enum WindowStyle
 	{
-		public Xlock(Display display)
-			: base("XLock Display", display.RawHandle)
-		{
-			X11._internal.Lib.XLockDisplay(m_pHandle);
-		}
-		protected override void CleanUpManagedResources()
-		{
-			X11._internal.Lib.XUnlockDisplay(m_pHandle);
-		}
-
+		NoResize = 1,
+		Resize = 2,
+		Fullscreen = 4
 	}
 }
 

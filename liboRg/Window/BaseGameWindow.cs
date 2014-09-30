@@ -24,17 +24,30 @@ using System.Common;
 using X11;
 using libral;
 using X11._internal;
+using liboRg.Input;
 
-namespace liboRg
+namespace liboRg.Window
 {
 	public class BaseGameWindow : SimpleWindow
 	{
 		private Game m_pGame;
+		private IContext m_pIContext;
 
-		public BaseGameWindow(Game pGame, Size size, string title, WindowStyle style )
-			: base(pGame.m_strDisplay, "GameWindow", Colors.SteelBlue, new 	libral.Rectangle(0,0,320,320), 
-				new GameWindowHandler(), "Game Window")
+		public IContext Context
 		{
+			get
+			{
+				if (m_pIContext == null)
+					m_pIContext = new X11Context();
+				return m_pIContext;
+			}
+		}
+
+		public BaseGameWindow(Game pGame, GameResolution size, string title, WindowStyle style )
+			: base(pGame.m_strDisplay, "GameWindow", Colors.SteelBlue, size.Size, 
+				new GameWindowHandler(), title)
+		{
+			m_pIContext = null;
 			m_pGame = pGame;
 			Namespace = "liboRg";
 			ClassName = "BaseGameWindow";
@@ -51,6 +64,7 @@ namespace liboRg
 
 			Created = "BaseGameWindow_Created";
 			KeyPress = "BaseGameWindow_KeyPressed";
+			KeyRelease = "BaseGameWindow_KeyRelease";
 			Resize = "BaseGameWindow_Resize";
 			UserEvents = "BaseGameWindow_UserEvents";
 			Move = "BaseGameWindow_Move";
@@ -64,15 +78,17 @@ namespace liboRg
 
 		protected bool BaseGameWindow_Created(Object sender, XEventArgs args)
 		{
+			m_pGame.Create();
 			return true;
 		}
 		protected bool BaseGameWindow_KeyPressed(Object sender, XEventArgs args)
 		{
-			if (((Keys)(args.Event.KeyEvent.keycode)) == Keys.Escape)
-			{
-				Console.WriteLine("Naja das war der Escape cheat bye bye ...");
-				return false;
-			}
+			m_pGame.InternalKeyPress(args.Event.KeyEvent.keycode);
+			return true;
+		}
+		protected bool BaseGameWindow_KeyRelease(Object sender, XEventArgs args)
+		{
+			m_pGame.InternalKeyRelease(args.Event.KeyEvent.keycode);
 			return true;
 		}
 		protected bool BaseGameWindow_Resize(Object sender, XEventArgs args)

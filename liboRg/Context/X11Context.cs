@@ -1,5 +1,5 @@
 ﻿//
-//  Xlock.cs
+//  X11Context.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,21 +19,17 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using X11;
 
-namespace X11.Widgets
+namespace liboRg
 {
-	public class Xlock : XHandle
+	public class X11Context : Handle, IContext
 	{
-		public Xlock(Display display)
-			: base("XLock Display", display.RawHandle)
+		public X11Context()
+			: base("X11_CCONTEXT")
 		{
-			X11._internal.Lib.XLockDisplay(m_pHandle);
+			Register();
 		}
-		protected override void CleanUpManagedResources()
-		{
-			X11._internal.Lib.XUnlockDisplay(m_pHandle);
-		}
-
 	}
 }
 

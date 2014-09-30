@@ -20,23 +20,22 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Xml.Serialization;
+using X11.Widgets;
 
 namespace X11
 {
 	public interface IHandle : IDisposable
 	{
+
 	}
 	[Serializable]
 	public class Handle : IHandle
 	{
 		private bool m_bIsDisposed=false;
 		protected string m_strName;
-		protected IntPtr m_pHandle;
 
 		[XmlAttribute("Name")]
 		public virtual string Name { get { return m_strName; } set { m_strName = value; } }
-		[XmlIgnore]
-		public IntPtr RawHandle { get { return m_pHandle; } }
 
 		internal Handle()
 		{
@@ -44,11 +43,6 @@ namespace X11
 		public Handle(string name)
 		{
 			m_strName = name;
-		}
-		public Handle(string name, IntPtr handle)
-		{
-			m_strName = name;
-			m_pHandle = handle;
 		}
 		public void Dispose()
 		{
@@ -59,11 +53,7 @@ namespace X11
 		{
 			X11.Widgets.Application.Current.RegisterHandle(this);
 		}
-		public void Register(IntPtr handle)
-		{
-			m_pHandle = handle;
-			X11.Widgets.Application.Current.RegisterHandle(this);
-		}
+
 		protected virtual void CleanUpManagedResources()
 		{
 
@@ -85,14 +75,34 @@ namespace X11
 			m_bIsDisposed = true;
 		}
 	}
-	[Serializable]
-	public class XHandle : Handle
+	public class UnmanagedHandle : Handle
 	{
-		internal XHandle()
+		protected IntPtr m_pHandle;
+
+		public IntPtr RawHandle { get { return m_pHandle; } }
+
+		internal UnmanagedHandle()
+		{
+
+		}
+		public UnmanagedHandle(string strName, IntPtr pHandle)  : base(strName)
+		{
+			m_pHandle = pHandle;
+		}
+		public virtual void Register(IntPtr handle)
+		{
+			m_pHandle = handle;
+		}
+	}
+
+	[Serializable]
+	public class XHandle : UnmanagedHandle
+	{
+		internal XHandle() : base("", IntPtr.Zero)
 		{
 		}
 		public XHandle(string name) 
-			: base(name)
+			: base(name, IntPtr.Zero)
 		{
 		}
 		public XHandle(string name, IntPtr handle)
@@ -103,6 +113,11 @@ namespace X11
 		{
 			X11.Widgets.Application.Current.UnRegisterHandle(Name);
 			X11._internal.Lib.XFree(m_pHandle);
+		}
+		public override void Register(IntPtr handle)
+		{
+			base.Register(handle);
+			X11.Widgets.Application.Current.RegisterHandle(this);
 		}
 	}
 }

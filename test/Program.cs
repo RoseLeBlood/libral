@@ -25,6 +25,7 @@ using System.Reflection;
 using X11;
 using X11.Widgets;
 using liboRg;
+using liboRg.Window;
 
 namespace test
 {
@@ -34,14 +35,15 @@ namespace test
 		{
 			Application.Init("test");
 
-			Game game = new Game(":0", new libral.Size(320, 320), "Welt", WindowStyle.Resize);
+			var screenRes = new GameResolution(Screens.PrimaryScreen[3], 24);
+			Console.WriteLine(screenRes);
+
+			Game game = new Game(":0", screenRes, 
+				screenRes.ToString(), WindowStyle.Resize);
+			Application.Current.MainWindow = game.Window.Name;
 			game.Init();
 
-
-			Application.Current.MainWindow = "GameWindow";
 			Application.Run();
-
-
 		}
 	}
 }

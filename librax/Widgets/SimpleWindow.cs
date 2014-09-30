@@ -89,6 +89,9 @@ namespace X11.Widgets
 					borderPixel.pixel, 
 					backgroundPixel.pixel);
 			}	
+
+			X11._internal.Lib.XStoreName(m_pDisplay.RawHandle, m_pHandle, m_strTitle);
+
 			// Set default window name
 			string windowName = m_strName;
 			X11._internal.Lib.XTextProperty windowNameProperty = new Lib.XTextProperty(),
@@ -98,7 +101,7 @@ namespace X11.Widgets
 			{
 				// XDestroyWindow() can generate a BadWindow error.
 				X11._internal.Lib.XDestroyWindow(m_pDisplay.RawHandle, m_pHandle);
-				throw new XStringListToTextPropertyException(121, "Create");
+					throw new XStringListToTextPropertyException(101, "Create");
 
 			}
 

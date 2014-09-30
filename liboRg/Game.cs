@@ -21,6 +21,8 @@
 using System;
 using libral;
 using X11.Widgets;
+using liboRg.Input;
+using liboRg.Window;
 
 
 namespace liboRg
@@ -28,6 +30,8 @@ namespace liboRg
 	public class Game
 	{
 		private BaseGameWindow m_pGameWindow;
+		private Keyboard	   m_pKeyboard;
+
 		internal string		   m_strDisplay;
 
 		public Display		   Display { get { return m_pGameWindow.Display; } }
@@ -35,10 +39,12 @@ namespace liboRg
 		public BaseGameWindow  Window { get { return m_pGameWindow; } }
 
 
-		public Game(string strDisplay, Size size, string title, WindowStyle style)
+		public Game(string strDisplay, GameResolution pResolution, string title, WindowStyle style)
 		{
 			m_strDisplay = strDisplay;
-			m_pGameWindow = new BaseGameWindow(this, size, title, style );
+			m_pGameWindow = new BaseGameWindow(this, pResolution, title, style );
+			m_pKeyboard = new Keyboard();
+
 		}
 
 		public void Init()
@@ -46,16 +52,19 @@ namespace liboRg
 			m_pGameWindow.Create();
 		}
 
-		protected virtual void Create()
+		public virtual void Create()
 		{
 
 		}
-		protected virtual void Destroy()
+		public virtual void Destroy()
 		{
 
 		}
-		protected virtual bool Move(/*Keyboard pKeyboard, Mouse pMouse, GamePad pGamePad */)
+		protected virtual bool Move(InputState keyState)
 		{
+			if (keyState[X11.Keys.Escape])
+				Application.Current.Exit();
+
 			return true;
 		}
 		protected virtual bool Draw()
@@ -64,21 +73,30 @@ namespace liboRg
 		}
 		public virtual void OnResize(Rectangle newSize)
 		{
-			Console.Write("\rNew Size: {0}", newSize);
+
 		}
 
 		public void OnMove(Rectangle position)
 		{
-			Console.Write("\rNew Size: {0}", position);
+
 		}
 
 		internal bool drawing()
 		{
-			if (Move() == true)
+			if (Move( (InputState)m_pKeyboard.GetState() ) == true)
 				Draw();
 
 			// SwappBuffer
 			return true;
+		}
+
+		internal void InternalKeyPress(uint keycode)
+		{
+			m_pKeyboard.SetPress((X11.Keys)keycode);
+		}
+		internal void InternalKeyRelease(uint keycode)
+		{
+			m_pKeyboard.SetRelease((X11.Keys)keycode);
 		}
 	}
 }

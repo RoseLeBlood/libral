@@ -1,5 +1,5 @@
 ﻿//
-//  Keyboard.cs
+//  GameWindowHandler.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,9 +19,16 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11._internal;
+using X11;
+using X11.Widgets;
 
-namespace X11.Widgets
+namespace liboRg.Window
 {
+	public class GameWindowHandler : WindowEventHandler
+	{
+		public GameWindowHandler() 
+		{
+		}
+	}
 }
 

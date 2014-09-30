@@ -1,5 +1,5 @@
 ﻿//
-//  Gamepad.cs
+//  InputState.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,9 +19,20 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using X11;
 
-namespace X11.Widgets
+namespace liboRg.Input
 {
+	public class InputState : IState
+	{
+		private bool[] m_arKeys = new bool[(int)Keys.NoKey];
 
+		public bool this[Keys key] 
+		{
+			get { return m_arKeys[(int)key]; }
+			internal set { m_arKeys[(int)key] = true; }
+		}
+
+	}
 }
 

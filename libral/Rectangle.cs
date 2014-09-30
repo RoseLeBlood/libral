@@ -86,6 +86,13 @@ namespace libral
 			m_iWidth = width;
 			m_iHeight = height;
 		}
+		public Rectangle(int x, int y, Size size)
+		{
+			m_iX = x;
+			m_iY = y;
+			m_iWidth = size.Width;
+			m_iHeight = size.Height;
+		}
 		public Rectangle(string rectstring)
 		{
 			string[] rect = rectstring.Split(',');
@@ -127,6 +134,11 @@ namespace libral
 		public static implicit operator Rectangle(string strRect) 
 		{
 			Rectangle d = new Rectangle(strRect);  
+			return d;
+		}
+		public static implicit operator Rectangle(Size sSize) 
+		{
+			Rectangle d = new Rectangle(0,0,sSize.Width, sSize.Height);  
 			return d;
 		}
 	}

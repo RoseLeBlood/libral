@@ -1,5 +1,5 @@
 ﻿//
-//  WindowStyle.cs
+//  MonitorMode.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,15 +19,34 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using libral;
 
-namespace liboRg
+namespace X11
 {
-	[Flags()]
-	public enum WindowStyle
+	[Serializable]
+	public class MonitorMode
 	{
-		NoResize = 1,
-		Resize = 2,
-		Fullscreen = 4
+		private Size m_sSize;
+		private double  m_iRate;
+
+		public Size Size { get { return m_sSize; } }
+		public double Rate { get { return m_iRate; } }
+
+
+		public MonitorMode(Size size, int iRate)
+		{
+			m_sSize = size;
+			m_iRate = iRate;
+		}
+		internal MonitorMode(Size size, string ratestring)
+		{
+			m_iRate = double.Parse(ratestring.Replace("*", "").Replace("+", "").Replace(".", ","));
+			m_sSize = size;
+		}
+		public override string ToString()
+		{
+			return string.Format("{0}@{1}", Size, Rate);
+		}
 	}
 }
 

@@ -51,6 +51,7 @@
     <Folder Include="Widgets\" />
     <Folder Include="internal\XInput\" />
     <Folder Include="internal\Xkb\" />
+    <Folder Include="internal\Xinerama\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -80,6 +81,11 @@
     <Compile Include="internal\XInput\XInput.cs" />
     <Compile Include="internal\Xkb\Xkb.cs" />
     <Compile Include="Widgets\Xlock.cs" />
+    <Compile Include="internal\Xinerama\Xinerama.cs" />
+    <Compile Include="Monitor.cs" />
+    <Compile Include="MonitorList.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="MonitorMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libral\libral.csproj">

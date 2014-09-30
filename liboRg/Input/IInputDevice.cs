@@ -1,5 +1,5 @@
 ﻿//
-//  Xlock.cs
+//  IInputDevice.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -20,20 +20,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace X11.Widgets
+namespace liboRg.Input
 {
-	public class Xlock : XHandle
+	public interface IInputDevice
 	{
-		public Xlock(Display display)
-			: base("XLock Display", display.RawHandle)
-		{
-			X11._internal.Lib.XLockDisplay(m_pHandle);
-		}
-		protected override void CleanUpManagedResources()
-		{
-			X11._internal.Lib.XUnlockDisplay(m_pHandle);
-		}
-
 	}
 }
 

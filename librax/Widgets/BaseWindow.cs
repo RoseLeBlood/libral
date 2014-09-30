@@ -352,6 +352,10 @@ namespace X11.Widgets
 			m_iBorderWidth = 0;
 
 		}
+		public bool Send(string eventName, XEventArgs args)
+		{
+			return m_pEventHandler.CallHandler(eventName, args, this);
+		}
 		protected virtual bool OnCreate(XEventArgs args)
 		{
 
@@ -464,7 +468,7 @@ namespace X11.Widgets
 			else
 				return m_pParentWindow.Event(xevent);
 		}
-		void SetTitle(string value)
+		private void SetTitle(string value)
 		{
 			if (m_bIsCreated)
 			{

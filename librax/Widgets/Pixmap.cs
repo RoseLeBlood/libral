@@ -38,7 +38,7 @@ namespace X11.Widgets
 		{
 		}
 	};
-	public class Pixmap : Handle
+	public class Pixmap : XHandle
 	{
 		public virtual string Path 	 { get { return m_PixmapPath; } }
 		public virtual TSize Size 	 { get { return m_Size; } }

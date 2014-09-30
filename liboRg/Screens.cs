@@ -1,5 +1,5 @@
 ﻿//
-//  GameApplication.cs
+//  Screen.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,14 +19,27 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using liboRg.Window;
 using X11.Widgets;
+using X11._internal;
+using X11;
 
 namespace liboRg
 {
-	public class GameApplication : Application
+	public static class Screens
 	{
-		public GameApplication()
+		private static Monitor[] m_arScreens = null;
+
+		public static Monitor PrimaryScreen 
 		{
+			get
+			{
+				if (m_arScreens == null)
+				{
+					m_arScreens = MonitorList.GetScreens();
+				}
+				return m_arScreens[0];
+			}
 		}
 	}
 }

@@ -36,6 +36,7 @@ namespace X11.Widgets
 		private string									m_strNainWindow;
 		private string									m_strNamespace;
 		private Display									m_currentDisplay;
+		private bool 									m_bOpen = true;
 
 		protected Application()
 		{
@@ -145,21 +146,25 @@ namespace X11.Widgets
 			m_current = new Application(_namespace);
 			m_current.m_currentDisplay = new Display(":0");
 
-			Xkb.IsSupported(m_current.m_currentDisplay.RawHandle);
+			//Xkb.IsSupported(m_current.m_currentDisplay.RawHandle);
+		}
+		public void Exit()
+		{
+			m_bOpen = false;
 		}
 		public static void Run()
 		{
 			XEvent xevent = new XEvent();
 			var MainWindow = Application.Current.GetHandle<BaseWindow>(Application.Current.MainWindow);
 			MainWindow.Show();
-			bool m_bOpen = true;
 
-			while (m_bOpen)
+
+			while (Current.m_bOpen)
 			{
 				while (Lib.XCheckIfEvent(MainWindow.Display.RawHandle, 
 					       ref xevent, CheckEvent, MainWindow.RawHandle))
 				{
-					m_bOpen = MainWindow.Event(xevent);
+					Current.m_bOpen = MainWindow.Event(xevent);
 				}
 				MainWindow.EventHandler.CallHandler("UserEvents", null, MainWindow);
 			}
