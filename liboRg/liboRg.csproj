@@ -51,6 +51,10 @@
     <Compile Include="OpenGL\IGLNativeContext.cs" />
     <Compile Include="OpenGL\glxNativeContext.cs" />
     <Compile Include="Context\GameContext.cs" />
+    <Compile Include="Context\GameContextConfig.cs" />
+    <Compile Include="Texture.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="ImageHandle.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

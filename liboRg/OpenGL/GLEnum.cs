@@ -8792,6 +8792,10 @@ namespace liboRg.OpenGL
 		QUERY_RESULT_NO_WAIT_AMD = 0x9194,
 
 
+
+
+
+
 	}
 }
 

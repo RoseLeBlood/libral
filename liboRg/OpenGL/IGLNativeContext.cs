@@ -21,7 +21,7 @@
 using System;
 using X11;
 using liboRg.Window;
-using libral;
+using System.Common;
 
 namespace liboRg.OpenGL
 {

@@ -1106,7 +1106,7 @@ namespace liboRg.OpenGL
 		[DllImport(DllName)]
 		public static unsafe extern void glTexImage1D(uint target, int level, int internalformat, int width, int border, uint format, uint type, void* pixels);
 		[DllImport(DllName)]
-		public static extern void glTexImage2D(uint target, int level, int internalformat, int width, int height, int border, uint format, uint type, IntPtr pixels);
+		public static extern void glTexImage2D(uint target, int level, int internalformat, int width, int height, int border, uint format, uint type, [Out] byte[] pixels);
 		[DllImport(DllName)]
 		public static extern void glTexParameterf(uint target, uint pname, float param);
 		[DllImport(DllName)]
@@ -1179,6 +1179,8 @@ namespace liboRg.OpenGL
 		public static extern void glBeginTransformFeedback(uint i);
 		[DllImport(DllName)]
 		public static extern void glEndTransformFeedback();
+		[DllImport(DllName)]
+		public static extern void glGenerateMipmap(uint i);
 
 		public static string glGetString(int name)
 		{

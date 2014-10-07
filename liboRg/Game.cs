@@ -19,7 +19,6 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using libral;
 using X11.Widgets;
 using liboRg.Input;
 using liboRg.Window;
@@ -33,6 +32,7 @@ namespace liboRg
 	{
 		private BaseGameWindow m_pGameWindow;
 		private Keyboard	   m_pKeyboard;
+		private GameContextConfig m_pContextConfig;
 
 		internal string		   m_strDisplay;
 
@@ -44,6 +44,11 @@ namespace liboRg
 		{
 			get { return GameContext.ClearColor; }
 			set { GameContext.ClearColor = value; }
+		}
+
+		public GameContextConfig ContextConfig
+		{
+			get { return m_pContextConfig; }
 		}
 
 		public bool DepthMask
@@ -68,10 +73,12 @@ namespace liboRg
 		}
 
 
-		public Game(string strDisplay, GameResolution pResolution, string title, WindowStyle style)
+		public Game(string strDisplay, GameContextConfig pConfig, string title, WindowStyle style)
 		{
 			m_strDisplay = strDisplay;
-			m_pGameWindow = new BaseGameWindow(this, pResolution, title, style );
+			m_pContextConfig = pConfig;
+
+			m_pGameWindow = new BaseGameWindow(this, title, style );
 			m_pKeyboard = new Keyboard();
 
 		}
@@ -126,13 +133,13 @@ namespace liboRg
 			return true;
 		}
 
-		internal void InternalKeyPress(uint keycode)
+		internal void InternalKeyPress(X11.Keys keycode)
 		{
-			m_pKeyboard.SetPress((X11.Keys)keycode);
+			m_pKeyboard.SetPress(keycode);
 		}
-		internal void InternalKeyRelease(uint keycode)
+		internal void InternalKeyRelease(X11.Keys keycode)
 		{
-			m_pKeyboard.SetRelease((X11.Keys)keycode);
+			m_pKeyboard.SetRelease(keycode);
 		}
 	}
 }

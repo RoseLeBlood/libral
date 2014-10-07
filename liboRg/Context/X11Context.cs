@@ -28,10 +28,10 @@ namespace liboRg.Context
 {
 	public class X11Context : GameContext
 	{
-		public X11Context(BaseGameWindow window, int color, int depth, int stencil, int antialias)
+		public X11Context(BaseGameWindow window, GameContextConfig pConfig)
 			: base("X11_CCONTEXT")
 		{
-			m_pNativeContext = new glxNativeContext(window, depth, stencil, antialias);
+			m_pNativeContext = new glxNativeContext(window, pConfig);
 
 			Register();
 		}

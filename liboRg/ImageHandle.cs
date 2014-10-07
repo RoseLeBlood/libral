@@ -1,5 +1,5 @@
-﻿//
-//  GameResolution.cs
+//
+//  Image.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,40 +19,17 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Common;
-using X11.Widgets;
-using X11._internal;
 using X11;
-using liboRg.OpenGL;
 
-namespace liboRg.Window
+
+namespace liboRg
 {
-	public class GameResolution
+	public class ImageHandle : Handle
 	{
-		private MonitorMode 	m_pMonitorMode;
-		private int 			m_iBpp;
-	
-		public Size Size
+		public ImageHandle(string strName)
+			: base("img_" + strName)
 		{
-			get { return m_pMonitorMode.Size; }
-		}
-		public int BitsPerPixel
-		{
-			get { return m_iBpp; }
-			internal set { m_iBpp = value; }
-		}
-		public double RefreshRate
-		{
-			get { return m_pMonitorMode.Rate; }
-		}
-		public GameResolution(MonitorMode pMonitorMode, int iBpp)
-		{
-			m_pMonitorMode = pMonitorMode;
-			m_iBpp = iBpp;
-		}
-		public override string ToString()
-		{
-			return String.Format("{0} {1} Bpp", m_pMonitorMode, m_iBpp);
+
 		}
 	}
 }

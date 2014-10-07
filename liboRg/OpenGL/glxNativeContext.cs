@@ -19,14 +19,15 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Runtime.InteropServices;
-using X11;
-using liboRg.Window;
-using System.Security;
-using X11.Widgets;
 using System.Collections.Generic;
+using System.Common;
+using System.Runtime.InteropServices;
+using System.Security;
+using X11;
+using X11.Widgets;
 using X11._internal;
-using libral;
+using liboRg.Context;
+using liboRg.Window;
 
 namespace liboRg.OpenGL
 {
@@ -101,18 +102,18 @@ namespace liboRg.OpenGL
 			m_rDefaultViewport = Viewport;
 		}
 
-		public glxNativeContext(BaseGameWindow handle,int color = 32, int depth = 24, int stencil = 0, int antialias = 0) 
+		public glxNativeContext(BaseGameWindow handle, GameContextConfig pConfig) 
 			: base("OPENGL_CONTEXT", IntPtr.Zero)
 		{
 			m_pWindow = handle;
 			LoadExtension();
 
-			CreateContext(color, depth, stencil, antialias);
+			CreateContext(pConfig);
 			m_bOwned = true;
 		
 			m_rDefaultViewport = Viewport;
 		}
-		protected unsafe virtual void CreateContext(int color, int depth, int stencil, int antialias)
+		protected unsafe virtual void CreateContext(GameContextConfig pConfig)
 		{
 			int[] visual_attribs =
 			{
@@ -121,11 +122,11 @@ namespace liboRg.OpenGL
 				(int)GLX.DOUBLEBUFFER, (int)GL.TRUE,
 				(int)GLX.RENDER_TYPE, (int)GLX.RGBA_BIT,
 				(int)GLX.X_VISUAL_TYPE, (int)GLX.TRUE_COLOR,
-				(int)GLX.BUFFER_SIZE, color,
-				(int)GLX.DEPTH_SIZE, depth,
-				(int)GLX.STENCIL_SIZE, stencil,
-				(int)GLX.SAMPLE_BUFFERS, antialias > 1 ? (int)GL.TRUE : (int)GL.FALSE,
-				(int)GLX.SAMPLES, antialias > 1 ? (int)antialias : 0,
+				(int)GLX.BUFFER_SIZE, pConfig.Color,
+				(int)GLX.DEPTH_SIZE, pConfig.Depth,
+				(int)GLX.STENCIL_SIZE, pConfig.Stencil,
+				(int)GLX.SAMPLE_BUFFERS, pConfig.Antialias > 1 ? (int)GL.TRUE : (int)GL.FALSE,
+				(int)GLX.SAMPLES, pConfig.Antialias > 1 ? (int)pConfig.Antialias : 0,
 				0
 			};
 										
@@ -163,7 +164,7 @@ namespace liboRg.OpenGL
 
 			glXMakeCurrent( m_pWindow.Display.RawHandle, m_pWindow.RawHandle, m_pHandle );
 
-			VScyn = VSyncMode.Adaptive;
+			VScyn = pConfig.VSync;
 
 			Register();
 

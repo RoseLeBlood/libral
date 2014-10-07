@@ -19,14 +19,13 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11.Widgets;
 using System.Common;
 using X11;
-using libral;
-using X11._internal;
-using liboRg.Input;
-using liboRg.Context;
+using X11.Widgets;
 using X11.Widgets.Event;
+using X11._internal;
+using liboRg.Context;
+using liboRg.Input;
 
 namespace liboRg.Window
 {
@@ -43,8 +42,8 @@ namespace liboRg.Window
 			}
 		}
 
-		public BaseGameWindow(Game pGame, GameResolution size, string title, WindowStyle style )
-			: base(pGame.m_strDisplay, "GameWindow", Colors.SteelBlue, size.Size, 
+		public BaseGameWindow(Game pGame, string title, WindowStyle style )
+			: base(pGame.m_strDisplay, "GameWindow", Colors.SteelBlue, pGame.ContextConfig.Resolution.Size, 
 				title)
 		{
 			m_pIContext = null;
@@ -60,7 +59,7 @@ namespace liboRg.Window
 			this.EventMask = EventMask.FocusChangeMask | EventMask.ButtonPressMask | EventMask.ButtonReleaseMask |
 				EventMask.ButtonMotionMask | EventMask.PointerMotionMask | EventMask.KeyPressMask | 
 				EventMask.KeyReleaseMask | EventMask.StructureNotifyMask | EventMask.EnterWindowMask | 
-				EventMask.LeaveWindowMask;
+				EventMask.LeaveWindowMask | EventMask.All;
 
 			this.Created += new EventHandler<XEventArgs>(	BaseGameWindow_Created);
 			KeyPress += BaseGameWindow_KeyPressed;
@@ -78,17 +77,17 @@ namespace liboRg.Window
 
 		protected void BaseGameWindow_Created(Object sender, XEventArgs args)
 		{
-			m_pIContext = new X11Context(this, 32, 24, 0, 0);
+			m_pIContext = new X11Context(this, m_pGame.ContextConfig);
 
 			m_pGame.Create();
 		}
-		protected void BaseGameWindow_KeyPressed(Object sender, XEventArgs args)
+		protected void BaseGameWindow_KeyPressed(Object sender, XKeyEventArgs args)
 		{
-			//m_pGame.InternalKeyPress(args.Event.KeyEvent.keycode);
+			m_pGame.InternalKeyPress(args.Key);
 		}
-		protected void BaseGameWindow_KeyRelease(Object sender, XEventArgs args)
+		protected void BaseGameWindow_KeyRelease(Object sender, XKeyEventArgs args)
 		{
-			//m_pGame.InternalKeyRelease(args.Event.KeyEvent.keycode);
+			m_pGame.InternalKeyRelease(args.Key);
 		}
 		protected void BaseGameWindow_Resize(Object sender, XEventArgs args)
 		{

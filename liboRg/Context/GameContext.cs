@@ -23,7 +23,6 @@ using X11;
 using System.Common;
 using liboRg.OpenGL;
 using liboRg.Window;
-using libral;
 
 namespace liboRg.Context
 {
@@ -99,14 +98,14 @@ namespace liboRg.Context
 			}
 		}
 
-		public bool VSync
+		public VSyncMode VSync
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return m_pNativeContext.VScyn; }
+			set { m_pNativeContext.VScyn = value; }
 		}
-		public long Time
+		public double Time
 		{
-			get { return System.DateTime.UtcNow.Ticks; }
+			get { return (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds; }
 		}
 
 		public IGLNativeContext Handle
