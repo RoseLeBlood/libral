@@ -49,9 +49,9 @@ namespace X11
 			Dispose(true);
 			//GC.SupressFinalize(this);
 		}
-		public void Register()
+		public void Register(bool eindeutig = false)
 		{
-			X11.Widgets.Application.Current.RegisterHandle(this);
+			X11.Widgets.Application.Current.RegisterHandle(this, eindeutig);
 		}
 
 		protected virtual void CleanUpManagedResources()
@@ -73,6 +73,7 @@ namespace X11
 				CleanUpUnManagedResources();
 			}
 			m_bIsDisposed = true;
+			X11.Widgets.Application.Current.UnRegisterHandle(Name);
 		}
 	}
 	public class UnmanagedHandle : Handle
@@ -89,9 +90,10 @@ namespace X11
 		{
 			m_pHandle = pHandle;
 		}
-		public virtual void Register(IntPtr handle)
+		public virtual void Register(IntPtr handle, bool eindeutig = false)
 		{
 			m_pHandle = handle;
+			Register(eindeutig);
 		}
 	}
 
@@ -114,10 +116,10 @@ namespace X11
 			X11.Widgets.Application.Current.UnRegisterHandle(Name);
 			X11._internal.Lib.XFree(m_pHandle);
 		}
-		public override void Register(IntPtr handle)
+		public override void Register(IntPtr handle, bool e)
 		{
 			base.Register(handle);
-			X11.Widgets.Application.Current.RegisterHandle(this);
+			X11.Widgets.Application.Current.RegisterHandle(this, e);
 		}
 	}
 }

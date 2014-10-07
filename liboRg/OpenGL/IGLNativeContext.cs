@@ -1,5 +1,5 @@
 ﻿//
-//  IContext.cs
+//  IGLContext.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -20,12 +20,31 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using X11;
+using liboRg.Window;
+using libral;
 
-namespace liboRg
+namespace liboRg.OpenGL
 {
-	public interface IContext 
+	public enum VSyncMode : int
 	{
+		Enable = 1,
+		Disable = 0,
+		Adaptive = -1
+	}
+	public interface IGLNativeContext 
+	{
+		BaseGameWindow Window { get; }
+		bool 		   Owned { get; }
+		IntPtr		   RawHandle { get; }
+		Rectangle      DefaultViewport { get; }
+		Rectangle	   Viewport { get; set; }
 
+		VSyncMode	   VScyn { get; set; }
+
+		Delegate GetProc<T>(string name);
+
+		void Activate();
+		void Present();
 	}
 }
 

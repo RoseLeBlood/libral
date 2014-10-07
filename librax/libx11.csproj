@@ -52,6 +52,7 @@
     <Folder Include="internal\XInput\" />
     <Folder Include="internal\Xkb\" />
     <Folder Include="internal\Xinerama\" />
+    <Folder Include="Widgets\Event\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -75,8 +76,6 @@
     <Compile Include="Widgets\Colormap.cs" />
     <Compile Include="Widgets\SimpleWindow.cs" />
     <Compile Include="Widgets\CommandLine.cs" />
-    <Compile Include="Widgets\IEventHandler.cs" />
-    <Compile Include="Widgets\WindowEventHandler.cs" />
     <Compile Include="Widgets\BaseWindow.cs" />
     <Compile Include="internal\XInput\XInput.cs" />
     <Compile Include="internal\Xkb\Xkb.cs" />
@@ -86,6 +85,10 @@
     <Compile Include="MonitorList.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="MonitorMode.cs" />
+    <Compile Include="Widgets\Event\XEventArgs.cs" />
+    <Compile Include="Widgets\Event\XResizeEventArgs.cs" />
+    <Compile Include="Widgets\Event\XMoveEventArgs.cs" />
+    <Compile Include="Widgets\Event\XKeyEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libral\libral.csproj">

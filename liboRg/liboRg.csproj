@@ -34,7 +34,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="Context\IContext.cs" />
     <Compile Include="Context\X11Context.cs" />
     <Compile Include="Input\IState.cs" />
     <Compile Include="Input\InputState.cs" />
@@ -43,8 +42,15 @@
     <Compile Include="Window\GameResolution.cs" />
     <Compile Include="Window\BaseGameWindow.cs" />
     <Compile Include="Window\WindowStyle.cs" />
-    <Compile Include="Window\GameWindowHandler.cs" />
     <Compile Include="Screens.cs" />
+    <Compile Include="OpenGL\GLEnum.cs" />
+    <Compile Include="OpenGL\OpenGL.cs" />
+    <Compile Include="OpenGL\OpenGlExt.cs" />
+    <Compile Include="OpenGL\GLEnumExt.cs" />
+    <Compile Include="OpenGL\GLXEnum.cs" />
+    <Compile Include="OpenGL\IGLNativeContext.cs" />
+    <Compile Include="OpenGL\glxNativeContext.cs" />
+    <Compile Include="Context\GameContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -61,6 +67,7 @@
     <Folder Include="Context\" />
     <Folder Include="Input\" />
     <Folder Include="Window\" />
+    <Folder Include="OpenGL\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

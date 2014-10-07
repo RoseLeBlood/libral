@@ -1,5 +1,5 @@
 ﻿//
-//  Point.cs
+//  XResizeEventArgs.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,19 +19,17 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using libral;
 
-namespace libral
+namespace X11.Widgets.Event
 {
-	[Serializable]
-	public class Point
+	public class XResizeEventArgs : XEventArgs
 	{
-		public Point()
-		{
-		}
+		public Size Size { get; set;  }
 
-		public Point(int m_iY, int m_iX)
+		public XResizeEventArgs(Size pSize)
 		{
-			//throw new NotImplementedException();
+			Size = pSize;
 		}
 	}
 }

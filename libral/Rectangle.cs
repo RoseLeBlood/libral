@@ -86,6 +86,13 @@ namespace libral
 			m_iWidth = width;
 			m_iHeight = height;
 		}
+		public Rectangle(int[] rect)
+		{
+			m_iX = rect[0];
+			m_iY = rect[1];
+			m_iWidth = rect[2];
+			m_iHeight = rect[3];
+		}
 		public Rectangle(int x, int y, Size size)
 		{
 			m_iX = x;

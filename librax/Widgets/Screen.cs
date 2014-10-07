@@ -99,7 +99,7 @@ namespace X11.Widgets
 
 			m_strName = m_iScreenNumber.ToString();
 
-			Register();
+			Register(true);
 		}
 		protected int m_iScreenNumber;
 		protected int m_iScreenWidth;

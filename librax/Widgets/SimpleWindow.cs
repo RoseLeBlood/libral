@@ -38,17 +38,16 @@ namespace X11.Widgets
 		public XStringListToTextPropertyException(int iLine, string Function) : base("SimpleWindow.cs", iLine, Function) { }
 
 	}
-	[Serializable]
 	public abstract class SimpleWindow : BaseWindow
 	{
 		protected SimpleWindow(string strDisplay) : base(strDisplay)
 		{
 		}
 		public SimpleWindow(string strDisplay, string strName, Color pBackgroundColor, Rectangle Rectangle,  
-			IEventHandler pEventHandler, string strTitle = "LibX# Window", EventMask eEventMask = EventMask.All,
+			string strTitle = "LibX# Window", EventMask eEventMask = EventMask.All,
 			uint iBorderWidth = 0, bool bIsResizeable = true, bool bShowCursor = true, string strIconPath = "", 
 			BaseWindow pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
-			: base(strDisplay, strName, pBackgroundColor, Rectangle, pEventHandler, strTitle, eEventMask, iBorderWidth,
+			: base(strDisplay, strName, pBackgroundColor, Rectangle, strTitle, eEventMask, iBorderWidth,
 				bIsResizeable, bShowCursor, strIconPath, pParentWindow, ClassName)
 		{
 
@@ -199,8 +198,6 @@ namespace X11.Widgets
 			{
 				m_id = RegisterChild(this);
 			}
-			if (m_pEventHandler == null)
-				m_pEventHandler = WindowEventHandler.BaseEvent;
 
 			uint opacity = (uint)(((double)m_colBackground.Alpha) * 0xffffffff);
 
@@ -208,8 +205,8 @@ namespace X11.Widgets
 				Lib.AtomType.CARDINAL, (TInt)32, Lib.PropMode.Replace, ref opacity, (TInt)1);
 
 
+			OnCreated(new XEvent());
 
-			m_pEventHandler.CallHandler("Created", new XEventArgs(), this);
 			base.Create();
 		}
 		public override void Show()
@@ -248,7 +245,7 @@ namespace X11.Widgets
 
 		public override void Destroy()
 		{
-			OnDestroy(new XEventArgs());
+			OnDestroy(new XEvent());
 			if (null == m_pParentWindow)
 			{
 				int windowsCount = m_Windows.Count;

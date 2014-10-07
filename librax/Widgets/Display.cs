@@ -96,7 +96,7 @@ namespace X11.Widgets
 			}
 			m_iScreensCount = X11._internal.Lib.XScreenCount(RawHandle);
 			m_pScreen = new Screen(X11._internal.Lib.XDefaultScreenOfDisplay(m_pHandle), this);
-			Register();
+			Register(true);
 
 			#if DEBUG
 			Console.WriteLine("Display: Open {0}", ServerName);

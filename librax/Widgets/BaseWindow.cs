@@ -27,16 +27,10 @@ using System.Reflection;
 using System.IO;
 using libral;
 using System.ComponentModel;
+using X11.Widgets.Event;
 
 namespace X11.Widgets
 {
-	public class XEventArgs: EventArgs
-	{
-		public XEvent Event { get ; private set; }
-		public XEventArgs() { }
-		public XEventArgs(XEvent xevent) { Event = xevent; }
-	}
-	[Serializable]
 	public abstract class BaseWindow : XHandle, IHandle
 	{
 		protected Display    	m_pDisplay;
@@ -51,163 +45,105 @@ namespace X11.Widgets
 		protected EventMask     m_iEventMask;
 		protected BaseWindow		m_pParentWindow;
 		protected List<BaseWindow>	m_Windows;
-		protected SortedDictionary<string /*name */, string /* function */> m_handler;
 		protected int			m_id;
 		protected string		m_strClassName;
 		protected bool			m_bIsResizeable;
 		protected int 			m_iBorderWidth;
-		protected IEventHandler m_pEventHandler;
 		private   bool			m_bIsCreated;
 		private   string		m_strNamespace;
+		private	  bool			m_bClose;
 
-		internal SortedDictionary<string /*name */, string /* function */> CallHandlers { get { return m_handler; } }
-
-		[XmlAttribute("Name")]
 		public override string Name
 		{
 			get { return base.Name; }
 			set { base.Name = value; }
 		}
-		[XmlIgnore]
 		public Display			Display
 		{
 			get { return m_pDisplay; }
 		}
-		[XmlAttribute("Background")]
-		public string			strBackground
-		{
-			get { return m_colBackground.ToString(); }
-			set { setBackground(value); }
-		}
-		[XmlAttribute("Border")]
-		public string			strBorder
-		{
-			get { return m_colBorder.ToString(); }
-			set { m_colBorder = new Color(value); }
-		}
-		[XmlIgnore]
+
 		public Color		Background
 		{
 			get { return m_colBackground; }
-			set { m_colBackground = value; setBackground(m_colBackground.ToString()); }
+			set { m_colBackground = value; setBackground(m_colBackground); }
 		}
-		[XmlIgnore]
 		public Color		Border
 		{
 			get { return m_colBorder; }
-			set { m_colBorder = value; setBorder(m_colBorder.ToString()); }
+			set { m_colBorder = value; setBorder(m_colBorder); }
 		}
-		[XmlAttribute("Rectangle")]
-		public string		strRectangle
-		{
-			get { return m_xRectangle.ToString(); }
-			set { SetRectangle(value); }
-		}
-		[XmlIgnore]
 		public Rectangle		Rectangle
 		{
 			get { return m_xRectangle; }
 		}
-		[XmlAttribute("Title")]
 		public string			Title
 		{
 			get { return m_strTitle; }
 			set { SetTitle(value); }
 		}
-		[XmlIgnore]
 		public bool				 IsFocusable
 		{
 			get { return m_bHaveFocus; }
 		}
-		[XmlAttribute("Icon")]
 		public string				Icon
 		{
 			get { return m_strIconPath; }
 			set { m_strIconPath = value; }
 		}
-		[XmlAttribute("ShowCursor")]
 		public bool 				ShowCursor
 		{
 			get { return m_bShowCursor; }
 			set { m_bShowCursor = value;}
 		}
-		[XmlAttribute("EventMask")]
 		public EventMask			EventMask
 		{
 			get { return m_iEventMask; }
 			set { m_iEventMask = value; }
 		}
-		[XmlIgnore]
 		public int					ID
 		{
 			get { return m_id; }
 		}
-		[XmlAttribute("ClassName")]
 		public string				ClassName
 		{
 			get { return m_strClassName; }
 			set { m_strClassName = value; }
 		}
-		[XmlAttribute("BorderWidth")]
 		public int					BorderWidth
 		{
 			get { return m_iBorderWidth; }
 			set { m_iBorderWidth = value; }
 		}
-		[XmlAttribute("Parent")]
-		public string				Parent
+		public BaseWindow				Parent
 		{
-			get {  return (m_pParentWindow != null) ? m_pParentWindow.Name : null; }
-			set { m_pParentWindow = Application.Current.GetHandle<BaseWindow>(value); }
+			get {  return (m_pParentWindow != null) ? m_pParentWindow : null; }
+			set { m_pParentWindow = value; }
 		}
-		[XmlAttribute("Namespace")]
 		public string Namespace
 		{
 			get { return m_strNamespace; }
 			set { m_strNamespace = value; }
 		}
-		[XmlAttribute("KeyPress")]
-		public string KeyPress
-		{
-			get { return m_handler.ContainsKey("KeyPress") ? m_handler["KeyPress"] : null; }
-			set { SetHandler(value, "KeyPress"); }
-		}
-		[XmlAttribute("KeyRelease")]
-		public string KeyRelease
-		{
-			get { return m_handler.ContainsKey("KeyRelease") ? m_handler["KeyRelease"] : null; }
-			set { SetHandler(value, "KeyRelease"); }
-		}
-		[XmlAttribute("Created")]
-		public string Created
-		{
-			get { return m_handler.ContainsKey("Created") ? m_handler["Created"] : null; }
-			set { SetHandler(value, "Created"); }
-		}
-		[XmlAttribute("Destroyed")]
-		public string Destroyed
-		{
-			get { return m_handler.ContainsKey("Destroyed") ? m_handler["Destroyed"] : null; }
-			set { SetHandler(value, "Destroyed"); }
-		}
-		[XmlAttribute("Showed")]
-		public string Showed
-		{
-			get { return m_handler.ContainsKey("Showed") ? m_handler["Showed"] : null; }
-			set { SetHandler(value, "Showed"); }
-		}
-		[XmlAttribute("Hidded")]
-		public string Hidded
-		{
-			get { return m_handler.ContainsKey("Hidded") ? m_handler["Hidded"] : null; }
-			set { SetHandler(value, "Hidded"); }
-		}
-		[XmlAttribute("ClientMessage")]
-		public string ClientMessage
-		{
-			get { return m_handler.ContainsKey("ClientMessage") ? m_handler["ClientMessage"] : null; }
-			set { SetHandler(value, "ClientMessage"); }
-		}
+
+		public EventHandler<XEventArgs> Created;
+		public EventHandler<XEventArgs> Destroyed;
+		public EventHandler<XEventArgs> Showed;
+		public EventHandler<XEventArgs> Hidded;
+		public EventHandler<XEventArgs> ClientMessage;
+		public EventHandler<XEventArgs> UserEvent;
+		public EventHandler<XEventArgs> Expose;
+		public EventHandler<XEventArgs> Focus;
+		public EventHandler<XEventArgs> LostFocus;
+		public EventHandler<XMoveEventArgs> Move;
+		public EventHandler<XResizeEventArgs> Resize;
+		public EventHandler<XKeyEventArgs> KeyPress;
+		public EventHandler<XKeyEventArgs> KeyRelease;
+
+
+
+
+		/*
 		[XmlAttribute("MouseKeyPress")]
 		public string MouseKeyPress
 		{
@@ -220,18 +156,7 @@ namespace X11.Widgets
 			get { return m_handler.ContainsKey("MouseKeyRelease") ? m_handler["MouseKeyRelease"] : null; }
 			set { SetHandler(value, "MouseKeyRelease"); }
 		}
-		[XmlAttribute("UserEvents")]
-		public string UserEvents
-		{
-			get { return m_handler.ContainsKey("UserEvents") ? m_handler["UserEvents"] : null; }
-			set { SetHandler(value, "UserEvents"); }
-		}
-		[XmlAttribute("Expose")]
-		public string Expose
-		{
-			get { return m_handler.ContainsKey("Expose") ? m_handler["Expose"] : null; }
-			set { SetHandler(value, "Expose"); }
-		}
+
 		[XmlAttribute("MouseEnter")]
 		public string MouseEnter
 		{
@@ -249,44 +174,12 @@ namespace X11.Widgets
 		{
 			get { return m_handler.ContainsKey("MouseLeave") ? m_handler["MouseLeave"] : null; }
 			set { SetHandler(value, "MouseLeave"); }
-		}
-		[XmlAttribute("Focus")]
-		public string Focus
-		{
-			get { return m_handler.ContainsKey("Focus") ? m_handler["Focus"] : null; }
-			set { SetHandler(value, "Focus"); }
-		}
-		[XmlAttribute("LostFocus")]
-		public string LostFocus
-		{
-			get { return m_handler.ContainsKey("LostFocus") ? m_handler["LostFocus"] : null; }
-			set { SetHandler(value, "LostFocus"); }
-		}
-		[XmlAttribute("Resize")]
-		public string Resize
-		{
-			get { return m_handler.ContainsKey("Resize") ? m_handler["Resize"] : null; }
-			set { SetHandler(value, "Resize"); }
-		}
-		[XmlAttribute("Move")]
-		public string Move
-		{
-			get { return m_handler.ContainsKey("Move") ? m_handler["Move"] : null; }
-			set { SetHandler(value, "Move"); }
-		}
-		[XmlIgnore]
-		public IEventHandler EventHandler
-		{
-			get { return m_pEventHandler; }
-			set { m_pEventHandler = value; }
-		}
-		[XmlAttribute("Resizeable")]
+		}*/
 		public bool Resizeable
 		{
 			get { return m_bIsResizeable; }
 			set { m_bIsResizeable = value; }
 		}
-		[XmlIgnore]
 		public bool IsOpen
 		{
 			get { return m_bIsCreated; }
@@ -294,7 +187,6 @@ namespace X11.Widgets
 
 		public virtual void Create()
 		{
-
 			m_bIsCreated = true;
 		}
 		public virtual void Destroy()
@@ -311,7 +203,6 @@ namespace X11.Widgets
 				throw new NULLPtrConnectionException("IWindow.cs", 294, "Window::Window(string,string)");
 
 			m_Windows = new List<BaseWindow>();
-			m_handler = new SortedDictionary<string, string>();
 			m_xRectangle = new Rectangle(0,0,320,320);
 			m_colBackground = Colors.LightBlue;
 			m_colBorder = Colors.LightSteelBlue;
@@ -322,10 +213,9 @@ namespace X11.Widgets
 			m_id = -1;
 			m_strClassName = ClassName;
 			m_bIsResizeable = true;
-			m_handler = new SortedDictionary<string, string>();
 			m_iBorderWidth = 0;
 		}
-		public BaseWindow (string strDisplay, string strName, Color pBackgroundColor,Rectangle Rectangle, IEventHandler pEventHandler,
+		public BaseWindow (string strDisplay, string strName, Color pBackgroundColor,Rectangle Rectangle, 
 			string strTitle = "LibX# Window", EventMask eEventMask = EventMask.ButtonPressMask| EventMask.KeyPressMask,
 			uint iBorderWidth = 0, bool bIsResizeable = true, bool bShowCursor = true, string strIconPath = null, 
 			BaseWindow pParentWindow = null, string ClassName = "__SIMPLEWINDOW_LIBX__")
@@ -347,56 +237,59 @@ namespace X11.Widgets
 			m_id = -1;
 			m_strClassName = ClassName;
 			m_bIsResizeable = bIsResizeable;
-			m_handler = new SortedDictionary<string, string>();
-			m_pEventHandler = pEventHandler;
 			m_iBorderWidth = 0;
 
 		}
-		public bool Send(string eventName, XEventArgs args)
+		protected virtual void OnCreated(XEvent args)
 		{
-			return m_pEventHandler.CallHandler(eventName, args, this);
+			if (Created != null) Created(this, new XEventArgs());
 		}
-		protected virtual bool OnCreate(XEventArgs args)
-		{
 
-			return m_pEventHandler.CallHandler("Created", args, this);
-		}
-		protected virtual bool OnDestroy(XEventArgs  args)
+		protected virtual void OnDestroy(XEvent args)
 		{
-			return m_pEventHandler.CallHandler("Destroyed", args, this);
+			if (Destroyed != null) Destroyed(this, new XEventArgs());
 		}
-		protected virtual bool OnClientMessage(XEventArgs args)
+		protected virtual void OnClientMessage(XEvent args)
 		{
 			IntPtr protocolsAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_PROTOCOLS", false);
 			IntPtr deleteWindowAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_DELETE_WINDOW", false);
 
-			if(args.Event.ClientMessageEvent.message_type == protocolsAtom && 
-			   args.Event.ClientMessageEvent.ptr1 == deleteWindowAtom) 
+			if(args.ClientMessageEvent.message_type == protocolsAtom && 
+			   args.ClientMessageEvent.ptr1 == deleteWindowAtom) 
 			{
-				return false;
+					//return false;
+
 			}
 					
-			return m_pEventHandler.CallHandler("ClientMessage", args, this);
+
+			if (ClientMessage != null)
+				ClientMessage(this, new XEventArgs());
 		}
 
-		protected virtual bool OnConfigureNotify(XEventArgs args)
+		protected virtual void OnConfigureNotify(XEvent args)
 		{
-			if (m_xRectangle.Width != (int)args.Event.ConfigureEvent.width ||
-				m_xRectangle.Height != (int)args.Event.ConfigureEvent.height)
+			if (m_xRectangle.Width != (int)args.ConfigureEvent.width ||
+				m_xRectangle.Height != (int)args.ConfigureEvent.height)
 			{
-					m_xRectangle.Width = (int)args.Event.ConfigureEvent.width;
-					m_xRectangle.Height = (int)args.Event.ConfigureEvent.height;
+					m_xRectangle.Width = (int)args.ConfigureEvent.width;
+					m_xRectangle.Height = (int)args.ConfigureEvent.height;
 				
-				return OnResize(args);
+				OnResize(args);
 			}
-			return true;
 		}
-		protected virtual bool OnResize(XEventArgs args)
+		protected virtual void OnResize(XEvent args)
 		{
-			m_pEventHandler.CallHandler("Resize", args, this);
-			return true;
+			var arg = new XResizeEventArgs(Rectangle.Size);
+			if (Resize != null)
+				Resize(this, arg);
 		}
-			
+		protected virtual void OnMove(XEvent args)
+		{
+			var arg = new XMoveEventArgs(Rectangle.Position);
+			if (Move != null)
+				Move(this, arg);
+		}
+
 		public int RegisterChild(BaseWindow pWindow)
 		{
 			if (null == pWindow)
@@ -442,37 +335,12 @@ namespace X11.Widgets
 				Lib.AtomType.CARDINAL, (TInt)32, Lib.PropMode.Replace, ref opacity, (TInt)1);
 
 		}
-		internal bool Event(XEvent xevent)
-		{
-			BaseWindow window = null;
-			if (xevent.AnyEvent.window == m_pHandle)
-			{
-					window = this;
-			}
-			else
-			{
-				for (int i = 0; i < m_Windows.Count; i++)
-				{
-					if (null != m_Windows[i])
-					{
-						if (xevent.AnyEvent.window == m_Windows[i].RawHandle)
-						{
-							window = m_Windows[i];
-							break;
-						}
-					}
-				}
-			}
-			if (m_pParentWindow == null)
-				return m_pEventHandler.WndProc(xevent, this);
-			else
-				return m_pParentWindow.Event(xevent);
-		}
+
 		private void SetTitle(string value)
 		{
 			if (m_bIsCreated)
 			{
-			
+				X11._internal.Lib.XStoreName(m_pDisplay.RawHandle, m_pHandle, value);
 			}
 			m_strTitle = value;
 		}
@@ -489,56 +357,112 @@ namespace X11.Widgets
 
 		}
 
-		private void setBorder(string str)
+		private void setBorder(Color str)
 		{
-			if(m_colBorder.ToString() != str)
-				m_colBorder = new Color(str);
+			if(m_colBorder != str)
+				m_colBorder = str;
 			if (m_bIsCreated)
 			{
 			}
 		}
 
-		private void setBackground(string color)
+		private void setBackground(Color color)
 		{
-			if(m_colBackground.ToString() != color)
-				m_colBackground = new Color(color);
+			if(m_colBackground != color)
+				m_colBackground = color;
 			if (m_bIsCreated)
 			{
 				SetWindowOpacity(m_colBackground.Alpha);
 			}
 		}
-		public static void SaveAsXml(BaseWindow wnd)
+		internal void OnIdle()
 		{
-			string name = wnd.Name + ".xml";
-			if (File.Exists(name))
-				File.Delete(name);
-
-			using(FileStream stream = new FileStream(wnd.Name + ".xml", FileMode.CreateNew))
-			{
-				XmlSerializer x = new XmlSerializer(wnd.GetType());
-				x.Serialize(stream, wnd);
-			}
+			if (UserEvent != null)
+				UserEvent(this, new XEventArgs());
 		}
-		public static T OpenFromXml<T>(string name) where T : BaseWindow
+		internal bool Event(XEvent xevent)
 		{
-			T window = null;
-			FileStream stream = new FileStream(name + ".xml", FileMode.Open, 
-				FileAccess.Read, 
-				FileShare.None);
+			BaseWindow window = null;
+			if (xevent.AnyEvent.window == m_pHandle)
 			{
-				XmlSerializer x = new XmlSerializer(typeof(T));
-					window =  (T)x.Deserialize(stream);
-				
-					
+				window = this;
 			}
-			return window;
-		}
-		internal void SetHandler(string name, string eventName)
-		{
-			if (m_handler.ContainsKey(eventName))
-				m_handler[eventName] = name;
 			else
-				m_handler.Add(eventName, name);
+			{
+				for (int i = 0; i < m_Windows.Count; i++)
+				{
+					if (null != m_Windows[i])
+					{
+						if (xevent.AnyEvent.window == m_Windows[i].RawHandle)
+						{
+							window = m_Windows[i];
+
+							window.WndProc(xevent);
+							break;
+						}
+					}
+				}
+			}
+			if (m_pParentWindow == null)
+				return WndProc(xevent);
+			else
+				return m_pParentWindow.Event(xevent);
+		}
+		protected virtual bool WndProc(XEvent xevent)
+		{
+			switch (xevent.type)
+			{
+				case XEventName.ClientMessage:
+				{
+					IntPtr protocolsAtom = Lib.XInternAtom(Display.RawHandle, "WM_PROTOCOLS", false);
+					IntPtr deleteWindowAtom = Lib.XInternAtom(Display.RawHandle, "WM_DELETE_WINDOW", false);
+
+					if (xevent.ClientMessageEvent.message_type == protocolsAtom &&
+					    xevent.ClientMessageEvent.ptr1 == deleteWindowAtom)
+					{
+						OnClientMessage(xevent);
+
+						return false;
+					}
+				}
+				break;
+				case XEventName.ConfigureNotify:
+					{
+						if (Rectangle.Width != (int)xevent.ConfigureEvent.width ||
+						    Rectangle.Height != (int)xevent.ConfigureEvent.height)
+						{
+							Rectangle.Width = (int)xevent.ConfigureEvent.width;
+							Rectangle.Height = (int)xevent.ConfigureEvent.height;
+
+							OnResize(xevent);
+						}
+						else if ((int)xevent.ConfigureEvent.x != Rectangle.X ||
+						         (int)xevent.ConfigureEvent.y != Rectangle.Y)
+						{
+							Rectangle.X = (int)xevent.ConfigureEvent.x;
+							Rectangle.Y = (int)xevent.ConfigureEvent.y;
+							OnMove(xevent);
+						}
+					}
+					break;
+				default:
+					break;
+			}
+
+
+
+
+			if (xevent.type == XEventName.FocusOut)
+			{
+				m_bHaveFocus = false;
+				
+			}
+			else if (xevent.type == XEventName.FocusIn)
+			{
+				m_bHaveFocus = true;
+			}
+
+			return m_bIsCreated;
 		}
 	}
 }

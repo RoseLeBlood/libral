@@ -1,5 +1,5 @@
 ﻿//
-//  IEventHandler.cs
+//  XKeyEventArgs.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -18,15 +18,18 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using X11._internal;
+using System;
 
-namespace X11.Widgets
+namespace X11.Widgets.Event
 {
-	public interface IEventHandler 
+	public class XKeyEventArgs : XEventArgs
 	{
-		string Name { get;  }
-		bool WndProc(XEvent xevent, BaseWindow wnd);
-		bool CallHandler(string eventName, XEventArgs args, BaseWindow wnd);
+		public Keys Key { get; set; }
+
+		public XKeyEventArgs(Keys pKey)
+		{
+			Key = pKey;
+		}
 	}
 }
 

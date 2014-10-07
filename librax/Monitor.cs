@@ -64,7 +64,9 @@ namespace X11
 			m_lstModes = new List<MonitorMode>();
 			m_strConnectionName = name;
 
+			#if DEBUG
 			Console.WriteLine("{1} found at {0}", m_strConnectionName, Name);
+			#endif
 
 		}
 

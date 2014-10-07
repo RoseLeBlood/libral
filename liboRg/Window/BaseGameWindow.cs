@@ -25,27 +25,27 @@ using X11;
 using libral;
 using X11._internal;
 using liboRg.Input;
+using liboRg.Context;
+using X11.Widgets.Event;
 
 namespace liboRg.Window
 {
 	public class BaseGameWindow : SimpleWindow
 	{
 		private Game m_pGame;
-		private IContext m_pIContext;
+		private GameContext m_pIContext;
 
-		public IContext Context
+		public GameContext Context
 		{
 			get
 			{
-				if (m_pIContext == null)
-					m_pIContext = new X11Context();
 				return m_pIContext;
 			}
 		}
 
 		public BaseGameWindow(Game pGame, GameResolution size, string title, WindowStyle style )
 			: base(pGame.m_strDisplay, "GameWindow", Colors.SteelBlue, size.Size, 
-				new GameWindowHandler(), title)
+				title)
 		{
 			m_pIContext = null;
 			m_pGame = pGame;
@@ -62,44 +62,41 @@ namespace liboRg.Window
 				EventMask.KeyReleaseMask | EventMask.StructureNotifyMask | EventMask.EnterWindowMask | 
 				EventMask.LeaveWindowMask;
 
-			Created = "BaseGameWindow_Created";
-			KeyPress = "BaseGameWindow_KeyPressed";
-			KeyRelease = "BaseGameWindow_KeyRelease";
-			Resize = "BaseGameWindow_Resize";
-			UserEvents = "BaseGameWindow_UserEvents";
-			Move = "BaseGameWindow_Move";
+			this.Created += new EventHandler<XEventArgs>(	BaseGameWindow_Created);
+			KeyPress += BaseGameWindow_KeyPressed;
+			KeyRelease += BaseGameWindow_KeyRelease;
+			Resize += BaseGameWindow_Resize;
+			UserEvent += BaseGameWindow_UserEvents;
+			Move += BaseGameWindow_Move;
 		}
 
 
-		protected bool BaseGameWindow_UserEvents(Object sender, XEventArgs args)
+		protected void BaseGameWindow_UserEvents(Object sender, XEventArgs args)
 		{
-			return m_pGame.drawing();
+			m_pGame.drawing();
 		}
 
-		protected bool BaseGameWindow_Created(Object sender, XEventArgs args)
+		protected void BaseGameWindow_Created(Object sender, XEventArgs args)
 		{
+			m_pIContext = new X11Context(this, 32, 24, 0, 0);
+
 			m_pGame.Create();
-			return true;
 		}
-		protected bool BaseGameWindow_KeyPressed(Object sender, XEventArgs args)
+		protected void BaseGameWindow_KeyPressed(Object sender, XEventArgs args)
 		{
-			m_pGame.InternalKeyPress(args.Event.KeyEvent.keycode);
-			return true;
+			//m_pGame.InternalKeyPress(args.Event.KeyEvent.keycode);
 		}
-		protected bool BaseGameWindow_KeyRelease(Object sender, XEventArgs args)
+		protected void BaseGameWindow_KeyRelease(Object sender, XEventArgs args)
 		{
-			m_pGame.InternalKeyRelease(args.Event.KeyEvent.keycode);
-			return true;
+			//m_pGame.InternalKeyRelease(args.Event.KeyEvent.keycode);
 		}
-		protected bool BaseGameWindow_Resize(Object sender, XEventArgs args)
+		protected void BaseGameWindow_Resize(Object sender, XEventArgs args)
 		{
 			m_pGame.OnResize(this.Rectangle);
-			return true;
 		}
-		protected bool BaseGameWindow_Move(Object sender, XEventArgs args)
+		protected void BaseGameWindow_Move(Object sender, XEventArgs args)
 		{
 			m_pGame.OnMove(this.Rectangle);
-			return true;
 		}
 	}
 }

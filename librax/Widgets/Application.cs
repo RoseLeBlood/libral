@@ -26,14 +26,13 @@ using System.IO;
 
 namespace X11.Widgets
 {
-	[Serializable]
 	public class Application 
 	{
 		private static Application							m_current;
 		private  Object										m_look = null;
 	
 		private SortedDictionary<string, Handle>		m_handles;
-		private string									m_strNainWindow;
+		private BaseWindow								m_NainWindow;
 		private string									m_strNamespace;
 		private Display									m_currentDisplay;
 		private bool 									m_bOpen = true;
@@ -51,30 +50,24 @@ namespace X11.Widgets
 			m_handles = new SortedDictionary<string, Handle>();
 
 		}
-		[XmlIgnore]
 		public static Application Current
 		{
 			get { return m_current; }
 		}
-		[XmlIgnore]
 		public Display Display
 		{
 			get { return m_current.m_currentDisplay; }
 		}
-		[XmlAttribute("MainWindow")]
-		public string MainWindow
+		public BaseWindow MainWindow
 		{
-			get { return m_strNainWindow; }
-			set { m_strNainWindow = value; }
+			get { return m_NainWindow; }
+			set { m_NainWindow = value; }
 		}
-		[XmlAttribute("DisplayName")]
-		public string strDisplay
+		public string DisplayName
 		{
 			get { return m_current.m_currentDisplay.Name; }
 			set { m_current.m_currentDisplay = Current.GetHandle<Display>( value); }
 		}
-
-		[XmlAttribute("Namespace")]
 		public string Namespace
 		{
 			get { return m_strNamespace; }
@@ -113,17 +106,27 @@ namespace X11.Widgets
 			}
 			return con;
 		}
-		public bool RegisterHandle(Handle handle)
+		public bool RegisterHandle(Handle handle, bool eindeutig = false)
 		{
 			bool ok = false;
+			string name = handle.Name;
+			int i = 0;
+
 			lock (m_look)
 			{
-				Console.WriteLine("RegisterHandle: {0}", handle.Name);
-				if (!m_handles.ContainsKey(handle.Name))
+				if (!eindeutig)
 				{
-							Application.Current.m_handles.Add(handle.Name, handle);
-					ok = true;
+					do
+					{
+						name = string.Format("{0}{1}", name, i++);
+					} while(m_handles.ContainsKey(name));
 				}
+				handle.Name = name;
+				Console.WriteLine("RegisterHandle: {0}", handle.Name);
+
+				Application.Current.m_handles.Add(handle.Name, handle);
+				ok = true;
+				
 			}
 			return ok;
 		}
@@ -145,8 +148,6 @@ namespace X11.Widgets
 		{
 			m_current = new Application(_namespace);
 			m_current.m_currentDisplay = new Display(":0");
-
-			//Xkb.IsSupported(m_current.m_currentDisplay.RawHandle);
 		}
 		public void Exit()
 		{
@@ -155,7 +156,7 @@ namespace X11.Widgets
 		public static void Run()
 		{
 			XEvent xevent = new XEvent();
-			var MainWindow = Application.Current.GetHandle<BaseWindow>(Application.Current.MainWindow);
+			var MainWindow = Current.MainWindow;
 			MainWindow.Show();
 
 
@@ -166,7 +167,8 @@ namespace X11.Widgets
 				{
 					Current.m_bOpen = MainWindow.Event(xevent);
 				}
-				MainWindow.EventHandler.CallHandler("UserEvents", null, MainWindow);
+				MainWindow.OnIdle();
+					//MainWindow.EventHandler.CallHandler("UserEvents", null, MainWindow);
 			}
 			MainWindow.Destroy();
 		}
@@ -174,15 +176,6 @@ namespace X11.Widgets
 		static bool CheckEvent(IntPtr display, ref XEvent xevent, IntPtr userData)
 		{
 			return xevent.AnyEvent.window ==  userData;
-		}
-
-		public static void SaveAsXml(Application app, string file = "app.xml")
-		{
-			using (FileStream stream = new FileStream(file, FileMode.Create))
-			{
-				XmlSerializer x = new XmlSerializer(app.GetType());
-				x.Serialize(stream, app);
-			}
 		}
 	}
 }

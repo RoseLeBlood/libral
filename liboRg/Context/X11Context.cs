@@ -20,14 +20,19 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using X11;
+using System.Common;
+using liboRg.OpenGL;
+using liboRg.Window;
 
-namespace liboRg
+namespace liboRg.Context
 {
-	public class X11Context : Handle, IContext
+	public class X11Context : GameContext
 	{
-		public X11Context()
+		public X11Context(BaseGameWindow window, int color, int depth, int stencil, int antialias)
 			: base("X11_CCONTEXT")
 		{
+			m_pNativeContext = new glxNativeContext(window, depth, stencil, antialias);
+
 			Register();
 		}
 	}

@@ -23,6 +23,8 @@ using libral;
 using X11.Widgets;
 using liboRg.Input;
 using liboRg.Window;
+using liboRg.Context;
+using System.Common;
 
 
 namespace liboRg
@@ -37,6 +39,33 @@ namespace liboRg
 		public Display		   Display { get { return m_pGameWindow.Display; } }
 		public Rectangle	   Bounds { get { return m_pGameWindow.Rectangle; } }
 		public BaseGameWindow  Window { get { return m_pGameWindow; } }
+
+		public Color ClearColor
+		{
+			get { return GameContext.ClearColor; }
+			set { GameContext.ClearColor = value; }
+		}
+
+		public bool DepthMask
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		public bool VSync
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+		public float Time
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public GameContext GameContext
+		{
+			get { return Window.Context; }
+		}
 
 
 		public Game(string strDisplay, GameResolution pResolution, string title, WindowStyle style)
@@ -73,20 +102,27 @@ namespace liboRg
 		}
 		public virtual void OnResize(Rectangle newSize)
 		{
+			Console.Write("{0}\r", newSize);
 
+			newSize.X = newSize.Y = 0;
+
+			GameContext.Viewport = newSize;
 		}
 
 		public void OnMove(Rectangle position)
 		{
-
+			Console.Write("{0}\r", position);
 		}
 
 		internal bool drawing()
 		{
+
+
 			if (Move( (InputState)m_pKeyboard.GetState() ) == true)
 				Draw();
 
 			// SwappBuffer
+			GameContext.Swap();
 			return true;
 		}
 
