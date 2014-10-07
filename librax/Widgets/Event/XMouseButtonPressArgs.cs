@@ -1,5 +1,5 @@
 ﻿//
-//  MonitorMode.cs
+//  XMouseButtonPressArgs.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -21,31 +21,21 @@
 using System;
 using System.Common;
 
-namespace X11
+namespace X11.Widgets.Event
 {
-	[Serializable]
-	public class MonitorMode
+	public class XMouseButtonPressArgs : XMotionEventArgs
 	{
-		private Size m_sSize;
-		private double  m_iRate;
+		private MouseButton m_pButton;
 
-		public Size Size { get { return m_sSize; } }
-		public double Rate { get { return m_iRate; } }
-
-
-		public MonitorMode(Size size, int iRate)
+		public MouseButton MouseButton
 		{
-			m_sSize = size;
-			m_iRate = iRate;
+			get { return m_pButton; }
 		}
-		internal MonitorMode(Size size, string ratestring)
+
+		public XMouseButtonPressArgs(Point pPosition, MouseButton pButton )
+			: base(pPosition)
 		{
-			m_iRate = double.Parse(ratestring.Replace("*", "").Replace("+", "").Replace(".", ","));
-			m_sSize = size;
-		}
-		public override string ToString()
-		{
-			return string.Format("{0}@{1}", Size, Rate);
+			m_pButton = pButton;
 		}
 	}
 }

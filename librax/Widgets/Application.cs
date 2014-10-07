@@ -121,6 +121,9 @@ namespace X11.Widgets
 						name = string.Format("{0}{1}", name, i++);
 					} while(m_handles.ContainsKey(name));
 				}
+				else if (m_handles.ContainsKey(name))
+					return false;
+
 				handle.Name = name;
 				Console.WriteLine("RegisterHandle: {0}", handle.Name);
 

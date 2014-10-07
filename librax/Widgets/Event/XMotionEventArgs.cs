@@ -1,5 +1,5 @@
 ﻿//
-//  MonitorMode.cs
+//  XMotionEventArgs.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -21,31 +21,16 @@
 using System;
 using System.Common;
 
-namespace X11
+namespace X11.Widgets.Event
 {
-	[Serializable]
-	public class MonitorMode
+	public class XMotionEventArgs : XEventArgs
 	{
-		private Size m_sSize;
-		private double  m_iRate;
+		private Point m_Position;
+		public Point Position { get { return m_Position; } }
 
-		public Size Size { get { return m_sSize; } }
-		public double Rate { get { return m_iRate; } }
-
-
-		public MonitorMode(Size size, int iRate)
+		public XMotionEventArgs(Point pPosition)
 		{
-			m_sSize = size;
-			m_iRate = iRate;
-		}
-		internal MonitorMode(Size size, string ratestring)
-		{
-			m_iRate = double.Parse(ratestring.Replace("*", "").Replace("+", "").Replace(".", ","));
-			m_sSize = size;
-		}
-		public override string ToString()
-		{
-			return string.Format("{0}@{1}", Size, Rate);
+			m_Position = pPosition;
 		}
 	}
 }

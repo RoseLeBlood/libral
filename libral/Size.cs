@@ -20,7 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 
-namespace libral
+namespace System.Common
 {
 	[Serializable]
 	public class Size

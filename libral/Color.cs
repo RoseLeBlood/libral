@@ -41,6 +41,8 @@ namespace System.Common
 		public float Alpha { get { return m_colors[3]; } set { m_colors[3] = value; } }
 		[XmlIgnore]
 		public float[] fRGBA { get { return m_colors; } set { m_colors = value; } }
+		[XmlIgnore]
+		public byte[]  RGBA { get { return new byte[] { R,G,B,A }; } }
 
 		[XmlElement("Red")]
 		public byte R { get { return FloatColorToByte(Red ); } set { Red = ByteColorToFloat(value); } }

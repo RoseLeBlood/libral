@@ -1,5 +1,5 @@
 ﻿//
-//  MonitorMode.cs
+//  XUnknownEventArgs.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,33 +19,18 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Common;
+using X11._internal;
 
-namespace X11
+namespace X11.Widgets.Event
 {
-	[Serializable]
-	public class MonitorMode
+	public class XUnknownEventArgs : XEventArgs
 	{
-		private Size m_sSize;
-		private double  m_iRate;
+		private XEvent m_pEvent;
+		public XEvent Event { get { return m_pEvent; } }
 
-		public Size Size { get { return m_sSize; } }
-		public double Rate { get { return m_iRate; } }
-
-
-		public MonitorMode(Size size, int iRate)
+		public XUnknownEventArgs(XEvent xevent)
 		{
-			m_sSize = size;
-			m_iRate = iRate;
-		}
-		internal MonitorMode(Size size, string ratestring)
-		{
-			m_iRate = double.Parse(ratestring.Replace("*", "").Replace("+", "").Replace(".", ","));
-			m_sSize = size;
-		}
-		public override string ToString()
-		{
-			return string.Format("{0}@{1}", Size, Rate);
+			m_pEvent = xevent;
 		}
 	}
 }

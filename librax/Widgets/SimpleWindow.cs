@@ -23,7 +23,7 @@ using X11._internal;
 using System.Common;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using libral;
+using System.Common;
 using System.Xml;
 
 namespace X11.Widgets
@@ -205,7 +205,7 @@ namespace X11.Widgets
 				Lib.AtomType.CARDINAL, (TInt)32, Lib.PropMode.Replace, ref opacity, (TInt)1);
 
 
-			OnCreated(new XEvent());
+			OnCreate(new XEvent());
 
 			base.Create();
 		}
@@ -240,6 +240,7 @@ namespace X11.Widgets
 			}
 			Lib.XUnmapWindow(m_pDisplay.RawHandle, m_pHandle);
 			Lib.XFlush(m_pDisplay.RawHandle);
+
 		}
 
 
@@ -270,7 +271,10 @@ namespace X11.Widgets
 			Lib.XUndefineCursor(m_pDisplay.RawHandle, m_pHandle);
 			Lib.XDestroyWindow(m_pDisplay.RawHandle, m_pHandle);
 		}
+		protected override void EnableFullscreen(bool enabled, int width, int height)
+		{
 
+		}
 		[DllImport("libX11.so")]
 		private static extern void XSetWMNormalHints (IntPtr display, IntPtr w, ref X11._internal.Lib.XSizeHints hints);
 	}

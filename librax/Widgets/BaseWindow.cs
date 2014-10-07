@@ -25,7 +25,6 @@ using System.Common;
 using System.Xml.Serialization;
 using System.Reflection;
 using System.IO;
-using libral;
 using System.ComponentModel;
 using X11.Widgets.Event;
 
@@ -51,7 +50,6 @@ namespace X11.Widgets
 		protected int 			m_iBorderWidth;
 		private   bool			m_bIsCreated;
 		private   string		m_strNamespace;
-		private	  bool			m_bClose;
 
 		public override string Name
 		{
@@ -126,55 +124,30 @@ namespace X11.Widgets
 			set { m_strNamespace = value; }
 		}
 
-		public EventHandler<XEventArgs> Created;
-		public EventHandler<XEventArgs> Destroyed;
+		public EventHandler<XEventArgs> Created; //
+		public EventHandler<XEventArgs> Destroyed; //
 		public EventHandler<XEventArgs> Showed;
 		public EventHandler<XEventArgs> Hidded;
-		public EventHandler<XEventArgs> ClientMessage;
-		public EventHandler<XEventArgs> UserEvent;
-		public EventHandler<XEventArgs> Expose;
-		public EventHandler<XEventArgs> Focus;
-		public EventHandler<XEventArgs> LostFocus;
-		public EventHandler<XMoveEventArgs> Move;
-		public EventHandler<XResizeEventArgs> Resize;
-		public EventHandler<XKeyEventArgs> KeyPress;
-		public EventHandler<XKeyEventArgs> KeyRelease;
+		public EventHandler<XEventArgs> ClientMessage; //
+		public EventHandler<XEventArgs> UserEvent; //
+		public EventHandler<XEventArgs> Expose; //
+		public EventHandler<XEventArgs> Focus; //
+		public EventHandler<XEventArgs> LostFocus; //
+		public EventHandler<XMoveEventArgs> Move; //
+		public EventHandler<XResizeEventArgs> Resize; //
+		public EventHandler<XKeyEventArgs> KeyPress; //
+		public EventHandler<XKeyEventArgs> KeyRelease; //
+		public EventHandler<XMotionEventArgs> MouseMove; //
+		public EventHandler<XEventArgs> MouseEnter; //
+		public EventHandler<XEventArgs> MouseLeave; //
+		public EventHandler<XMouseButtonPressArgs> MouseButtonPress; //
+		public EventHandler<XMouseButtonReleaseArgs> MouseButtonRelease; //
+		public EventHandler<XMouseScrollArgs> MouseScroll; //
+		public EventHandler<XUnknownEventArgs> UnknownEvent;
 
 
 
 
-		/*
-		[XmlAttribute("MouseKeyPress")]
-		public string MouseKeyPress
-		{
-			get { return m_handler.ContainsKey("MouseKeyPress") ? m_handler["MouseKeyPress"] : null; }
-			set { SetHandler(value, "MouseKeyPress"); }
-		}
-		[XmlAttribute("MouseKeyRelease")]
-		public string MouseKeyRelease
-		{
-			get { return m_handler.ContainsKey("MouseKeyRelease") ? m_handler["MouseKeyRelease"] : null; }
-			set { SetHandler(value, "MouseKeyRelease"); }
-		}
-
-		[XmlAttribute("MouseEnter")]
-		public string MouseEnter
-		{
-			get { return m_handler.ContainsKey("MouseEnter") ? m_handler["MouseEnter"] : null; }
-			set { SetHandler(value, "MouseEnter"); }
-		}
-		[XmlAttribute("MouseMove")]
-		public string MouseMove
-		{
-			get { return m_handler.ContainsKey("MouseMove") ? m_handler["MouseMove"] : null; }
-			set { SetHandler(value, "MouseMove"); }
-		}
-		[XmlAttribute("MouseLeave")]
-		public string MouseLeave
-		{
-			get { return m_handler.ContainsKey("MouseLeave") ? m_handler["MouseLeave"] : null; }
-			set { SetHandler(value, "MouseLeave"); }
-		}*/
 		public bool Resizeable
 		{
 			get { return m_bIsResizeable; }
@@ -195,6 +168,7 @@ namespace X11.Widgets
 		}
 		public abstract void Show();
 		public abstract void Hide();
+		protected abstract void EnableFullscreen( bool enabled, int width, int height);
 
 		internal BaseWindow(string strDisplay)
 		{
@@ -240,7 +214,9 @@ namespace X11.Widgets
 			m_iBorderWidth = 0;
 
 		}
-		protected virtual void OnCreated(XEvent args)
+
+
+		protected virtual void OnCreate(XEvent args)
 		{
 			if (Created != null) Created(this, new XEventArgs());
 		}
@@ -289,7 +265,60 @@ namespace X11.Widgets
 			if (Move != null)
 				Move(this, arg);
 		}
-
+		protected virtual void OnKeyPress(XEvent xevent)
+		{
+			if (KeyPress != null)
+				KeyPress(this, new XKeyEventArgs((Keys)xevent.KeyEvent.keycode));
+		}
+		protected virtual void OnKeyRelease(XEvent xevent)
+		{
+			if (KeyPress != null)
+				KeyRelease(this, new XKeyEventArgs((Keys)xevent.KeyEvent.keycode));
+		}
+		protected virtual void OnFocus(XEvent xevent)
+		{
+			m_bHaveFocus = true;
+			if (Focus != null)
+				Focus(this, new XEventArgs());
+		}
+		protected virtual void OnLostFocus(XEvent xevent)
+		{
+			m_bHaveFocus = false;
+			if (LostFocus != null)
+				LostFocus(this, new XEventArgs());
+		}
+		protected virtual void OnExpose(XEvent xevent)
+		{
+			if (Expose != null)
+				Expose(this, new XEventArgs());
+		}
+		protected virtual void OnMouseMove(XEvent xevent)
+		{
+			if (MouseMove != null)
+				MouseMove(this, new XMotionEventArgs(new Point(
+					xevent.MotionEvent.x,
+					xevent.MotionEvent.y)));
+		}
+		protected virtual void OnShow(XEvent xevent)
+		{
+			if (Showed != null)
+				Showed(this, new XEventArgs());
+		}
+		protected virtual void OnHide(XEvent xevent)
+		{
+			if (Hidded != null)
+				Hidded(this, new XEventArgs());
+		}
+		protected virtual void OnMouseEnter(XEvent args)
+		{
+			if (MouseEnter != null)
+				MouseEnter(this, new XEventArgs());
+		}
+		protected virtual void OnMouseLeave(XEvent args)
+		{
+			if (MouseLeave != null)
+				MouseLeave(this, new XEventArgs());
+		}
 		public int RegisterChild(BaseWindow pWindow)
 		{
 			if (null == pWindow)
@@ -305,6 +334,39 @@ namespace X11.Widgets
 			{
 				return m_pParentWindow.RegisterChild(pWindow);
 			}
+		}
+		protected virtual void OnMouseButtonPress(XEvent xevent)
+		{
+			MouseButton button = (MouseButton)xevent.ButtonEvent.button;
+
+			var mousex = xevent.ButtonEvent.x;
+			var mousey = xevent.ButtonEvent.y;
+
+
+			if (MouseButtonPress != null)
+				MouseButtonPress(this, new XMouseButtonPressArgs(new Point(mousex,
+					mousey), button));
+
+		}
+		protected virtual void OnMouseButtonRelease(XEvent xevent)
+		{
+			MouseButton button = (MouseButton)xevent.ButtonEvent.button;
+
+			var mousex = xevent.ButtonEvent.x;
+			var mousey = xevent.ButtonEvent.y;
+
+			if (button == MouseButton.ScrollDown || button == MouseButton.ScrollUp)
+				{
+					var delta = button == MouseButton.ScrollUp ? 1 : -1;
+					if (MouseScroll != null)
+						MouseScroll(this, new XMouseScrollArgs(delta));
+				}
+			else
+				{
+					if (MouseButtonRelease != null)
+						MouseButtonRelease(this, new XMouseButtonReleaseArgs(new Point(mousex, mousey), button));
+				}
+
 		}
 		public void UnregisterChild(int iId)
 		{
@@ -347,7 +409,7 @@ namespace X11.Widgets
 
 		private void SetRectangle(string value)
 		{
-			m_xRectangle = new libral.Rectangle(value);
+			m_xRectangle = new System.Common.Rectangle(value);
 			if (m_bIsCreated)
 			{
 					Lib.XMoveResizeWindow(m_pDisplay.RawHandle, m_pHandle, (TInt)m_xRectangle.X, (TInt)m_xRectangle.Y, 
@@ -412,20 +474,29 @@ namespace X11.Widgets
 		{
 			switch (xevent.type)
 			{
+				case XEventName.CreateNotify:
+					OnCreate(xevent);
+					break;
+				case XEventName.DestroyNotify:
+					OnDestroy(xevent);
+					break;
+				case XEventName.ButtonRelease:
+					OnMouseButtonRelease(xevent);
+					break;
 				case XEventName.ClientMessage:
 				{
 					IntPtr protocolsAtom = Lib.XInternAtom(Display.RawHandle, "WM_PROTOCOLS", false);
 					IntPtr deleteWindowAtom = Lib.XInternAtom(Display.RawHandle, "WM_DELETE_WINDOW", false);
 
 					if (xevent.ClientMessageEvent.message_type == protocolsAtom &&
-					    xevent.ClientMessageEvent.ptr1 == deleteWindowAtom)
+					   xevent.ClientMessageEvent.ptr1 == deleteWindowAtom)
 					{
-						OnClientMessage(xevent);
-
 						return false;
 					}
+					OnClientMessage(xevent);
 				}
 				break;
+		
 				case XEventName.ConfigureNotify:
 					{
 						if (Rectangle.Width != (int)xevent.ConfigureEvent.width ||
@@ -445,22 +516,42 @@ namespace X11.Widgets
 						}
 					}
 					break;
+				case XEventName.MapNotify:
+					OnShow(xevent);
+					break;
+				case XEventName.UnmapNotify:
+					OnHide(xevent);
+					break;
+				case XEventName.KeyPress:
+					OnKeyPress(xevent);
+					break;
+				case XEventName.KeyRelease:
+					OnKeyRelease(xevent);
+					break;
+				case XEventName.FocusOut:
+					OnLostFocus(xevent);
+					break;
+				case XEventName.FocusIn:
+					OnFocus(xevent);
+					break;
+				case XEventName.Expose:
+					OnExpose(xevent);
+					break;
+				case XEventName.MotionNotify:
+					OnMouseMove(xevent);
+					break;
+				case XEventName.EnterNotify:
+					OnMouseEnter(xevent);
+					break;
+				case XEventName.LeaveNotify:
+					OnMouseLeave(xevent);
+					break;
 				default:
+					if (UnknownEvent != null)
+						UnknownEvent(this, new XUnknownEventArgs(xevent));
 					break;
 			}
-
-
-
-
-			if (xevent.type == XEventName.FocusOut)
-			{
-				m_bHaveFocus = false;
-				
-			}
-			else if (xevent.type == XEventName.FocusIn)
-			{
-				m_bHaveFocus = true;
-			}
+					
 
 			return m_bIsCreated;
 		}

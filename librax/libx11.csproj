@@ -89,6 +89,11 @@
     <Compile Include="Widgets\Event\XResizeEventArgs.cs" />
     <Compile Include="Widgets\Event\XMoveEventArgs.cs" />
     <Compile Include="Widgets\Event\XKeyEventArgs.cs" />
+    <Compile Include="Widgets\Event\XMotionEventArgs.cs" />
+    <Compile Include="Widgets\Event\XMouseButtonPressArgs.cs" />
+    <Compile Include="Widgets\Event\XMouseButtonReleaseArgs.cs" />
+    <Compile Include="Widgets\Event\XMouseScrollArgs.cs" />
+    <Compile Include="Widgets\Event\XUnknownEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libral\libral.csproj">

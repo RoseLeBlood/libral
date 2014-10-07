@@ -27,15 +27,17 @@ using X11.Widgets;
 using liboRg;
 using liboRg.Window;
 using liboRg.OpenGL;
+using liboRg.Context;
 
 namespace test
 {
 	public class TestGame : Game
 	{
-		long lastTime;
+		double lastTime;
 		int nbFrames = 0;
 
-		public TestGame() : base(":0", new GameResolution(Screens.PrimaryScreen[3], 24),
+
+		public TestGame() : base(":0", new GameContextConfig(new GameResolution(Screens.PrimaryScreen[3], 24)),
 			"Hallo Welt", WindowStyle.Resize)
 		{
 
@@ -44,16 +46,16 @@ namespace test
 		{
 			ClearColor = Colors.CornflowerBlue;
 			lastTime = this.GameContext.Time;
+
+
 		}
 		protected override bool Move(liboRg.Input.InputState keyState)
 		{
-			long currentTime = this.GameContext.Time;
+			double currentTime = this.GameContext.Time;
 			nbFrames++;
 			if (currentTime - lastTime >= 1.0)
-			{ // If last prinf() was more than 1 sec ago
-				// printf and reset timer
-				//printf("%f ms/frame\n", 1000.0/double(nbFrames));
-				this.Window.Title = ((double)nbFrames).ToString();
+			{ 
+				this.Window.Title = string.Format("FPS: {0}", nbFrames);
 				nbFrames = 0;
 				lastTime += 1;
 			}

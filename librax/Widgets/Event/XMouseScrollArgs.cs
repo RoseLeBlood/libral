@@ -1,5 +1,5 @@
 ﻿//
-//  MonitorMode.cs
+//  XMouseScrollArgs.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,33 +19,26 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Common;
 
-namespace X11
+namespace X11.Widgets.Event
 {
-	[Serializable]
-	public class MonitorMode
+	public enum MouseScrollDirection : int
 	{
-		private Size m_sSize;
-		private double  m_iRate;
+		Up = 1,
+		Down = -1
+	}
+	public class XMouseScrollArgs : XEventArgs
+	{
+		private MouseScrollDirection m_eScrollDirection;
 
-		public Size Size { get { return m_sSize; } }
-		public double Rate { get { return m_iRate; } }
-
-
-		public MonitorMode(Size size, int iRate)
+		public MouseScrollDirection ScrollDirection
 		{
-			m_sSize = size;
-			m_iRate = iRate;
+			get { return m_eScrollDirection; }
 		}
-		internal MonitorMode(Size size, string ratestring)
+
+		public XMouseScrollArgs(int direction)
 		{
-			m_iRate = double.Parse(ratestring.Replace("*", "").Replace("+", "").Replace(".", ","));
-			m_sSize = size;
-		}
-		public override string ToString()
-		{
-			return string.Format("{0}@{1}", Size, Rate);
+			m_eScrollDirection = (MouseScrollDirection)direction;
 		}
 	}
 }

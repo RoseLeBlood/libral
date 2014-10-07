@@ -49,9 +49,9 @@ namespace X11
 			Dispose(true);
 			//GC.SupressFinalize(this);
 		}
-		public void Register(bool eindeutig = false)
+		public virtual bool Register(bool eindeutig = false)
 		{
-			X11.Widgets.Application.Current.RegisterHandle(this, eindeutig);
+			return X11.Widgets.Application.Current.RegisterHandle(this, eindeutig);
 		}
 
 		protected virtual void CleanUpManagedResources()
