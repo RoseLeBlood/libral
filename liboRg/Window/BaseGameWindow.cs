@@ -61,7 +61,7 @@ namespace liboRg.Window
 				EventMask.KeyReleaseMask | EventMask.StructureNotifyMask | EventMask.EnterWindowMask | 
 				EventMask.LeaveWindowMask | EventMask.All;
 
-			this.Created += new EventHandler<XEventArgs>(	BaseGameWindow_Created);
+			this.Created += BaseGameWindow_Created;
 			KeyPress += BaseGameWindow_KeyPressed;
 			KeyRelease += BaseGameWindow_KeyRelease;
 			Resize += BaseGameWindow_Resize;

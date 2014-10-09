@@ -22,6 +22,7 @@ using System;
 using X11;
 using liboRg.Window;
 using System.Common;
+using liboRg.Context;
 
 namespace liboRg.OpenGL
 {
@@ -33,18 +34,21 @@ namespace liboRg.OpenGL
 	}
 	public interface IGLNativeContext 
 	{
-		BaseGameWindow Window { get; }
-		bool 		   Owned { get; }
-		IntPtr		   RawHandle { get; }
-		Rectangle      DefaultViewport { get; }
-		Rectangle	   Viewport { get; set; }
+		BaseGameWindow 		Window 				{ get; }
+		GameContextConfig 	GameConfig 			{ get; }
+		INativContextConfig NativeConfig 		{ get; }
+		bool 		   		Owned 				{ get; }
+		IntPtr		   		RawHandle 			{ get; }
+		Rectangle      		DefaultViewport 	{ get; }
+		Rectangle	   		Viewport 			{ get; set; }
+		VSyncMode	   		VScyn 				{ get; set; }
 
-		VSyncMode	   VScyn { get; set; }
-
-		Delegate GetProc<T>(string name);
 
 		void Activate();
 		void Present();
+		void CreateContext();
+
+		INativContextConfigs GetConfigs();
 	}
 }
 

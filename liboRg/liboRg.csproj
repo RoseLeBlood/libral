@@ -55,6 +55,10 @@
     <Compile Include="Texture.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="ImageHandle.cs" />
+    <Compile Include="OpenGL\OpenGLExtension.cs" />
+    <Compile Include="OpenGL\GLX\FBConfig.cs" />
+    <Compile Include="OpenGL\INativContextConfig.cs" />
+    <Compile Include="OpenGL\Extensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -72,6 +76,7 @@
     <Folder Include="Input\" />
     <Folder Include="Window\" />
     <Folder Include="OpenGL\" />
+    <Folder Include="OpenGL\GLX\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -48,151 +48,9 @@ namespace liboRg.OpenGL
 			DynamicRead 			= (uint)GL.DYNAMIC_READ_ARB,
 			DynamicCopy 			= (uint)GL.DYNAMIC_COPY_ARB,
 		}
-		private static bool m_bLoaded = false;
 
-		public static void LoadExtension(IGLNativeContext ctx)
-		{
-			if (m_bLoaded)
-				return;
-
-			InitVbo(ctx);
-			InitShaderProgram(ctx);
-
-			m_bLoaded = true;
-		}
-		private static void InitVbo(IGLNativeContext ctx)
-		{
-			glGenBuffersARB = (GenBuffersARB)ctx.GetProc<GenBuffersARB>("glGenBuffersARB");
-			glBindBufferARB = (BindBufferARB)ctx.GetProc<BindBufferARB>("glBindBufferARB");
-			glBufferDataARB = (BufferDataARB)ctx.GetProc<BufferDataARB>("glBufferDataARB");
-			glBufferSubDataARB = (BufferSubDataARB)ctx.GetProc<BufferSubDataARB>("glBufferSubDataARB");
-			glDeleteBuffersARB = (DeleteBuffersARB)ctx.GetProc<DeleteBuffersARB>("glDeleteBuffersARB");
-			glMapBufferARB = (MapBufferARB)ctx.GetProc<MapBufferARB>("glMapBufferARB");
-			glUnmapBufferARB = (UnmapBufferARB)ctx.GetProc<UnmapBufferARB>("glUnmapBufferARB");
-			#if DEBUG
-			Console.WriteLine("INIT VBO : OK");
-			#endif
-		}
-		private static void InitShaderProgram(IGLNativeContext ctx)
-		{
-
-			glVertexAttrib1dARB = (VertexAttrib1dARB)ctx.GetProc<VertexAttrib1dARB>("glVertexAttrib1dARB");
-			glVertexAttrib1dvARB = (VertexAttrib1dvARB)ctx.GetProc<VertexAttrib1dvARB>("glVertexAttrib1dvARB");
-			glVertexAttrib1fARB = (VertexAttrib1fARB)ctx.GetProc<VertexAttrib1fARB>("glVertexAttrib1fARB");
-			glVertexAttrib1fvARB = (VertexAttrib1fvARB)ctx.GetProc<VertexAttrib1fvARB>("glVertexAttrib1fvARB");
-			glVertexAttrib1sARB = (VertexAttrib1sARB)ctx.GetProc<VertexAttrib1sARB>("glVertexAttrib1sARB");
-			glVertexAttrib1svARB = (VertexAttrib1svARB)ctx.GetProc<VertexAttrib1svARB>("glVertexAttrib1svARB");
-			glVertexAttrib2dARB = (VertexAttrib2dARB)ctx.GetProc<VertexAttrib2dARB>("glVertexAttrib2dARB");
-			glVertexAttrib2dvARB = (VertexAttrib2dvARB)ctx.GetProc<VertexAttrib2dvARB>("glVertexAttrib2dvARB");
-			glVertexAttrib2fARB = (VertexAttrib2fARB)ctx.GetProc<VertexAttrib2fARB>("glVertexAttrib2fARB");
-			glVertexAttrib2fvARB = (VertexAttrib2fvARB)ctx.GetProc<VertexAttrib2fvARB>("glVertexAttrib2fvARB");
-			glVertexAttrib2sARB = (VertexAttrib2sARB)ctx.GetProc<VertexAttrib2sARB>("glVertexAttrib2sARB");
-			glVertexAttrib2svARB = (VertexAttrib2svARB)ctx.GetProc<VertexAttrib2svARB>("glVertexAttrib2svARB");
-			glVertexAttrib3dARB = (VertexAttrib3dARB)ctx.GetProc<VertexAttrib3dARB>("glVertexAttrib3dARB");
-			glVertexAttrib3dvARB = (VertexAttrib3dvARB)ctx.GetProc<VertexAttrib3dvARB>("glVertexAttrib3dvARB");
-			glVertexAttrib3fARB = (VertexAttrib3fARB)ctx.GetProc<VertexAttrib3fARB>("glVertexAttrib3fARB");
-			glVertexAttrib3fvARB = (VertexAttrib3fvARB)ctx.GetProc<VertexAttrib3fvARB>("glVertexAttrib3fvARB");
-			glVertexAttrib3sARB = (VertexAttrib3sARB)ctx.GetProc<VertexAttrib3sARB>("glVertexAttrib3sARB");
-			glVertexAttrib3svARB = (VertexAttrib3svARB)ctx.GetProc<VertexAttrib3svARB>("glVertexAttrib3svARB");
-			glVertexAttrib4NbvARB = (VertexAttrib4NbvARB)ctx.GetProc<VertexAttrib4NbvARB>("glVertexAttrib4NbvARB");
-			glVertexAttrib4NivARB = (VertexAttrib4NivARB)ctx.GetProc<VertexAttrib4NivARB>("glVertexAttrib4NivARB");
-			glVertexAttrib4NsvARB = (VertexAttrib4NsvARB)ctx.GetProc<VertexAttrib4NsvARB>("glVertexAttrib4NsvARB");
-			glVertexAttrib4NubARB = (VertexAttrib4NubARB)ctx.GetProc<VertexAttrib4NubARB>("glVertexAttrib4NubARB");
-			glVertexAttrib4NubvARB = (VertexAttrib4NubvARB)ctx.GetProc<VertexAttrib4NubvARB>("glVertexAttrib4NubvARB");
-			glVertexAttrib4NuivARB = (VertexAttrib4NuivARB)ctx.GetProc<VertexAttrib4NuivARB>("glVertexAttrib4NuivARB");
-			glVertexAttrib4NusvARB = (VertexAttrib4NusvARB)ctx.GetProc<VertexAttrib4NusvARB>("glVertexAttrib4NusvARB");
-			glVertexAttrib4bvARB = (VertexAttrib4bvARB)ctx.GetProc<VertexAttrib4bvARB>("glVertexAttrib4bvARB");
-			glVertexAttrib4dARB = (VertexAttrib4dARB)ctx.GetProc<VertexAttrib4dARB>("glVertexAttrib4dARB");
-			glVertexAttrib4dvARB = (VertexAttrib4dvARB)ctx.GetProc<VertexAttrib4dvARB>("glVertexAttrib4dvARB");
-			glVertexAttrib4fARB = (VertexAttrib4fARB)ctx.GetProc<VertexAttrib4fARB>("glVertexAttrib4fARB");
-			glVertexAttrib4fvARB = (VertexAttrib4fvARB)ctx.GetProc<VertexAttrib4fvARB>("glVertexAttrib4fvARB");
-			glVertexAttrib4ivARB = (VertexAttrib4ivARB)ctx.GetProc<VertexAttrib4ivARB>("glVertexAttrib4ivARB");
-			glVertexAttrib4sARB = (VertexAttrib4sARB)ctx.GetProc<VertexAttrib4sARB>("glVertexAttrib4sARB");
-			glVertexAttrib4svARB = (VertexAttrib4svARB)ctx.GetProc<VertexAttrib4svARB>("glVertexAttrib4svARB");
-			glVertexAttrib4ubvARB = (VertexAttrib4ubvARB)ctx.GetProc<VertexAttrib4ubvARB>("glVertexAttrib4ubvARB");
-			glVertexAttrib4uivARB = (VertexAttrib4uivARB)ctx.GetProc<VertexAttrib4uivARB>("glVertexAttrib4uivARB");
-			glVertexAttrib4usvARB = (VertexAttrib4usvARB)ctx.GetProc<VertexAttrib4usvARB>("glVertexAttrib4usvARB");
-			glVertexAttribPointerARB = (VertexAttribPointerARB)ctx.GetProc<VertexAttribPointerARB>("glVertexAttribPointerARB");
-			glEnableVertexAttribArrayARB = (EnableVertexAttribArrayARB)ctx.GetProc<EnableVertexAttribArrayARB>("glEnableVertexAttribArrayARB");
-			glDisableVertexAttribArrayARB = (DisableVertexAttribArrayARB)ctx.GetProc<DisableVertexAttribArrayARB>("glDisableVertexAttribArrayARB");
-			glProgramStringARB = (ProgramStringARB)ctx.GetProc<ProgramStringARB>("glProgramStringARB");
-			glBindProgramARB = (BindProgramARB)ctx.GetProc<BindProgramARB>("glBindProgramARB");
-			glDeleteProgramsARB = (DeleteProgramsARB)ctx.GetProc<DeleteProgramsARB>("glDeleteProgramsARB");
-			glGenProgramsARB = (GenProgramsARB)ctx.GetProc<GenProgramsARB>("glGenProgramsARB");
-			glProgramEnvParameter4dARB = (ProgramEnvParameter4dARB)ctx.GetProc<ProgramEnvParameter4dARB>("glProgramEnvParameter4dARB");
-			glProgramEnvParameter4dvARB = (ProgramEnvParameter4dvARB)ctx.GetProc<ProgramEnvParameter4dvARB>("glProgramEnvParameter4dvARB");
-			glProgramEnvParameter4fARB = (ProgramEnvParameter4fARB)ctx.GetProc<ProgramEnvParameter4fARB>("glProgramEnvParameter4fARB");
-			glProgramEnvParameter4fvARB = (ProgramEnvParameter4fvARB)ctx.GetProc<ProgramEnvParameter4fvARB>("glProgramEnvParameter4fvARB");
-			glProgramLocalParameter4dARB = (ProgramLocalParameter4dARB)ctx.GetProc<ProgramLocalParameter4dARB>("glProgramLocalParameter4dARB");
-			glProgramLocalParameter4dvARB = (ProgramLocalParameter4dvARB)ctx.GetProc<ProgramLocalParameter4dvARB>("glProgramLocalParameter4dvARB");
-			glProgramLocalParameter4fARB = (ProgramLocalParameter4fARB)ctx.GetProc<ProgramLocalParameter4fARB>("glProgramLocalParameter4fARB");
-			glProgramLocalParameter4fvARB = (ProgramLocalParameter4fvARB)ctx.GetProc<ProgramLocalParameter4fvARB>("glProgramLocalParameter4fvARB");
-			glGetProgramEnvParameterdvARB = (GetProgramEnvParameterdvARB)ctx.GetProc<GetProgramEnvParameterdvARB>("glGetProgramEnvParameterdvARB");
-			glGetProgramEnvParameterfvARB = (GetProgramEnvParameterfvARB)ctx.GetProc<GetProgramEnvParameterfvARB>("glGetProgramEnvParameterfvARB");
-			glGetProgramLocalParameterdvARB = (GetProgramLocalParameterdvARB)ctx.GetProc<GetProgramLocalParameterdvARB>("glGetProgramLocalParameterdvARB");
-			glGetProgramLocalParameterfvARB = (GetProgramLocalParameterfvARB)ctx.GetProc<GetProgramLocalParameterfvARB>("glGetProgramLocalParameterfvARB");
-			glGetProgramivARB = (GetProgramivARB)ctx.GetProc<GetProgramivARB>("glGetProgramivARB");
-			glGetProgramStringARB = (GetProgramStringARB)ctx.GetProc<GetProgramStringARB>("glGetProgramStringARB");
-			glGetVertexAttribdvARB = (GetVertexAttribdvARB)ctx.GetProc<GetVertexAttribdvARB>("glGetVertexAttribdvARB");
-			glGetVertexAttribfvARB = (GetVertexAttribfvARB)ctx.GetProc<GetVertexAttribfvARB>("glGetVertexAttribfvARB");
-			glGetVertexAttribivARB = (GetVertexAttribivARB)ctx.GetProc<GetVertexAttribivARB>("glGetVertexAttribivARB");
-			glGetVertexAttribPointervARB = (GetVertexAttribPointervARB)ctx.GetProc<GetVertexAttribPointervARB>("glGetVertexAttribPointervARB");
-			glIsProgramARB = (IsProgramARB)ctx.GetProc<IsProgramARB>("glIsProgramARB");
-
-			glDeleteObjectARB = (DeleteObjectARB)ctx.GetProc<DeleteObjectARB>("glDeleteObjectARB");
-			glGetHandleARB = (GetHandleARB)ctx.GetProc<GetHandleARB>("glGetHandleARB");
-			glDetachObjectARB = (DetachObjectARB)ctx.GetProc<DetachObjectARB>("glDetachObjectARB");
-			glCreateShaderObjectARB = (CreateShaderObjectARB)ctx.GetProc<CreateShaderObjectARB>("glCreateShaderObjectARB");
-			glShaderSourceARB = (ShaderSourceARB)ctx.GetProc<ShaderSourceARB>("glShaderSourceARB");
-			glCompileShaderARB = (CompileShaderARB)ctx.GetProc<CompileShaderARB>("glCompileShaderARB");
-			glCreateProgramObjectARB = (CreateProgramObjectARB)ctx.GetProc<CreateProgramObjectARB>("glCreateProgramObjectARB");
-			glAttachObjectARB = (AttachObjectARB)ctx.GetProc<AttachObjectARB>("glAttachObjectARB");
-			glLinkProgramARB = (LinkProgramARB)ctx.GetProc<LinkProgramARB>("glLinkProgramARB");
-			glUseProgramObjectARB = (UseProgramObjectARB)ctx.GetProc<UseProgramObjectARB>("glUseProgramObjectARB");
-			glValidateProgramARB = (ValidateProgramARB)ctx.GetProc<ValidateProgramARB>("glValidateProgramARB");
-			glUniform1fARB = (Uniform1fARB)ctx.GetProc<Uniform1fARB>("glUniform1fARB");
-			glUniform2fARB = (Uniform2fARB)ctx.GetProc<Uniform2fARB>("glUniform2fARB");
-			glUniform3fARB = (Uniform3fARB)ctx.GetProc<Uniform3fARB>("glUniform3fARB");
-			glUniform4fARB = (Uniform4fARB)ctx.GetProc<Uniform4fARB>("glUniform4fARB");
-			glUniform1iARB = (Uniform1iARB)ctx.GetProc<Uniform1iARB>("glUniform1iARB");
-			glUniform2iARB = (Uniform2iARB)ctx.GetProc<Uniform2iARB>("glUniform2iARB");
-			glUniform3iARB = (Uniform3iARB)ctx.GetProc<Uniform3iARB>("glUniform3iARB");
-			glUniform4iARB = (Uniform4iARB)ctx.GetProc<Uniform4iARB>("glUniform4iARB");
-			glUniform1fvARB = (Uniform1fvARB)ctx.GetProc<Uniform1fvARB>("glUniform1fvARB");
-
-			//glUniform2fvARB = ctx.GetProc<Uniform2fvARB>("glUniform2fvARB");
-			//glUniform3fvARB = ctx.GetProc<Uniform3fvARB>("glUniform3fvARB");
-			//glUniform4fvARB = ctx.GetProc<Uniform4fvARB>("glUniform4fvARB");
-
-			glUniform1ivARB = (Uniform1ivARB)ctx.GetProc<Uniform1ivARB>("glUniform1ivARB");
-			glUniform2ivARB = (Uniform2ivARB)ctx.GetProc<Uniform2ivARB>("glUniform2ivARB");
-			glUniform3ivARB = (Uniform3ivARB)ctx.GetProc<Uniform3ivARB>("glUniform3ivARB");
-			glUniform4ivARB = (Uniform4ivARB)ctx.GetProc<Uniform4ivARB>("glUniform4ivARB");
-			glUniformMatrix2fvARB = (UniformMatrix2fvARB)ctx.GetProc<UniformMatrix2fvARB>("glUniformMatrix2fvARB");
-			glUniformMatrix3fvARB = (UniformMatrix3fvARB)ctx.GetProc<UniformMatrix3fvARB>("glUniformMatrix3fvARB");
-
-			//glUniformMatrix4fvARB = ctx.GetProc<UniformMatrix4fvARB>("glUniformMatrix4fvARB");
-
-			glGetObjectParameterfvARB = (GetObjectParameterfvARB)ctx.GetProc<GetObjectParameterfvARB>("glGetObjectParameterfvARB");
-			glGetObjectParameterivARB = (GetObjectParameterivARB)ctx.GetProc<GetObjectParameterivARB>("glGetObjectParameterivARB");
-			glGetInfoLogARB = (GetInfoLogARB)ctx.GetProc<GetInfoLogARB>("glGetInfoLogARB");
-			glGetAttachedObjectsARB = (GetAttachedObjectsARB)ctx.GetProc<GetAttachedObjectsARB>("glGetAttachedObjectsARB");
-			glGetUniformLocationARB = (GetUniformLocationARB)ctx.GetProc<GetUniformLocationARB>("glGetUniformLocationARB");
-			glGetActiveUniformARB = (GetActiveUniformARB)ctx.GetProc<GetActiveUniformARB>("glGetActiveUniformARB");
-			glGetUniformfvARB = (GetUniformfvARB)ctx.GetProc<GetUniformfvARB>("glGetUniformfvARB");
-			glGetUniformivARB = (GetUniformivARB)ctx.GetProc<GetUniformivARB>("glGetUniformivARB");
-			glGetShaderSourceARB = (GetShaderSourceARB)ctx.GetProc<GetShaderSourceARB>("glGetShaderSourceARB");
-
-			glProgramParameteriARB = (ProgramParameteriARB)ctx.GetProc<ProgramParameteriARB>("glProgramParameteriARB");
-			glFramebufferTextureARB = (FramebufferTextureARB)ctx.GetProc<FramebufferTextureARB>("glFramebufferTextureARB");
-			glFramebufferTextureLayerARB = (FramebufferTextureLayerARB)ctx.GetProc<FramebufferTextureLayerARB>("glFramebufferTextureLayerARB");
-			glFramebufferTextureFaceARB = (FramebufferTextureFaceARB)ctx.GetProc<FramebufferTextureFaceARB>("glFramebufferTextureFaceARB");
-		
-			#if DEBUG
-			Console.WriteLine("INIT ShaderProgram : OK");
-			#endif
-		}
-
+		public delegate IntPtr GetStringi(int n, uint index);
+		//public delegate int GetStringi(int n, uint index​);
 		public delegate void GenBuffersARB(int n, uint[] ids);
 		public delegate void BindBufferARB(VboTarget target, uint id);
 		public unsafe delegate void BufferDataARB(VboTarget target, int size, IntPtr data, VboUsage usage);
@@ -425,8 +283,7 @@ namespace liboRg.OpenGL
 		public static FramebufferTextureLayerARB glFramebufferTextureLayerARB;
 		public static FramebufferTextureFaceARB glFramebufferTextureFaceARB;
 
-
-
+		public static GetStringi glGetStringi;
 	}
 }
 

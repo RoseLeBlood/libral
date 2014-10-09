@@ -126,6 +126,10 @@ namespace liboRg.Context
 		{
 
 		}
+		public void CreateContext()
+		{
+			m_pNativeContext.CreateContext();
+		}
 		public virtual void Activate()
 		{
 			m_pNativeContext.Activate();

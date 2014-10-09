@@ -24,6 +24,7 @@ using liboRg.Input;
 using liboRg.Window;
 using liboRg.Context;
 using System.Common;
+using liboRg.OpenGL;
 
 
 namespace liboRg
@@ -90,7 +91,7 @@ namespace liboRg
 
 		public virtual void Create()
 		{
-
+			GameContext.CreateContext();
 		}
 		public virtual void Destroy()
 		{
@@ -105,32 +106,29 @@ namespace liboRg
 		}
 		protected virtual bool Draw()
 		{
+			gl.glClearColor ( 0, 0.5f, 1f, 1f );
+			gl.glClear ( (int)GL.COLOR_BUFFER_BIT );
+
 			return true;
 		}
 		public virtual void OnResize(Rectangle newSize)
 		{
-			Console.Write("{0}\r", newSize);
-
 			newSize.X = newSize.Y = 0;
-
 			GameContext.Viewport = newSize;
 		}
 
 		public void OnMove(Rectangle position)
 		{
-			Console.Write("{0}\r", position);
 		}
 
 		internal bool drawing()
 		{
-
-
+			bool ret = true;
 			if (Move( (InputState)m_pKeyboard.GetState() ) == true)
-				Draw();
-
-			// SwappBuffer
+				ret = Draw();
+				
 			GameContext.Swap();
-			return true;
+			return ret;
 		}
 
 		internal void InternalKeyPress(X11.Keys keycode)

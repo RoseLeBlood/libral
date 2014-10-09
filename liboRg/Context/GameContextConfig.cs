@@ -26,13 +26,15 @@ namespace liboRg.Context
 {
 	public class GameContextConfig
 	{
-		private int m_iColor;
-		private int m_iDepth;
-		private int m_iStencil;
-		private int m_iAntialias;
+		private int 			     	m_iColor;
+		private int 		         	m_iDepth;
+		private int 				 	m_iStencil;
 
-		private GameResolution m_pResolution;
-		private VSyncMode	   m_pVSync;
+		private GameResolution 		 	m_pResolution;
+		private VSyncMode	   		 	m_pVSync;
+		private NativContextConfigTyp 	m_pConfigTyp;
+		private int  					m_pConfigInt;
+		private bool					m_bSamples;
 
 		public int Color
 		{
@@ -49,11 +51,6 @@ namespace liboRg.Context
 			get { return m_iStencil; }
 			set { m_iStencil = value; }
 		}
-		public int Antialias
-		{
-			get { return m_iAntialias; }
-			set { m_iAntialias = value; }
-		}
 		public GameResolution Resolution
 		{
 			get { return m_pResolution; }
@@ -64,16 +61,32 @@ namespace liboRg.Context
 			get { return m_pVSync; }
 			set { m_pVSync = value; }
 		}
-
-		public GameContextConfig(GameResolution pResolution, int iColor = 32, int iDepth = 24, int iStencil = 0,
-			int iAntialias = 0, VSyncMode pVsync = VSyncMode.Adaptive )
+		public NativContextConfigTyp GraphicConfigType
+		{
+			get { return m_pConfigTyp; }
+			set { m_pConfigTyp = value; }
+		}
+		public int NormalGraphicConfigTypeNumber
+		{
+			get { return m_pConfigInt; }
+			set { m_pConfigInt = value; }
+		}
+		public bool EnableSample
+		{
+			get { return m_bSamples; }
+			set { m_bSamples = value; }
+		}
+		public GameContextConfig(GameResolution pResolution, int iColor = 24, int iDepth = 24, int iStencil = 8, 
+			bool bSamples = true, NativContextConfigTyp pGraphicType = NativContextConfigTyp.Best, VSyncMode pVsync = VSyncMode.Adaptive )
 		{
 			m_iColor = iColor;
 			m_iDepth = iDepth;
 			m_iStencil = iStencil;
-			m_iAntialias = iAntialias;
 			m_pResolution = pResolution;
 			m_pVSync = pVsync;
+			m_pConfigTyp = pGraphicType;
+			m_pConfigInt = 0;
+			m_bSamples = bSamples;
 		}
 	}
 }

@@ -1,12 +1,6 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="librax/Widgets/BaseWindow.cs">
-    <Files>
-      <File FileName="liboRg/Context/GameContext.cs" Line="82" Column="26" />
-      <File FileName="test/Program.cs" Line="58" Column="18" />
-      <File FileName="librax/Widgets/BaseWindow.cs" Line="369" Column="5" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/home/annasophia/rasLinux/librax/Widgets/Color.cs" line="365" column="1" />

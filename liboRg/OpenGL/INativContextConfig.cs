@@ -1,5 +1,5 @@
 ﻿//
-//  InputState.cs
+//  ICNativContextConfig.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,20 +19,30 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11;
+using System.Collections.Generic;
 
-namespace liboRg.Input
+namespace liboRg.OpenGL
 {
-	public class InputState : IState
+	public enum NativContextConfigTyp
 	{
-		private bool[] m_arKeys = new bool[256];
+		Best,
+		Worst,
+		Normal
+	}
 
-		public bool this[Keys key] 
-		{
-			get { return m_arKeys[(int)key]; }
-			internal set { m_arKeys[(int)key] = true; }
-		}
+	public interface INativContextConfig
+	{
+		IntPtr Config { get; }
+		int    ID { get; }
 
+		NativContextConfigTyp Typ { get; }
+	}
+	public interface INativContextConfigs
+	{
+		IList<INativContextConfig> Configs { get; }
+
+		INativContextConfig Best { get; }
+		INativContextConfig Worst { get; }
 	}
 }
 

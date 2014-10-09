@@ -44,6 +44,8 @@ namespace test
 		}
 		public override void Create()
 		{
+			base.Create();
+
 			ClearColor = Colors.CornflowerBlue;
 			lastTime = this.GameContext.Time;
 

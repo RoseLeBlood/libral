@@ -28,16 +28,49 @@ using X11.Widgets;
 using X11._internal;
 using liboRg.Context;
 using liboRg.Window;
+using liboRg.GLX;
 
 namespace liboRg.OpenGL
 {
+	[StructLayout(LayoutKind.Sequential)]
+	public struct XVisualInfo
+	{
+		public IntPtr Visual;
+		public IntPtr VisualID;
+		public int Screen;
+		public int Depth;
+		public int Class;
+		public long RedMask;
+		public long GreenMask;
+		public long blueMask;
+		public int ColormapSize;
+		public int BitsPerRgb;
 
+		public override string ToString()
+		{
+			return String.Format("VisualID: {0}, RedMask: {1} GreenMask: {2} blueMask: {3}  Depth: {4}",
+				VisualID,RedMask, GreenMask, blueMask, Depth);
+		}
+	}
 	public class glxNativeContext : UnmanagedHandle, IGLNativeContext
 	{
-		private BaseGameWindow m_pWindow;
-		private bool           m_bOwned;
-		private Rectangle      m_rDefaultViewport;
-		private VSyncMode	   m_bVsync = VSyncMode.Disable;
+		private BaseGameWindow 		m_pWindow;
+		private bool           		m_bOwned;
+		private Rectangle      		m_rDefaultViewport;
+		private VSyncMode	   		m_bVsync = VSyncMode.Disable;
+		private GameContextConfig 	m_pGameConfig;
+		private INativContextConfig m_pNativeConfig;
+		private INativContextConfigs m_pConfigs;
+
+		public GameContextConfig GameConfig
+		{
+			get { return m_pGameConfig; }
+		}
+
+		public INativContextConfig NativeConfig
+		{
+			get { return m_pNativeConfig; }
+		}
 
 		public BaseGameWindow Window
 		{
@@ -101,35 +134,32 @@ namespace liboRg.OpenGL
 			m_bOwned = false;
 			m_rDefaultViewport = Viewport;
 		}
-
-		public glxNativeContext(BaseGameWindow handle, GameContextConfig pConfig) 
+		public glxNativeContext(BaseGameWindow handle, GameContextConfig pConfig)
 			: base("OPENGL_CONTEXT", IntPtr.Zero)
 		{
 			m_pWindow = handle;
-			LoadExtension();
-
-			CreateContext(pConfig);
 			m_bOwned = true;
-		
 			m_rDefaultViewport = Viewport;
-		}
-		protected unsafe virtual void CreateContext(GameContextConfig pConfig)
-		{
-			int[] visual_attribs =
+			m_pGameConfig = pConfig;
+			m_pConfigs = new FBConfigs(m_pWindow, pConfig);
+
+			if (pConfig.GraphicConfigType == NativContextConfigTyp.Best)
 			{
-				(int)GLX.X_RENDERABLE, (int)GL.TRUE,
-				(int)GLX.DRAWABLE_TYPE, (int)GLX.WINDOW_BIT,
-				(int)GLX.DOUBLEBUFFER, (int)GL.TRUE,
-				(int)GLX.RENDER_TYPE, (int)GLX.RGBA_BIT,
-				(int)GLX.X_VISUAL_TYPE, (int)GLX.TRUE_COLOR,
-				(int)GLX.BUFFER_SIZE, pConfig.Color,
-				(int)GLX.DEPTH_SIZE, pConfig.Depth,
-				(int)GLX.STENCIL_SIZE, pConfig.Stencil,
-				(int)GLX.SAMPLE_BUFFERS, pConfig.Antialias > 1 ? (int)GL.TRUE : (int)GL.FALSE,
-				(int)GLX.SAMPLES, pConfig.Antialias > 1 ? (int)pConfig.Antialias : 0,
-				0
-			};
-										
+				m_pNativeConfig = m_pConfigs.Best;
+			}
+			else if (pConfig.GraphicConfigType == NativContextConfigTyp.Worst)
+			{
+				m_pNativeConfig = m_pConfigs.Worst;
+			}
+			else
+			{
+				m_pNativeConfig = m_pConfigs.Configs[pConfig.NormalGraphicConfigTypeNumber];
+			}
+
+			LoadExtension();
+		}
+		public unsafe virtual void CreateContext()
+		{
 			int glx_major, glx_minor;
 			if (!glXQueryVersion(m_pWindow.Display.RawHandle, out glx_major, out glx_minor) ||
 			    ((glx_major == 1) && (glx_minor < 3)) || (glx_major < 1))
@@ -137,37 +167,55 @@ namespace liboRg.OpenGL
 				Console.WriteLine("Invalid GLX version");
 					throw new System.Exception("[GLX] not supported");
 				
-				}
+			}
 			#if DEBUG
 			Console.WriteLine("glX String: {0}.{1}", glx_major, glx_minor);
 			#endif
+			Console.WriteLine("Using {0} Graphic Config", m_pNativeConfig.Typ);
 
-			int fbcount;
-			IntPtr* fbc = glXChooseFBConfig(m_pWindow.Display.RawHandle, 
-				m_pWindow.Display.Screen.ScreenNumber,
-				visual_attribs, out fbcount);
+			IntPtr ctx_old = glXCreateContext( m_pWindow.Display.RawHandle, ((FBConfig)m_pNativeConfig).VisualInfo, IntPtr.Zero, true );
 
-			if ( fbcount == 0 ) throw new System.Exception();
-			IntPtr config = fbc[0];
+			if (glXCreateContextAttribsARB == null)
+			{
+				Console.WriteLine("glXCreateContextAttribsARB() not found using old-style GLX context");
+				m_pHandle = ctx_old;
+			}
+			else
+			{
+				glXMakeCurrent( m_pWindow.Display.RawHandle, IntPtr.Zero, IntPtr.Zero );
+				glXDestroyContext( m_pWindow.Display.RawHandle, ctx_old );
 
+				IntPtr config = m_pNativeConfig.Config;
 
-
-			int[] attribs = {
+				int[] attribs =
+				{
 					(int)GLX.CONTEXT_MAJOR_VERSION_ARB, 3,
 					(int)GLX.CONTEXT_MINOR_VERSION_ARB, 2,
 					(int)GLX.CONTEXT_PROFILE_MASK_ARB, (int)GLX.CONTEXT_CORE_PROFILE_BIT_ARB,
 					0
 				};
-			m_pHandle =  glXCreateContextAttribsARB( m_pWindow.Display.RawHandle, config, 
-				IntPtr.Zero, true, attribs );
-			if ( m_pHandle == IntPtr.Zero ) throw new System.Exception("[GLX] OpenGL Version 3.2 not supported");
+				m_pHandle = glXCreateContextAttribsARB(m_pWindow.Display.RawHandle, config, 
+					IntPtr.Zero, true, attribs);
+				if (m_pHandle == IntPtr.Zero)
+				{
+					Console.WriteLine("Failed to create GL 3.2 context using old-style GLX context");
+					m_pHandle = glXCreateContext( m_pWindow.Display.RawHandle, ((FBConfig)m_pNativeConfig).VisualInfo, IntPtr.Zero, true );
+				}
+				glXMakeCurrent(m_pWindow.Display.RawHandle, m_pWindow.RawHandle, m_pHandle);
+			}
+			if (!glXIsDirect(m_pWindow.Display.RawHandle, m_pHandle))
+			{
+				throw new System.Exception("Indirect GLX rendering context obtained");
+			}
 
-			glXMakeCurrent( m_pWindow.Display.RawHandle, m_pWindow.RawHandle, m_pHandle );
-
-			VScyn = pConfig.VSync;
+			VScyn = m_pGameConfig.VSync;
+			Extensions.LoadExtensionsList();
 
 			Register();
-
+		}
+		public virtual INativContextConfigs GetConfigs()
+		{
+			return m_pConfigs;
 		}
 		public virtual void Activate()
 		{
@@ -190,14 +238,7 @@ namespace liboRg.OpenGL
 		{
 			glXSwapBuffers(m_pWindow.Display.RawHandle, m_pWindow.RawHandle);
 		}
-		public Delegate GetProc<T>(string name)
-		{
-			var ptr = glXGetProcAddressARB(name);
-			if (ptr == IntPtr.Zero)
-				return null;
 
-			return Marshal.GetDelegateForFunctionPointer(ptr, typeof(T));
-		}
 		protected override void CleanUpUnManagedResources()
 		{
 			if ( !m_bOwned ) return;
@@ -207,13 +248,13 @@ namespace liboRg.OpenGL
 		}
 		private void LoadExtension()
 		{
-			glXSwapIntervalSGI = (SwapIntervalSGI)GetProc<SwapIntervalSGI>("glXSwapIntervalSGI");
-			glXSwapIntervalMESA = (SwapIntervalMESA)GetProc<SwapIntervalMESA>("glXSwapIntervalMESA");
-			glXGetSwapIntervalMESA = (GetSwapIntervalMESA)GetProc<GetSwapIntervalMESA>("glXGetSwapIntervalMESA");
-			glXSwapIntervalEXT = (SwapIntervalEXT)GetProc<SwapIntervalEXT>("glXSwapIntervalEXT");
-			glXCreateContextAttribsARB = (CreateContextAttribsARB)GetProc<CreateContextAttribsARB>("glXCreateContextAttribsARB");
-
-			gl.LoadExtension(this);
+			glXSwapIntervalSGI = (SwapIntervalSGI)gl.GetProc<SwapIntervalSGI>("glXSwapIntervalSGI");
+			glXSwapIntervalMESA = (SwapIntervalMESA)gl.GetProc<SwapIntervalMESA>("glXSwapIntervalMESA");
+			glXGetSwapIntervalMESA = (GetSwapIntervalMESA)gl.GetProc<GetSwapIntervalMESA>("glXGetSwapIntervalMESA");
+			glXSwapIntervalEXT = (SwapIntervalEXT)gl.GetProc<SwapIntervalEXT>("glXSwapIntervalEXT");
+			glXCreateContextAttribsARB = (CreateContextAttribsARB)gl.GetProc<CreateContextAttribsARB>("glXCreateContextAttribsARB");
+		
+			gl.LoadExtension();
 		}
 
 		public const string DllName = "libGL.so";
@@ -260,6 +301,8 @@ namespace liboRg.OpenGL
 		[DllImport(DllName, EntryPoint = "glXChooseVisual")]
 		public extern static IntPtr ChooseVisual(IntPtr dpy, int screen, IntPtr attriblist);
 
+		[DllImport(DllName)]
+		public static extern bool glXIsDirect(IntPtr dpy, IntPtr ctx);
 		/*[DllImport(DllName, EntryPoint = "glXChooseVisual")]
 		public extern static IntPtr ChooseVisual(IntPtr dpy, int screen, ref int attriblist);*/
 
@@ -281,11 +324,20 @@ namespace liboRg.OpenGL
 
 		// Returns a pointer to an XVisualInfo structure.
 		[DllImport(DllName, EntryPoint = "glXGetVisualFromFBConfig")]
-		public unsafe extern static IntPtr glXGetVisualFromFBConfig(IntPtr dpy, IntPtr fbconfig);
+		public unsafe extern static XVisualInfo *glXGetVisualFromFBConfig(IntPtr dpy, IntPtr fbconfig);
 
 		[DllImport(DllName, EntryPoint = "glXGetProcAddressARB")]
 		public static extern IntPtr glXGetProcAddressARB([MarshalAs(UnmanagedType.LPTStr)] string procName);
 
+
+		[DllImport(DllName)]
+		public static extern int glXGetFBConfigAttrib(IntPtr dpy, IntPtr config, int attribute, ref int value);
+		[DllImport(DllName)]
+		public static extern IntPtr glXGetFBConfigs(IntPtr dpy, int screen, ref int nelements);
+		[DllImport(DllName)]
+		public static extern IntPtr glXCreateWindow(IntPtr dpy, IntPtr config, IntPtr win, int[] attribList);
+		[DllImport(DllName)]
+		public static extern void glXDestroyWindow(IntPtr dpy, IntPtr window);
 
 		public delegate IntPtr CreateContextAttribsARB(IntPtr display, IntPtr fbconfig, IntPtr share_context, bool direct, int[] attribs);
 		public static CreateContextAttribsARB glXCreateContextAttribsARB = null;
