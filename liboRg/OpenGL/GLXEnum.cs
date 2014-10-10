@@ -24,6 +24,8 @@ namespace liboRg.OpenGL
 {
 	public enum GLX : int
 	{
+
+
 		CONTEXT_MAJOR_VERSION_ARB      = 0x2091,
 		CONTEXT_MINOR_VERSION_ARB      = 0x2092,
 
@@ -32,6 +34,8 @@ namespace liboRg.OpenGL
 
 		CONTEXT_CORE_PROFILE_BIT_ARB         = 0x00000001,
 		CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB = 0x00000002,
+		CONTEXT_DEBUG_BIT_ARB = 0x0001,
+		CONTEXT_FORWARD_COMPATIBLE_BIT_ARB = 0x0002,
 
 		USE_GL							= 1,	/* support GLX rendering */
 		BUFFER_SIZE						= 2,	/* depth of the color buffer */

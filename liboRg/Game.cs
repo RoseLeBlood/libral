@@ -20,7 +20,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using X11.Widgets;
-using liboRg.Input;
 using liboRg.Window;
 using liboRg.Context;
 using System.Common;
@@ -31,16 +30,21 @@ namespace liboRg
 {
 	public class Game
 	{
-		private BaseGameWindow m_pGameWindow;
-		private Keyboard	   m_pKeyboard;
+		private IGameWindow m_pGameWindow;
 		private GameContextConfig m_pContextConfig;
+		private bool			  m_bDisableDraw;
 
 		internal string		   m_strDisplay;
 
 		public Display		   Display { get { return m_pGameWindow.Display; } }
 		public Rectangle	   Bounds { get { return m_pGameWindow.Rectangle; } }
-		public BaseGameWindow  Window { get { return m_pGameWindow; } }
+		public IGameWindow     Window { get { return m_pGameWindow; } }
 
+		internal bool DisableQue
+		{
+			get { return m_bDisableDraw; }
+			set { m_bDisableDraw = value; }
+		}
 		public Color ClearColor
 		{
 			get { return GameContext.ClearColor; }
@@ -70,7 +74,13 @@ namespace liboRg
 
 		public GameContext GameContext
 		{
-			get { return Window.Context; }
+			get
+			{ 
+				if(Window is BaseGameWindow2)
+					return ((BaseGameWindow2)Window).Context; 
+				else
+					return ((BaseGameWindow)Window).Context; 
+			}
 		}
 
 
@@ -79,9 +89,7 @@ namespace liboRg
 			m_strDisplay = strDisplay;
 			m_pContextConfig = pConfig;
 
-			m_pGameWindow = new BaseGameWindow(this, title, style );
-			m_pKeyboard = new Keyboard();
-
+			m_pGameWindow = new BaseGameWindow2(this, title, style );
 		}
 
 		public void Init()
@@ -97,18 +105,15 @@ namespace liboRg
 		{
 
 		}
-		protected virtual bool Move(InputState keyState)
+		protected virtual bool Move()
 		{
-			if (keyState[X11.Keys.Escape])
+			if (Window.IsKeyDown(X11.Keys.Escape))
 				Application.Current.Exit();
 
 			return true;
 		}
 		protected virtual bool Draw()
 		{
-			gl.glClearColor ( 0, 0.5f, 1f, 1f );
-			gl.glClear ( (int)GL.COLOR_BUFFER_BIT );
-
 			return true;
 		}
 		public virtual void OnResize(Rectangle newSize)
@@ -123,21 +128,15 @@ namespace liboRg
 
 		internal bool drawing()
 		{
+			if (DisableQue)
+				return true;
+
 			bool ret = true;
-			if (Move( (InputState)m_pKeyboard.GetState() ) == true)
+			if (Move( ))
 				ret = Draw();
 				
 			GameContext.Swap();
 			return ret;
-		}
-
-		internal void InternalKeyPress(X11.Keys keycode)
-		{
-			m_pKeyboard.SetPress(keycode);
-		}
-		internal void InternalKeyRelease(X11.Keys keycode)
-		{
-			m_pKeyboard.SetRelease(keycode);
 		}
 	}
 }

@@ -23,12 +23,13 @@ using X11;
 using System.Common;
 using liboRg.OpenGL;
 using liboRg.Window;
+using X11.Widgets;
 
 namespace liboRg.Context
 {
 	public class X11Context : GameContext
 	{
-		public X11Context(BaseGameWindow window, GameContextConfig pConfig)
+		public X11Context(BaseWindow window, GameContextConfig pConfig)
 			: base("X11_CCONTEXT")
 		{
 			m_pNativeContext = new glxNativeContext(window, pConfig);

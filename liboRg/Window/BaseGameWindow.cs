@@ -25,21 +25,30 @@ using X11.Widgets;
 using X11.Widgets.Event;
 using X11._internal;
 using liboRg.Context;
-using liboRg.Input;
+
 
 namespace liboRg.Window
 {
-	public class BaseGameWindow : SimpleWindow
+	public class BaseGameWindow : SimpleWindow, IGameWindow
 	{
 		private Game m_pGame;
 		private GameContext m_pIContext;
+		private bool[] 		m_bMouse = new bool[3];
+		private bool[] 		m_bKeys= new bool[100];
+
+		public bool IsKeyDown(Keys key)
+		{
+			return m_bKeys[(int)key];
+		}
+
+		public bool[] Input
+		{
+			get { return m_bKeys; }
+		}
 
 		public GameContext Context
 		{
-			get
-			{
-				return m_pIContext;
-			}
+			get { return m_pIContext; }
 		}
 
 		public BaseGameWindow(Game pGame, string title, WindowStyle style )
@@ -68,33 +77,40 @@ namespace liboRg.Window
 			UserEvent += BaseGameWindow_UserEvents;
 			Move += BaseGameWindow_Move;
 		}
-
+		public override void Create()
+		{
+			base.Create();
+			Application.Current.MainWindowStr = Name;
+		}
 
 		protected void BaseGameWindow_UserEvents(Object sender, XEventArgs args)
 		{
+			m_pGame.DisableQue = false;
 			m_pGame.drawing();
 		}
 
 		protected void BaseGameWindow_Created(Object sender, XEventArgs args)
 		{
 			m_pIContext = new X11Context(this, m_pGame.ContextConfig);
-
+			m_pGame.DisableQue = true;
 			m_pGame.Create();
 		}
 		protected void BaseGameWindow_KeyPressed(Object sender, XKeyEventArgs args)
 		{
-			m_pGame.InternalKeyPress(args.Key);
+			m_pGame.DisableQue = true;
 		}
 		protected void BaseGameWindow_KeyRelease(Object sender, XKeyEventArgs args)
 		{
-			m_pGame.InternalKeyRelease(args.Key);
+			m_pGame.DisableQue = true;
 		}
 		protected void BaseGameWindow_Resize(Object sender, XEventArgs args)
 		{
 			m_pGame.OnResize(this.Rectangle);
+			m_pGame.DisableQue = true;
 		}
 		protected void BaseGameWindow_Move(Object sender, XEventArgs args)
 		{
+			m_pGame.DisableQue = true;
 			m_pGame.OnMove(this.Rectangle);
 		}
 	}

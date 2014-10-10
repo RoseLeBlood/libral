@@ -23,6 +23,7 @@ using X11;
 using liboRg.Window;
 using System.Common;
 using liboRg.Context;
+using X11.Widgets;
 
 namespace liboRg.OpenGL
 {
@@ -34,7 +35,7 @@ namespace liboRg.OpenGL
 	}
 	public interface IGLNativeContext 
 	{
-		BaseGameWindow 		Window 				{ get; }
+		BaseWindow 			Window 				{ get; }
 		GameContextConfig 	GameConfig 			{ get; }
 		INativContextConfig NativeConfig 		{ get; }
 		bool 		   		Owned 				{ get; }
@@ -45,8 +46,11 @@ namespace liboRg.OpenGL
 
 
 		void Activate();
+		void DeActivate();
+
 		void Present();
 		void CreateContext();
+
 
 		INativContextConfigs GetConfigs();
 	}

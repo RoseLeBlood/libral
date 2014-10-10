@@ -1,5 +1,5 @@
 ﻿//
-//  IState.cs
+//  IGameWindow.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,14 +19,28 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using X11;
+using liboRg.Context;
+using X11.Widgets;
+using System.Common;
 
-namespace liboRg.Input
+namespace liboRg.Window
 {
-	public class IState 
+	public interface IGameWindow
 	{
-		public IState()
-		{
-		}
+		GameContext Context { get; }
+		bool[]  Input	{ get; }
+
+		Display Display { get; }
+		Rectangle Rectangle { get;  }
+
+		string Title { get; set; }
+
+		string Name { get; set; }
+
+		bool IsKeyDown( Keys key );
+
+		void Create();
 	}
 }
 

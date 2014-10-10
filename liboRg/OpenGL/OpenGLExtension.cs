@@ -168,6 +168,20 @@ namespace liboRg.OpenGL
 			glFramebufferTextureARB = (FramebufferTextureARB)GetProc<FramebufferTextureARB>("glFramebufferTextureARB");
 			glFramebufferTextureLayerARB = (FramebufferTextureLayerARB)GetProc<FramebufferTextureLayerARB>("glFramebufferTextureLayerARB");
 			glFramebufferTextureFaceARB = (FramebufferTextureFaceARB)GetProc<FramebufferTextureFaceARB>("glFramebufferTextureFaceARB");
+			glReleaseShaderCompiler = (ReleaseShaderCompiler)GetProc<ReleaseShaderCompiler>("glReleaseShaderCompiler");
+			glShaderBinary = (ShaderBinary)GetProc<ShaderBinary>("glShaderBinary");
+			glGetShaderPrecisionFormat = (GetShaderPrecisionFormat)GetProc<GetShaderPrecisionFormat>("glGetShaderPrecisionFormat");
+			glDepthRangef = (DepthRangef)GetProc<DepthRangef>("glDepthRangef");
+			glClearDepthf = (ClearDepthf)GetProc<ClearDepthf>("glClearDepth");
+
+			glDebugMessageControlARB = (DebugMessageControlARB)GetProc<DebugMessageControlARB>("glDebugMessageControlARB");
+			glDebugMessageInsertARB = (DebugMessageInsertARB)GetProc<DebugMessageInsertARB>("glDebugMessageInsertARB");
+			glDebugMessageCallbackARB = (DebugMessageCallbackARB)GetProc<DebugMessageCallbackARB>("glDebugMessageCallbackARB");
+			glGetDebugMessageLogARB = (GetDebugMessageLogARB)GetProc<GetDebugMessageLogARB>("glGetDebugMessageLogARB");
+
+			glGetProgramBinary = (GetProgramBinary)GetProc<GetProgramBinary>("glGetProgramBinary");
+			glProgramBinary = (ProgramBinary)GetProc<ProgramBinary>("glProgramBinary");
+			glProgramParameteri = (ProgramParameteri)GetProc<ProgramParameteri>("glProgramParameteri");
 		}
 	}
 }

@@ -374,7 +374,7 @@ namespace liboRg.OpenGL
 		public static  bool IsOES_read_format = false;
 		public static  bool IsEXT_depth_bounds_test = false;
 		public static  bool IsEXT_texture_mirror_clamp = false;
-		public static  bool IsEXT_blend_equation_separate = false;
+		public static  bool IsEXT_blend_equation_separate = false;//#6495ED
 		public static  bool IsMESA_pack_invert = false;
 		public static  bool IsMESA_ycbcr_texture = false;
 		public static  bool IsEXT_pixel_buffer_object = false;
@@ -517,7 +517,6 @@ namespace liboRg.OpenGL
 				int.TryParse(version[2], out versionMinor);
 
 				info.SetValue(null, true);
-				Console.WriteLine(info.ToString());
 			}
 		}
 	}

@@ -49,6 +49,23 @@ namespace liboRg.OpenGL
 			DynamicCopy 			= (uint)GL.DYNAMIC_COPY_ARB,
 		}
 
+		public delegate void ReleaseShaderCompiler();
+		public delegate void ShaderBinary(uint count, ref uint shaders, int binaryformat, IntPtr binary, uint length);
+		public delegate void GetShaderPrecisionFormat(uint shadertype, int precisiontype, ref int range, ref int precision);
+		public delegate void DepthRangef(float n, float f);
+		public delegate void ClearDepthf(float d);
+
+		public delegate void DebugMessageControlARB (uint source, uint type, uint severity, int count, ref int ids, bool enabled);
+		public delegate void DebugMessageInsertARB (uint source, uint type, uint id, uint severity, int length, byte[] buf);
+		public delegate void GLDEBUGPROCARB(uint source, uint type, uint id, uint severity, int length, [MarshalAs(UnmanagedType.LPStr)] string message, IntPtr userParam);
+		public delegate void DebugMessageCallbackARB (GLDEBUGPROCARB callback, IntPtr userParam);
+		public delegate void GetDebugMessageLogARB (uint count, int bufsize, ref uint sources, ref uint types, ref uint ids,
+			ref uint severities, ref int lengths, string messageLog);
+
+		public delegate void GetProgramBinary (uint program, int bufSize, ref int length, ref uint binaryFormat, IntPtr binary);
+		public delegate void ProgramBinary (uint program, uint binaryFormat, IntPtr binary, int length);
+		public delegate void ProgramParameteri (uint program, int pname, int value);
+
 		public delegate IntPtr GetStringi(int n, uint index);
 		//public delegate int GetStringi(int n, uint index​);
 		public delegate void GenBuffersARB(int n, uint[] ids);
@@ -284,6 +301,21 @@ namespace liboRg.OpenGL
 		public static FramebufferTextureFaceARB glFramebufferTextureFaceARB;
 
 		public static GetStringi glGetStringi;
+
+		public static  ReleaseShaderCompiler glReleaseShaderCompiler;
+		public static  ShaderBinary glShaderBinary;
+		public static  GetShaderPrecisionFormat glGetShaderPrecisionFormat;
+		public static  DepthRangef glDepthRangef;
+		public static  ClearDepthf glClearDepthf;
+
+		public static DebugMessageControlARB 	glDebugMessageControlARB;
+		public static DebugMessageInsertARB 	glDebugMessageInsertARB;
+		public static DebugMessageCallbackARB 	glDebugMessageCallbackARB;
+		public static GetDebugMessageLogARB 	glGetDebugMessageLogARB;
+
+		public static  GetProgramBinary 		glGetProgramBinary;
+		public static  ProgramBinary 			glProgramBinary;
+		public static  ProgramParameteri 		glProgramParameteri;
 	}
 }
 

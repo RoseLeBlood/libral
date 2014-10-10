@@ -54,7 +54,7 @@ namespace liboRg.OpenGL
 	}
 	public class glxNativeContext : UnmanagedHandle, IGLNativeContext
 	{
-		private BaseGameWindow 		m_pWindow;
+		private BaseWindow 		m_pWindow;
 		private bool           		m_bOwned;
 		private Rectangle      		m_rDefaultViewport;
 		private VSyncMode	   		m_bVsync = VSyncMode.Disable;
@@ -72,7 +72,7 @@ namespace liboRg.OpenGL
 			get { return m_pNativeConfig; }
 		}
 
-		public BaseGameWindow Window
+		public BaseWindow Window
 		{
 			get { return m_pWindow; }
 		}
@@ -116,14 +116,16 @@ namespace liboRg.OpenGL
 			get
 			{
 				int[] rect = new int[4];
-				//struct { GLint x, y, w, h; } rect;
+				Activate();
 				gl.glGetIntegerv( (uint)GL.VIEWPORT, rect);
-
+				DeActivate();
 				return new Rectangle(rect);
 			}
 			set
 			{
+				Activate();
 				gl.glViewport(value.X, value.Y, value.Width, value.Height);
+				DeActivate();
 			}
 		}
 
@@ -134,7 +136,7 @@ namespace liboRg.OpenGL
 			m_bOwned = false;
 			m_rDefaultViewport = Viewport;
 		}
-		public glxNativeContext(BaseGameWindow handle, GameContextConfig pConfig)
+		public glxNativeContext(BaseWindow handle, GameContextConfig pConfig)
 			: base("OPENGL_CONTEXT", IntPtr.Zero)
 		{
 			m_pWindow = handle;
@@ -145,7 +147,7 @@ namespace liboRg.OpenGL
 
 			if (pConfig.GraphicConfigType == NativContextConfigTyp.Best)
 			{
-				m_pNativeConfig = m_pConfigs.Best;
+					m_pNativeConfig = m_pConfigs.Best;
 			}
 			else if (pConfig.GraphicConfigType == NativContextConfigTyp.Worst)
 			{
@@ -168,12 +170,15 @@ namespace liboRg.OpenGL
 					throw new System.Exception("[GLX] not supported");
 				
 			}
-			#if DEBUG
+
 			Console.WriteLine("glX String: {0}.{1}", glx_major, glx_minor);
-			#endif
+		
 			Console.WriteLine("Using {0} Graphic Config", m_pNativeConfig.Typ);
 
 			IntPtr ctx_old = glXCreateContext( m_pWindow.Display.RawHandle, ((FBConfig)m_pNativeConfig).VisualInfo, IntPtr.Zero, true );
+			glXMakeCurrent(m_pWindow.Display.RawHandle, m_pWindow.RawHandle, ctx_old);
+
+			GLVersion(out glx_major, out glx_minor);
 
 			if (glXCreateContextAttribsARB == null)
 			{
@@ -187,10 +192,15 @@ namespace liboRg.OpenGL
 
 				IntPtr config = m_pNativeConfig.Config;
 
+				
+
 				int[] attribs =
 				{
-					(int)GLX.CONTEXT_MAJOR_VERSION_ARB, 3,
-					(int)GLX.CONTEXT_MINOR_VERSION_ARB, 2,
+					(int)GLX.CONTEXT_MAJOR_VERSION_ARB, glx_major,
+					(int)GLX.CONTEXT_MINOR_VERSION_ARB, glx_minor,
+					
+					(int)GLX.CONTEXT_FLAGS_ARB, (int)GLX.CONTEXT_FORWARD_COMPATIBLE_BIT_ARB |
+					(int)GLX.CONTEXT_DEBUG_BIT_ARB,        
 					(int)GLX.CONTEXT_PROFILE_MASK_ARB, (int)GLX.CONTEXT_CORE_PROFILE_BIT_ARB,
 					0
 				};
@@ -198,7 +208,8 @@ namespace liboRg.OpenGL
 					IntPtr.Zero, true, attribs);
 				if (m_pHandle == IntPtr.Zero)
 				{
-					Console.WriteLine("Failed to create GL 3.2 context using old-style GLX context");
+					Console.WriteLine("Failed to create GL {0}.{1} context using old-style GLX context",
+						glx_major, glx_minor);
 					m_pHandle = glXCreateContext( m_pWindow.Display.RawHandle, ((FBConfig)m_pNativeConfig).VisualInfo, IntPtr.Zero, true );
 				}
 				glXMakeCurrent(m_pWindow.Display.RawHandle, m_pWindow.RawHandle, m_pHandle);
@@ -222,23 +233,49 @@ namespace liboRg.OpenGL
 			if (Owned && glXGetCurrentContext() != RawHandle)
 				MakeCurrent();
 		}
+		public virtual void DeActivate()
+		{
+		if (Owned && glXGetCurrentContext() == RawHandle)
+			MakeOutdated();
+		}
 		public virtual void Present()
 		{
 			if ( RawHandle == IntPtr.Zero ) return;
 
-			Activate();
+			gl.glFlush();
 			Swap();
+			DeActivate();
 		}
 
 		public void MakeCurrent()
 		{
 			glXMakeCurrent( m_pWindow.Display.RawHandle, m_pWindow.RawHandle, m_pHandle );
 		}
+		public void MakeOutdated()
+		{
+			glXMakeCurrent( m_pWindow.Display.RawHandle, IntPtr.Zero, IntPtr.Zero );
+		}
 		public void Swap()
 		{
 			glXSwapBuffers(m_pWindow.Display.RawHandle, m_pWindow.RawHandle);
 		}
+		protected void GLVersion(out int major, out int minor)
+		{
+			Extensions.LoadExtensionsList();
 
+			if (Extensions.IsVERSION_3_0) { major = 3; minor = 0; }
+			else if (Extensions.IsVERSION_3_1) { major = 3; minor = 1; }
+			else if (Extensions.IsVERSION_3_2) { major = 3; minor = 2; }
+			else if (Extensions.IsVERSION_3_3) { major = 3; minor = 3; }
+			else if (Extensions.IsVERSION_4_0) { major = 4; minor = 0; }
+			else if (Extensions.IsVERSION_4_1) { major = 4; minor = 1; }
+			else if (Extensions.IsVERSION_4_2) { major = 4; minor = 2; }
+			else if (Extensions.IsVERSION_4_3) { major = 4; minor = 3; }
+			else { major = 0; minor = 0; }
+
+			if (major != 0)
+				Console.WriteLine("OpenGL Version: {0}.{1}", major, minor);
+		}
 		protected override void CleanUpUnManagedResources()
 		{
 			if ( !m_bOwned ) return;

@@ -121,7 +121,7 @@ namespace liboRg.GLX
 		{
 			get { return m_pConfigs; }
 		}
-		public unsafe FBConfigs(BaseGameWindow pWindow, GameContextConfig pConfig)
+		public unsafe FBConfigs(BaseWindow pWindow, GameContextConfig pConfig)
 		{
 			m_pConfigs = new List<INativContextConfig>();
 
@@ -135,6 +135,7 @@ namespace liboRg.GLX
 				(int)liboRg.OpenGL.GLX.BUFFER_SIZE, pConfig.Color,
 				(int)liboRg.OpenGL.GLX.DEPTH_SIZE, pConfig.Depth,
 				(int)liboRg.OpenGL.GLX.STENCIL_SIZE, pConfig.Stencil,
+				(int)liboRg.OpenGL.GLX.DOUBLEBUFFER, (int)GL.TRUE,
 				(int)liboRg.OpenGL.GLX.SAMPLE_BUFFERS, pConfig.EnableSample ? (int)GL.TRUE : (int)GL.FALSE,
 				0
 			};

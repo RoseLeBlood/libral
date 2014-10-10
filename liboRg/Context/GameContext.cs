@@ -23,6 +23,7 @@ using X11;
 using System.Common;
 using liboRg.OpenGL;
 using liboRg.Window;
+using X11.Widgets;
 
 namespace liboRg.Context
 {
@@ -112,7 +113,7 @@ namespace liboRg.Context
 		{
 			get { return m_pNativeContext; }
 		}
-		public BaseGameWindow Window
+		public BaseWindow Window
 		{
 			get { return m_pNativeContext.Window; }
 		}
@@ -134,7 +135,10 @@ namespace liboRg.Context
 		{
 			m_pNativeContext.Activate();
 		}
-
+		public virtual void DeActivate()
+		{
+			m_pNativeContext.DeActivate();
+		}
 		public virtual void Enable( Capability capability )
 		{
 			gl.glEnable((uint)capability);
@@ -146,6 +150,7 @@ namespace liboRg.Context
 
 		public void Clear( Buffer buffers = Buffer.Color | Buffer.Depth )
 		{
+			Activate();
 			gl.glClear((int)buffers);
 		}
 
