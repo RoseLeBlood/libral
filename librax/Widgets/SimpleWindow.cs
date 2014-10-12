@@ -34,7 +34,7 @@ namespace X11.Widgets
 
 	}
 
-	class XStringListToTextPropertyException : Exception {
+	public class XStringListToTextPropertyException : Exception {
 		public XStringListToTextPropertyException(int iLine, string Function) : base("SimpleWindow.cs", iLine, Function) { }
 
 	}

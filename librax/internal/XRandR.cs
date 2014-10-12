@@ -209,6 +209,13 @@ namespace X11._internal
 
 			return screens;
 		}
+		[DllImport("libXrandr")]
+		public static extern int XRRConfigCurrentConfiguration(IntPtr config, out ushort current_rotation);
+		[DllImport("libXrandr")]
+		public static extern void XRRSetScreenConfig(IntPtr rawHandle, IntPtr config, IntPtr desktop, int i, 
+			ushort currentRotation, int currentTime);
+		[DllImport("libXrandr")]
+		public static extern  void XRRFreeScreenConfigInfo(IntPtr config);
 	}
 }
 

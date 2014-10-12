@@ -19,61 +19,74 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using Mono.Simd;
 
 namespace System.Common
 {
 	[Serializable]
-	public class Rectangle
+	public class Rectangle : IEquatable<Rectangle>
 	{
-		private int 	m_iX;
-		private int 	m_iY;
-		private int 	m_iWidth;
-		private int 	m_iHeight;
+		private Vector4i	m_iRect;
+
+		public static Rectangle Empty 
+		{
+			get { return new Rectangle (0, 0, 0, 0); }
+		}
 
 		public int		X
 		{
-			get { return m_iX; }
-			set { m_iX = value; }
+			get { return m_iRect.X; }
+			set { m_iRect.X = value; }
 		}
 		public int Y
 		{
-			get { return m_iY; }
-			set { m_iY = value; }
+			get { return m_iRect.Y; }
+			set { m_iRect.Y = value; }
 		}
 
 		public int Width
 		{
-			get { return m_iWidth; }
-			set { m_iWidth = value; }
+			get { return m_iRect.Z; }
+			set { m_iRect.Z = value; }
 		}
 		public int Height
 		{
-			get { return m_iHeight; }
-			set { m_iHeight = value; }
+			get { return m_iRect.W; }
+			set { m_iRect.W = value; }
 		}
 		public int Top
 		{
-			get { return m_iY;	}
+			get { return Y;	}
 		}
 		public int Left
 		{
-			get { return m_iX;	}
+			get { return X;	}
 		}
 		public int Bottom
 		{
-			get { return m_iY + m_iHeight;	}
+			get { return Y + Height;	}
 		}
 		public int Right
 		{
-			get { return m_iX + m_iWidth;	}
+			get { return X + Width;	}
 		}
-		public Point Position
+		public Point Location
 		{
-			get { return new Point (m_iY, m_iX);	}
+			get { return new Point (X, Y);	}
+			set { X = value.X; Y = value.Y; }
 		}
+		public Point Center 
+		{
+			get { return new Point (X + Width / 2, Y + Height / 2); }
+		}
+		public bool IsEmpty 
+		{
+			get { return X == 0 && Y == 0; }
+		}
+
 		public Size Size
 		{
-			get { return new Size (m_iWidth, m_iHeight);	}
+			get { return new Size (Width, Height);	}
 		}
 		public Rectangle()
 			: this(0,0,1,1)
@@ -81,63 +94,173 @@ namespace System.Common
 		}
 		public Rectangle(int x, int y, int width, int height)
 		{
-			m_iX = x;
-			m_iY = y;
-			m_iWidth = width;
-			m_iHeight = height;
+			m_iRect = new Vector4i();
+			X = x;
+			Y = y;
+			Width = width;
+			Height = height;
 		}
 		public Rectangle(int[] rect)
 		{
-			m_iX = rect[0];
-			m_iY = rect[1];
-			m_iWidth = rect[2];
-			m_iHeight = rect[3];
+			m_iRect = new Vector4i();
+			X = rect[0];
+			Y = rect[1];
+			Width = rect[2];
+			Height = rect[3];
 		}
 		public Rectangle(int x, int y, Size size)
 		{
-			m_iX = x;
-			m_iY = y;
-			m_iWidth = size.Width;
-			m_iHeight = size.Height;
+			m_iRect = new Vector4i();
+			X = x;
+			Y = y;
+			Width = size.Width;
+			Height = size.Height;
 		}
 		public Rectangle(string rectstring)
 		{
 			string[] rect = rectstring.Split(',');
+			int x = 0, y=0, w=0, h=0;
 			if (rect.Length == 4)
 			{
 
-				int.TryParse(rect[0], out m_iY); // Top
-				int.TryParse(rect[1], out m_iX); // Left
-				int.TryParse(rect[2], out m_iWidth); 
-				int.TryParse(rect[3], out m_iHeight); 
+				int.TryParse(rect[0], out y); // Top
+				int.TryParse(rect[1], out x); // Left
+				int.TryParse(rect[2], out w); 
+				int.TryParse(rect[3], out h); 
 
 			}
 			else if (rect.Length == 2)
 			{
 
-				int.TryParse(rect[0], out m_iY); // Top
-				int.TryParse(rect[0], out m_iX); // Left
-				int.TryParse(rect[1], out m_iWidth); 
-				int.TryParse(rect[1], out m_iHeight); 
+				int.TryParse(rect[0], out x); // Top
+				int.TryParse(rect[0], out y); // Left
+				int.TryParse(rect[1], out w); 
+				int.TryParse(rect[1], out h); 
 
 			}
+			m_iRect = new Vector4i(x, y, w, h);
 		}
 		public Rectangle Inflate (int leftRight, int topBottom)
 		{
-			m_iX -= leftRight;
-			m_iWidth += leftRight * 2;
-			m_iY -= topBottom;
-			m_iHeight += topBottom * 2;
+			m_iRect.X -= leftRight;
+			m_iRect.Z += leftRight * 2;
+			m_iRect.Y -= topBottom;
+			m_iRect.W += topBottom * 2;
 
 			return this;
 		}
+		public bool Contains (int x, int y)
+		{
+			return Contains (new Point (x, y));
+		}
+		public bool Contains (Point value)
+		{
+			bool result;
+			Contains (ref value, out result);
+			return result;
+		}
+		public void Contains (ref Point value, out bool result)
+		{
+			result = value.X >= Left && value.X <= Right && value.Y >= Top && value.Y <= Bottom;  
+		}
+		public bool Contains (Rectangle value)
+		{
+			bool result;
+			Contains (ref value, out result);
+			return result;
+		}
+		public void Contains (ref Rectangle value, out bool result)
+		{
+			result = value.Left >= Left && value.Right <= Right && value.Top >= Top && value.Bottom <= Bottom;
+		}
+		public static Rectangle Intersect (Rectangle value1, Rectangle value2)
+		{
+			Rectangle result;
+			Intersect (ref value1, ref value2, out result);
+			return result;
+		}
+		public static void Intersect (ref Rectangle value1, ref Rectangle value2, out Rectangle result)
+		{
+			int x = System.Math.Max (value1.X, value2.X);
+			int y = System.Math.Max (value1.Y, value2.Y);
+			int w = System.Math.Min (value1.Right, value2.Right) - x;
+			int h = System.Math.Min (value1.Bottom, value2.Bottom) - y;
+			if (w <= 0 || h <= 0)
+				result = Rectangle.Empty;
+			else
+				result = new Rectangle (x, y, w, h);
+		}
+		public bool Intersects (Rectangle value)
+		{
+			bool result;
+			Intersects (ref value, out result);
+			return result;
+		}
+
+		public void Intersects (ref Rectangle value, out bool result)
+		{
+			int w = System.Math.Min (value.Right, Right) - System.Math.Max (value.X, X);
+			int h = System.Math.Min (value.Bottom, Bottom) - System.Math.Max (value.Y, Y);
+			result = w > 0 && h > 0;
+		}
+		public void Offset (int offsetX, int offsetY)
+		{
+			X += offsetX;
+			Y += offsetY;
+		}
+
+		public void Offset (Point amount)
+		{
+			X += amount.X;
+			Y += amount.Y;
+		}
+
+		public static Rectangle Union (Rectangle value1, Rectangle value2)
+		{
+			Rectangle result;
+			Union (ref value1, ref value2, out result);
+			return result;
+		}
+
+		public static void Union (ref Rectangle value1, ref Rectangle value2, out Rectangle result)
+		{
+			int x = System.Math.Min (value1.X, value2.X);
+			int y = System.Math.Min (value1.Y, value2.Y);
+			int w = System.Math.Max (value1.Right, value2.Right) - x;
+			int h = System.Math.Max (value1.Bottom, value2.Bottom) - y;
+			result = new Rectangle (x, y, w, h);
+		}
+
 		public override string ToString()
 		{
 			return string.Format("{0},{1},{2},{3}", 
 				Top, Left, Width, Height);
 		}
 
+		public bool Equals (Rectangle other)
+		{
+			return other == this;
+		}
 
+		public override bool Equals (object obj)
+		{
+			return obj is Rectangle && ((Rectangle)obj) == this;
+		}
+
+		public override int GetHashCode ()
+		{
+			return X ^ Y ^ Width ^ Height;
+		}
+
+		public static bool operator == (Rectangle a, Rectangle b)
+		{
+			return a.X == b.X && a.Y == b.Y && a.Width == b.Width && a.Height == b.Height;
+		}
+
+		public static bool operator != (Rectangle a, Rectangle b)
+		{
+			return a.X != b.X || a.Y != b.Y || a.Width != b.Width || a.Height != b.Height;
+		}
 		public static implicit operator Rectangle(string strRect) 
 		{
 			Rectangle d = new Rectangle(strRect);  

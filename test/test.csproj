@@ -30,6 +30,8 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="Mono.Simd" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

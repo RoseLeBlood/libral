@@ -29,6 +29,7 @@ using liboRg.Window;
 using liboRg.OpenGL;
 using liboRg.Context;
 
+
 namespace test
 {
 	public class TestGame : Game
@@ -40,7 +41,7 @@ namespace test
 		public TestGame() : base(":0", new GameContextConfig(new GameResolution(Screens.PrimaryScreen[3], 24)),
 			"Hallo Welt", WindowStyle.Resize)
 		{
-
+			Init();
 		}
 		public override void Create()
 		{
@@ -51,7 +52,8 @@ namespace test
 
 
 		}
-		protected override bool Move(liboRg.Input.InputState keyState)
+
+		protected override bool Move()
 		{
 			double currentTime = this.GameContext.Time;
 			nbFrames++;
@@ -61,12 +63,16 @@ namespace test
 				nbFrames = 0;
 				lastTime += 1;
 			}
+			if (Window.IsKeyDown(Keys.F1))
+				Console.WriteLine("Hallo F1");
 
-			return base.Move(keyState);
+			return base.Move();
 		}
 		protected override bool Draw()
 		{
-			GameContext.Clear();
+			GameContext.Clear(liboRg.Context.Buffer.Color);
+
+
 			return base.Draw();
 		}
 	}
@@ -75,16 +81,15 @@ namespace test
 
 	public class Programm
 	{
+
 		public static void Main (string[] args)
 		{
 			Application.Init("test");
-
 			Game game = new TestGame();
-
-			Application.Current.MainWindow = game.Window;
-			game.Init();
-
-			Application.Run();
+			{
+				Application.Run();
+			}
+			game.Destroy();
 		}
 	}
 }

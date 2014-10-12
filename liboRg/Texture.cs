@@ -23,6 +23,7 @@ using X11;
 using System.Common;
 using liboRg.OpenGL;
 using System.Runtime.InteropServices;
+using X11.Widgets;
 
 namespace liboRg
 {
@@ -152,8 +153,6 @@ namespace liboRg
 	}
 	public class Texture : Handle
 	{
-	
-		private IntPtr m_pUnmanagedPointer;
 		private uint[] m_iObject;
 
 		public Texture(string name) 
@@ -164,15 +163,17 @@ namespace liboRg
 		}
 
 		public Texture(Image image, TextureInternalFormat internalFormat = TextureInternalFormat.RGBA )
-			: base("tex_" + image.Name)
+			: this(image.Name, image.ToByteArray(), TextureDataType.Byte, TextureFormat.RGBA, image.Size , internalFormat )
 		{
-			byte[] data = image.ToByteArray();
+		}
+		public Texture(string name, byte[] data, TextureDataType type, TextureFormat format, 
+			Size pSize, TextureInternalFormat internalFormat )
+			: this("tex_" + name)
+		{
 
-			m_iObject = new uint[1];
-			gl.glGenTextures(1, m_iObject);
-
-			gl.glTexImage2D( (uint)GL.TEXTURE_2D, 0, (int)internalFormat, image.Size.Width, image.Size.Height, 0, 
-				(uint)TextureFormat.RGBA, (uint)TextureDataType.Byte, data );
+			gl.glBindTexture( (uint)GL.TEXTURE_2D, m_iObject[0] );
+			gl.glTexImage2D( (uint)GL.TEXTURE_2D, 0, (int)internalFormat, pSize.Width, pSize.Height, 0, (uint)format, (uint)type, 
+				data );
 
 			gl.glTexParameteri( (uint)GL.TEXTURE_2D, (uint)GL.TEXTURE_WRAP_S, (int)GL.CLAMP_TO_EDGE );
 			gl.glTexParameteri( (uint)GL.TEXTURE_2D, (uint)GL.TEXTURE_WRAP_T, (int)GL.CLAMP_TO_EDGE );
@@ -183,26 +184,13 @@ namespace liboRg
 
 			Register(true);
 		}
-
 		~Texture()
 		{
-			gl.glDeleteTextures(1, m_iObject);
-			if(m_pUnmanagedPointer != IntPtr.Zero)
-				Marshal.FreeHGlobal(m_pUnmanagedPointer);
+			Dispose(false);
 		}
-
-
-		public void Image2D( byte[] data, TextureDataType type, TextureFormat format, Size pSize, TextureInternalFormat internalFormat )
+		protected override void CleanUpManagedResources()
 		{
-			var x = PushState();
-
-			gl.glBindTexture( (uint)GL.TEXTURE_2D, m_iObject[0] );
-			gl.glTexImage2D( (uint)GL.TEXTURE_2D, 0, (int)internalFormat, pSize.Width, pSize.Height, 0, (uint)format, (uint)type, 
-				data );
-
-			PopState(x);
-
-			Register(true);
+			gl.glDeleteTextures(1, m_iObject);
 		}
 
 		public void SetWrapping( TextureWrapping s )
@@ -272,7 +260,7 @@ namespace liboRg
 
 		private uint PushState()
 		{
-			int[] restoreId = new int[0]; 
+			int[] restoreId = new int[1]; 
 			gl.glGetIntegerv( (uint)GL.TEXTURE_BINDING_2D, restoreId );
 			return (uint)restoreId[0];
 		}

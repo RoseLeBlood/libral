@@ -42,7 +42,7 @@ namespace System.Common
 		public static Color Chartreuse {  get { return  FromUInt32(0x7FFF00FF); } }
 		public static Color Chocolate {  get { return  FromUInt32(0xD2691EFF); } }
 		public static Color Coral {  get { return  FromUInt32(0xFF7F50FF); } }
-		public static Color CornflowerBlue {  get { return  FromUInt32(0x6495EDFF); } }
+		public static Color CornflowerBlue {  get { return  FromUInt32(0x6495EDFF); } } 
 		public static Color Cornsilk {  get { return  FromUInt32(0xFFF8DCFF); } }
 		public static Color Crimson {  get { return  FromUInt32(0xDC143CFF); } }
 		public static Color Cyan {  get { return  FromUInt32(0x00FFFFFF); } }

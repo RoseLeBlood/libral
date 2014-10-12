@@ -261,7 +261,7 @@ namespace X11.Widgets
 		}
 		protected virtual void OnMove(XEvent args)
 		{
-			var arg = new XMoveEventArgs(Rectangle.Position);
+			var arg = new XMoveEventArgs(Rectangle.Location);
 			if (Move != null)
 				Move(this, arg);
 		}

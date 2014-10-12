@@ -26,13 +26,6 @@ using System.IO;
 
 namespace liboRg
 {
-	public enum ImageFileFormat
-	{
-		BMP,
-		TGA,
-		JPEG,
-		PNG
-	}
 	public class Image : ImageHandle
 	{
 		private Color[] m_clImage;

@@ -25,6 +25,8 @@ namespace X11._internal
 {
 	public class Lib
 	{
+		public const int CurrentTime = 0;
+
 		[Flags]
 		public enum GCattributemask : long
 		{
@@ -52,7 +54,11 @@ namespace X11._internal
 			DashList						= (1L<<21),
 			ArcMode							= (1L<<22)
 		}
-
+		public enum GrabMode : int
+		{
+			Sync = 0,
+			Async = 1,
+		}
 		public enum WindowClass : uint
 		{
 			CopyFromParent					= 0,
@@ -912,6 +918,23 @@ namespace X11._internal
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool XCheckIfEvent(IntPtr display, ref XEvent event_return,
 			/*[MarshalAs(UnmanagedType.FunctionPtr)] */ CheckEventPredicate predicate, /*XPointer*/ IntPtr arg);
+
+		[DllImport("libX11.so")]
+		extern public static int XGrabPointer(IntPtr display, IntPtr grab_window,
+			bool owner_events, int event_mask, GrabMode pointer_mode, GrabMode keyboard_mode,
+			IntPtr confine_to, IntPtr cursor, int time);
+
+		[DllImport("libX11.so")]
+		extern public static int UngrabPointer(IntPtr display, int time);
+
+		//int XGrabKeyboard(Display *display, Window grab_window, Bool owner_events, int pointer_mode, int keyboard_mode, Time time);
+
+		[DllImport("libX11.so")]
+		extern public static int XGrabKeyboard(IntPtr display, IntPtr grab_window,
+			bool owner_events, GrabMode pointer_mode, GrabMode keyboard_mode, int time);
+
+		[DllImport("libX11.so")]
+		extern public static void XUngrabKeyboard(IntPtr display, int time);
 	}
 }
 

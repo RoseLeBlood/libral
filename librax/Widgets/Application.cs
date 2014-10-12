@@ -63,6 +63,13 @@ namespace X11.Widgets
 			get { return m_NainWindow; }
 			set { m_NainWindow = value; }
 		}
+
+		public string MainWindowStr
+		{
+			get { return MainWindow.Name; }
+			set { MainWindow = Application.Current.GetHandle<BaseWindow>(value); }
+		}
+
 		public string DisplayName
 		{
 			get { return m_current.m_currentDisplay.Name; }
