@@ -64,15 +64,17 @@ namespace liboRg.Framework
 			}
 		}
 
-		public Shader(string strName, ShaderType type)
-			: base("sh_" + strName, type)
-		{
-		}
-
 		public Shader(string strName, ShaderType type, string source)
 			: base("sh_" + strName, type)
 		{
 			m_strSource = source;
+			gl.glShaderSourceARB(m_iObject, 1, new string[] { m_strSource }, null);
+			Compile();
+		}
+		public Shader(string file, ShaderType type)
+			: base("sh_" + System.IO.Path.GetFileName(file), type)
+		{
+			m_strSource = System.IO.File.ReadAllText(file);
 			gl.glShaderSourceARB(m_iObject, 1, new string[] { m_strSource }, null);
 			Compile();
 		}

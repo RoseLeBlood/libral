@@ -25,7 +25,8 @@ namespace liboRg.Window
 	[Flags()]
 	public enum WindowStyle
 	{
-		Normal = 1,
+		Fixed = 1,
+		Resize = 2,
 		Fullscreen = 4
 	}
 }

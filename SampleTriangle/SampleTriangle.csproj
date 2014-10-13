@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D2CEBFB6-661B-42EE-8F66-4F78E0A1639B}</ProjectGuid>
+    <ProjectGuid>{8ED9F755-3E7B-456A-BC27-2CB17F9CB393}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>test</RootNamespace>
-    <AssemblyName>test</AssemblyName>
+    <RootNamespace>SampleTriangle</RootNamespace>
+    <AssemblyName>SampleTriangle</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,28 +28,33 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="Mono.Simd" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TriangleGame.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\librax\libx11.csproj">
-      <Project>{72080CDA-8E8B-4187-B5A3-6A42726F746E}</Project>
-      <Name>libx11</Name>
+    <ProjectReference Include="..\liboRg\liboRg.csproj">
+      <Project>{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}</Project>
+      <Name>liboRg</Name>
     </ProjectReference>
     <ProjectReference Include="..\libral\libral.csproj">
       <Project>{897E6333-D6C4-4BDA-B51E-5575A17E5291}</Project>
       <Name>libral</Name>
     </ProjectReference>
-    <ProjectReference Include="..\liboRg\liboRg.csproj">
-      <Project>{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}</Project>
-      <Name>liboRg</Name>
+    <ProjectReference Include="..\librax\libx11.csproj">
+      <Project>{72080CDA-8E8B-4187-B5A3-6A42726F746E}</Project>
+      <Name>libx11</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vertex.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="frag.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

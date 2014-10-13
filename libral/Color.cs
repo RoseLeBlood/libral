@@ -99,7 +99,6 @@ namespace System.Common
 		public Color(byte i) 
 			: this(i,i,i,i)
 		{
-
 		}
 		public Color(float red, float green, float blue, float alpha)		
 		{
@@ -148,9 +147,17 @@ namespace System.Common
 			Color right = (Color)obj;
 			return this == right;
 		}
+		[Acceleration (AccelMode.SSE2)]
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			unsafe 
+			{
+				Vector4f f = new Vector4f(R,G,B,A);
+				Vector4i i = *((Vector4i*)&f);
+				i = i ^ i.Shuffle (ShuffleSel.Swap);
+				i = i ^ i.Shuffle (ShuffleSel.RotateLeft);
+				return i.X;
+			}
 		}
 		public override string ToString()
 		{
@@ -230,7 +237,7 @@ namespace System.Common
 		{
 			return new Color(hex);  
 		}
-		[Acceleration (AccelMode.SSE1)]
+		[Acceleration (AccelMode.SSE3)]
 		public static Color Contrast(Color c, float s)
 		{
 			return new Color()
@@ -241,22 +248,22 @@ namespace System.Common
 				Alpha = c.Alpha,
 			};
 		}
-		[Acceleration (AccelMode.SSE1)]
+		[Acceleration (AccelMode.SSE3)]
 		public static Color	Negate(Color c)											
 		{
 			return new Color(1.0f - c.Red, 1.0f - c.Green, 1.0f - c.Blue, 1.0f - c.Alpha);
 		}
-		[Acceleration (AccelMode.SSE1)]
+		[Acceleration (AccelMode.SSE3)]
 		public static float	Brightness(Color c)										
 		{
 			return c.Red * 0.299f + c.Green * 0.587f + c.Blue * 0.114f;
 		}
-		[Acceleration (AccelMode.SSE1)]
+		[Acceleration (AccelMode.SSE3)]
 		public static Color	Interpolate(Color c1, Color c2, float p)	
 		{
 			return c1 + p * (c2 - c1);
 		}
-
+		[Acceleration (AccelMode.SSE1)]
 		public static Color	Min(Color c1, Color c2)						
 		{
 			return new Color(Math.Min(c1.Red, c2.Red), 
@@ -264,6 +271,7 @@ namespace System.Common
 				Math.Min(c1.Blue, c2.Blue), 
 				Math.Min(c1.Alpha, c2.Alpha));
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color	Max(Color c1, Color c2)						
 		{
 			return new Color(Math.Max(c1.Red, c2.Red), 

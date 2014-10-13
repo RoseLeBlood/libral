@@ -86,7 +86,7 @@ namespace liboRg
 			m_strDisplay = strDisplay;
 			m_pContextConfig = pConfig;
 
-			m_pGameWindow = new BaseGameWindow2(this, title, style );
+			m_pGameWindow = new BaseGameWindow(this, title, style );
 		}
 
 		public void Init()

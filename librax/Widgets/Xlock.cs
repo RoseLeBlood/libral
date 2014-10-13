@@ -33,7 +33,10 @@ namespace X11.Widgets
 		{
 			X11._internal.Lib.XUnlockDisplay(m_pHandle);
 		}
-
+		protected override void CleanUpUnManagedResources()
+		{
+			X11.Widgets.Application.Current.UnRegisterHandle(Name);
+		}
 	}
 }
 

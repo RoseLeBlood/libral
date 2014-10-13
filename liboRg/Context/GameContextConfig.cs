@@ -21,12 +21,12 @@
 using System;
 using liboRg.Window;
 using liboRg.OpenGL;
+using X11;
 
 namespace liboRg.Context
 {
 	public class GameContextConfig
 	{
-		private int 			     	m_iColor;
 		private int 		         	m_iDepth;
 		private int 				 	m_iStencil;
 
@@ -38,8 +38,8 @@ namespace liboRg.Context
 
 		public int Color
 		{
-			get { return m_iColor; }
-			set { m_iColor = value; }
+			get { return m_pResolution.BitsPerPixel; }
+			set { m_pResolution.BitsPerPixel = value; }
 		}
 		public int Depth
 		{
@@ -64,7 +64,11 @@ namespace liboRg.Context
 		public NativContextConfigTyp GraphicConfigType
 		{
 			get { return m_pConfigTyp; }
-			set { m_pConfigTyp = value; }
+			set 
+			{ 
+				m_pConfigTyp = value; 
+				m_bSamples = (value != NativContextConfigTyp.Worst);
+			}
 		}
 		public int NormalGraphicConfigTypeNumber
 		{
@@ -76,17 +80,21 @@ namespace liboRg.Context
 			get { return m_bSamples; }
 			set { m_bSamples = value; }
 		}
-		public GameContextConfig(GameResolution pResolution, int iColor = 24, int iDepth = 24, int iStencil = 8, 
-			bool bSamples = true, NativContextConfigTyp pGraphicType = NativContextConfigTyp.Best, VSyncMode pVsync = VSyncMode.Adaptive )
+		public GameContextConfig(MonitorMode pResolution, int iDepth = 24, int iStencil = 8, 
+			bool bSamples = true, NativContextConfigTyp pGraphicType = NativContextConfigTyp.Best, 
+			VSyncMode pVsync = VSyncMode.Adaptive )
 		{
-			m_iColor = iColor;
 			m_iDepth = iDepth;
 			m_iStencil = iStencil;
-			m_pResolution = pResolution;
+			m_pResolution = new GameResolution(pResolution);
 			m_pVSync = pVsync;
 			m_pConfigTyp = pGraphicType;
 			m_pConfigInt = 0;
 			m_bSamples = bSamples;
+		}
+		public override string ToString()
+		{
+			return string.Format("{3}  VSync={4} Depth={1} Stencil={2}, GraphicConfigType={5}, EnableSample={7}", Color, Depth, Stencil, Resolution, VSync, GraphicConfigType, NormalGraphicConfigTypeNumber, EnableSample);
 		}
 	}
 }

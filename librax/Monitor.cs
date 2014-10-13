@@ -56,6 +56,12 @@ namespace X11
 		{
 			get { return m_lstModes[imode]; }
 		}
+
+		public List<MonitorMode> Modes
+		{
+			get { return m_lstModes; }
+		}
+
 		public Monitor(string name)
 			: base(SetupNames(name))
 		{

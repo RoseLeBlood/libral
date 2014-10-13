@@ -696,6 +696,9 @@ namespace X11._internal
 		[DllImport("libX11")]
 		extern public static void XFlush (IntPtr x11display);
 		[DllImport("libX11")]
+		extern public static IntPtr XCreateColormap(IntPtr rawHandle, IntPtr desktop, IntPtr intPtr, int i);
+
+		[DllImport("libX11")]
 		extern public static void XStoreName(IntPtr x11display, IntPtr x11window, sbyte[] windowName);
 		[DllImport("libX11")]
 		extern public static void XStoreName(IntPtr x11display, IntPtr x11window, [MarshalAs(UnmanagedType.LPStr)] string windowName);
@@ -862,7 +865,7 @@ namespace X11._internal
 		[DllImport("libX11")]
 		public extern static void XPeekEvent(IntPtr display, ref XEvent x11event);
 		[DllImport("libX11")]
-		extern public static TInt XSendEvent(IntPtr x11display, IntPtr x11window, TBoolean propagate, TLong eventMask, ref XEvent eventSend);
+		extern public static TInt XSendEvent(IntPtr x11display, IntPtr x11window, bool propagate, TLong eventMask, ref XEvent eventSend);
 		[DllImport("libX11")]
 		extern public static string XServerVendor(IntPtr x11display);
 		[DllImport("libX11")]

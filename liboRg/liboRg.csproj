@@ -38,7 +38,6 @@
     <Compile Include="Game.cs" />
     <Compile Include="Context\X11Context.cs" />
     <Compile Include="Window\GameResolution.cs" />
-    <Compile Include="Window\BaseGameWindow.cs" />
     <Compile Include="Window\WindowStyle.cs" />
     <Compile Include="Screens.cs" />
     <Compile Include="OpenGL\GLEnum.cs" />
@@ -57,7 +56,6 @@
     <Compile Include="OpenGL\GLX\FBConfig.cs" />
     <Compile Include="OpenGL\INativContextConfig.cs" />
     <Compile Include="OpenGL\Extensions.cs" />
-    <Compile Include="Window\BaseGameWindow2.cs" />
     <Compile Include="Window\IGameWindow.cs" />
     <Compile Include="Framework\Framebuffer.cs" />
     <Compile Include="glHandle.cs" />
@@ -68,6 +66,7 @@
     <Compile Include="Framework\VertexBuffer.cs" />
     <Compile Include="Framework\VertexDataBuffer.cs" />
     <Compile Include="Framework\Mesh.cs" />
+    <Compile Include="Window\BaseGameWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

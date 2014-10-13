@@ -1,5 +1,5 @@
 ﻿//
-//  GameResolution.cs
+//  Program.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,40 +19,34 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Common;
 using X11.Widgets;
-using X11._internal;
-using X11;
-using liboRg.OpenGL;
+using liboRg;
 
-namespace liboRg.Window
+namespace SampleTriangle
 {
-	public class GameResolution
+	class MainClass
 	{
-		private MonitorMode 	m_pMonitorMode;
-		private int 			m_iBpp;
-	
-		public Size Size
+		public static void Main(string[] args)
 		{
-			get { return m_pMonitorMode.Size; }
-		}
-		internal int BitsPerPixel
-		{
-			get { return m_iBpp; }
-			set { m_iBpp = value; }
-		}
-		public double RefreshRate
-		{
-			get { return m_pMonitorMode.Rate; }
-		}
-		public GameResolution(MonitorMode pMonitorMode)
-		{
-			m_pMonitorMode = pMonitorMode;
-		}
-		public override string ToString()
-		{
-			return String.Format("{0} Bpp={1}", m_pMonitorMode, m_iBpp);
+			Application.Init("test");
+
+			var x = Screens.PrimaryScreen.Modes;
+			Console.WriteLine("Reselutions: ");
+			for (int i = 0; i < x.Count; i++)
+				{
+					Console.WriteLine("\t{0}. {1}", i+1, x[i]);
+				}
+			int res = 3; int.TryParse(Console.ReadLine(), out res);
+
+			Console.Write("FullScreen [Y/n]: ");
+			bool fullscreen = (Console.ReadLine().ToUpper() == "Y");
+
+			Console.Write("GraphicMode [Best/low]: ");
+			bool mode = (Console.ReadLine().ToUpper() == "BEST");
+
+			Game game = new TriangleGame(res, fullscreen, mode);
+			Application.Run();
+			game.Destroy();
 		}
 	}
 }
-
