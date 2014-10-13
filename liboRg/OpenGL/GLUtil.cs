@@ -1,5 +1,5 @@
 ﻿//
-//  WindowStyle.cs
+//  GLUtil.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,14 +19,24 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Runtime.InteropServices;
 
-namespace liboRg.Window
+namespace liboRg.OpenGL
 {
-	[Flags()]
-	public enum WindowStyle
+	public partial class gl
 	{
-		Normal = 1,
-		Fullscreen = 4
+		public static string glGetShaderInfoLogARB(IntPtr shader, Int32 bufSize)
+		{
+			byte[] infoLog = new byte[bufSize];
+			gl.glGetShaderInfoLog(shader, bufSize, IntPtr.Zero, infoLog);
+			return System.Text.Encoding.UTF8.GetString(infoLog);
+		}
+		public static string glGetProgramInfoLogARB(IntPtr program, Int32 bufSize)
+		{
+			byte[] infoLog = new byte[bufSize];
+			gl.glGetProgramInfoLog(program, bufSize, IntPtr.Zero, infoLog);
+			return System.Text.Encoding.UTF8.GetString(infoLog);
+		}
 	}
 }
 

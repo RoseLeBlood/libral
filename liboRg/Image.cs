@@ -82,12 +82,14 @@ namespace liboRg
 		{
 			MemoryStream stream = new MemoryStream();
 
-			for (int i = 0; i < m_clImage.Length; i++) // 4
+			for (int i = 0; i < m_clImage.Length; i++)
 			{
-				stream.Write(m_clImage[i].RGBA, 0, m_clImage[i].RGBA.Length);
+				byte[] data = m_clImage[i].ToByteRgba();
+				stream.Write(data, 0, data.Length);
 			}
 			return stream.ToArray();
 		}
+
 	}
 }
 

@@ -22,42 +22,57 @@ using System;
 using System.Text;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+using Mono.Simd;
 
 namespace System.Common
 {
-	[Serializable]
-	[TypeConverter(typeof (ColorConverter))]
-	public class Color : IFormattable, IEquatable<Color>
+	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
+	public struct Color : IFormattable, IEquatable<Color>
 	{
-		private float[] m_colors = new float[4] { 0, 0, 0, 0 };
+		[ FieldOffset(0) ]
+		internal float m_fRed;
+		[ FieldOffset(4) ]
+		internal float m_fGreen;
+		[ FieldOffset(8) ]
+		internal float m_fBlue;
+		[ FieldOffset(12) ]
+		internal float m_fAlpha;
 
-		[XmlIgnore]
-		public float Red { get { return m_colors[0]; } set { m_colors[0] = value; } }
-		[XmlIgnore]
-		public float Green { get { return m_colors[1]; } set { m_colors[1] = value; } }
-		[XmlIgnore]
-		public float Blue { get { return m_colors[2]; } set { m_colors[2] = value; } }
-		[XmlIgnore]
-		public float Alpha { get { return m_colors[3]; } set { m_colors[3] = value; } }
-		[XmlIgnore]
-		public float[] fRGBA { get { return m_colors; } set { m_colors = value; } }
-		[XmlIgnore]
-		public byte[]  RGBA { get { return new byte[] { R,G,B,A }; } }
 
-		[XmlElement("Red")]
-		public byte R { get { return FloatColorToByte(Red ); } set { Red = ByteColorToFloat(value); } }
-		[XmlElement("Green")]
-		public byte G { get { return FloatColorToByte(Green ); } set { Green = ByteColorToFloat(value); } }
-		[XmlElement("Blue")]
-		public byte B { get { return FloatColorToByte(Blue); } set { Blue = ByteColorToFloat(value); } }
-		[XmlElement("Alpha")]
-		public byte A { get { return FloatColorToByte(Alpha ); } set { Alpha = ByteColorToFloat(value); } }
+		public float Red { get { return m_fRed; } set { m_fRed = value; } }
+		public float Green { get { return m_fGreen; } set { m_fGreen = value; } }
+		public float Blue { get { return m_fBlue; } set { m_fBlue = value; } }
+		public float Alpha { get { return m_fAlpha; } set { m_fAlpha = value; } }
 
-		public Color()
-			: this(0,0,0, 1.0f)
+		public byte R { get { return FloatColorToByte(Red ); } set { m_fRed = ByteColorToFloat(value); } }
+		public byte G { get { return FloatColorToByte(Green ); } set { m_fGreen = ByteColorToFloat(value); } }
+		public byte B { get { return FloatColorToByte(Blue); } set { m_fBlue = ByteColorToFloat(value); } }
+		public byte A { get { return FloatColorToByte(Alpha ); } set { m_fAlpha = ByteColorToFloat(value); } }
+
+		[System.Runtime.CompilerServices.IndexerName ("Component")]
+		public unsafe float this [int index]
 		{
-
+			get
+			{
+				if ((index | 0x3) != 0x3) //index < 0 || index > 3
+					throw new ArgumentOutOfRangeException("index");
+				fixed (float *v = &m_fRed)
+				{
+					return *(v + index);
+				}
+			}
+			set
+			{
+				if ((index | 0x3) != 0x3) //index < 0 || index > 3
+					throw new ArgumentOutOfRangeException("index");
+				fixed (float *v = &m_fRed)
+				{
+					*(v + index) = value;
+				}
+			}
 		}
+
 		public Color(float red, float green, float blue) 
 			: this(red, green, blue, 1.0f)
 		{
@@ -88,25 +103,41 @@ namespace System.Common
 		}
 		public Color(float red, float green, float blue, float alpha)		
 		{
-			Red = red;
-			Green = green;
-			Blue = blue;
-			Alpha = alpha;
+			m_fRed = red;
+			m_fGreen = green;
+			m_fBlue = blue;
+			m_fAlpha = alpha;
 		}
 		public Color(byte red, byte green, byte blue, byte alpha) 				
 		{
-			R = red;
-			G = green;
-			B = blue;
-			A = alpha;
+			m_fRed = m_fGreen = m_fBlue = m_fAlpha = 0.0f;
+			m_fRed = ByteColorToFloat(red);
+			m_fGreen = ByteColorToFloat(green);
+			m_fBlue = ByteColorToFloat(blue);
+			m_fAlpha = ByteColorToFloat(alpha);
+
 		}	
+		public Color(uint rgba)
+		{
+			byte[] values = BitConverter.GetBytes(rgba);
+			if (!BitConverter.IsLittleEndian) Array.Reverse(values);
+			m_fRed = m_fGreen = m_fBlue = m_fAlpha = 0.0f;
+			m_fRed = ByteColorToFloat(values[3]);
+			m_fGreen = ByteColorToFloat(values[2]);
+			m_fBlue = ByteColorToFloat(values[1]);
+			m_fAlpha = ByteColorToFloat(values[0]);
+		}
+		public uint ToRgba()
+		{
+			return (uint)((R << 24) | (G << 16) | (B << 8)  | (A << 0));
+		}
 		public  Color(string hexstring)
 		{
 			var cal = Colors.FromString(hexstring);
-			R = cal.R;
-			G = cal.G;
-			B = cal.B;
-			A = cal.A;
+			m_fRed = cal.R;
+			m_fGreen = cal.G;
+			m_fBlue = cal.B;
+			m_fAlpha = cal.A;
 		}
 		public override bool Equals (object obj)
 		{
@@ -130,19 +161,19 @@ namespace System.Common
 			StringBuilder sb = new StringBuilder();
 
 			if (format == null)
-				{
-					sb.AppendFormat(provider, "#{0:X2}", this.R);
-					sb.AppendFormat(provider, "{0:X2}", this.G);
-					sb.AppendFormat(provider, "{0:X2}", this.B);
-					sb.AppendFormat(provider, "{0:X2}", this.A);
-				}
+			{
+				sb.AppendFormat(provider, "#{0:X2}", this.R);
+				sb.AppendFormat(provider, "{0:X2}", this.G);
+				sb.AppendFormat(provider, "{0:X2}", this.B);
+				sb.AppendFormat(provider, "{0:X2}", this.A);
+			}
 			else
-				{
-					sb.AppendFormat(provider,
-						"sc#{1:" + format + "}{0} {2:" + format + "}{0} {3:" + format + "}{0} {4:" + format + "}",
-						".", Red, Green,
-						Blue, Alpha);
-				}
+			{
+				sb.AppendFormat(provider,
+					"sc#{1:" + format + "}{0} {2:" + format + "}{0} {3:" + format + "}{0} {4:" + format + "}",
+					".", Red, Green,
+					Blue, Alpha);
+			}
 
 			return sb.ToString();
 		}
@@ -194,26 +225,33 @@ namespace System.Common
 			this.Green = n.Green;
 			this.Alpha = n.Alpha;
 		}
-
-		/*public static explicit operator Color(string hex) 
-		{
-			Color d = new Color(hex); 
-			return d;
-		}*/
+			
 		public static implicit operator Color(string hex) 
 		{
-			Color d = new Color(hex);  
-			return d;
+			return new Color(hex);  
 		}
-
+		[Acceleration (AccelMode.SSE1)]
+		public static Color Contrast(Color c, float s)
+		{
+			return new Color()
+			{
+				Red = 0.5f + s * (c.Red - 0.5f),
+				Green = 0.5f + s * (c.Green - 0.5f),
+				Blue = 0.5f + s * (c.Blue - 0.5f),
+				Alpha = c.Alpha,
+			};
+		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color	Negate(Color c)											
 		{
 			return new Color(1.0f - c.Red, 1.0f - c.Green, 1.0f - c.Blue, 1.0f - c.Alpha);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static float	Brightness(Color c)										
 		{
 			return c.Red * 0.299f + c.Green * 0.587f + c.Blue * 0.114f;
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color	Interpolate(Color c1, Color c2, float p)	
 		{
 			return c1 + p * (c2 - c1);
@@ -234,7 +272,7 @@ namespace System.Common
 				Math.Max(c1.Alpha, c2.Alpha));
 		}
 
-
+		[Acceleration (AccelMode.SSE2)]
 		public static bool operator == (Color left, Color right) 
 		{
 			bool ret = false;
@@ -249,62 +287,82 @@ namespace System.Common
 			}
 			return ret;
 		}
-
+		[Acceleration (AccelMode.SSE2)]
 		public static bool operator != (Color left, Color right) 
 		{
 			return !(left == right);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator + ( Color a, Color b)
 		{
 			return new Color(a.Red + b.Red, a.Green + b.Green, a.Blue + b.Blue, a.Alpha + b.Alpha);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator - ( Color a, Color b)
 		{
 			return new Color(a.Red - b.Red, a.Green - b.Green, a.Blue - b.Blue, a.Alpha - b.Alpha);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator * ( Color a, Color b)
 		{
 			return new Color(a.Red * b.Red, a.Green * b.Green, a.Blue * b.Blue, a.Alpha * b.Alpha);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator / ( Color a, Color b)
 		{
 			return new Color(a.Red / b.Red, a.Green / b.Green, a.Blue / b.Blue, a.Alpha / b.Alpha);
 		}
-
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator + ( Color a, float b)
 		{
 			return new Color(a.Red + b, a.Green + b, a.Blue + b, a.Alpha + b);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator - ( Color a, float b)
 		{
 			return new Color(a.Red - b, a.Green - b, a.Blue - b, a.Alpha - b);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator * ( Color a, float b)
 		{
 			return new Color(a.Red * b, a.Green * b, a.Blue * b, a.Alpha * b);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator / ( Color a, float b)
 		{
 			return new Color(a.Red / b, a.Green / b, a.Blue / b, a.Alpha / b);
 		}
-
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator + ( float a, Color b)
 		{
 			return new Color(a + b.Red, a + b.Green, a + b.Blue, a + b.Alpha);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator - ( float a, Color b)
 		{
 			return new Color(a - b.Red, a - b.Green, a - b.Blue, a - b.Alpha);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator * ( float a, Color b)
 		{
 			return new Color(a * b.Red, a * b.Green, a * b.Blue, a * b.Alpha);
 		}
+		[Acceleration (AccelMode.SSE1)]
 		public static Color operator / ( float a, Color b)
 		{
 			return new Color(a / b.Red, a / b.Green, a / b.Blue, a / b.Alpha);
 		}
 
+		public byte[] ToByteRgba()
+		{
+			uint intValue = ToRgba();
+
+			byte[] intBytes = BitConverter.GetBytes(intValue);
+			if (BitConverter.IsLittleEndian)
+			    Array.Reverse(intBytes);
+			return intBytes;
+		}
+		[Acceleration (AccelMode.SSE2)]
 		private float ByteColorToFloat(byte val)
 		{
 			float f = ((float)val / 255.0f);
@@ -325,6 +383,7 @@ namespace System.Common
 					return (1.0f);
 				}
 		}
+		[Acceleration (AccelMode.SSE2)]
 		private static byte FloatColorToByte(float val)
 		{
 			if (!(val > 0.0))
@@ -343,6 +402,14 @@ namespace System.Common
 			{
 				return (255);
 			}
+		}
+
+		public float[] ToArray()
+		{
+			return new float[]
+			{
+				R, G, B, A
+			};
 		}
 	}
 }

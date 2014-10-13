@@ -147,21 +147,23 @@ namespace X11.Widgets
 			{
 				if (m_handles.ContainsKey(name))
 				{
-							Application.Current.m_handles.Remove(name);
+					Application.Current.m_handles.Remove(name);
 					ok = true;
 				}
 			}
 			return ok;
 		}
 
+		public void Exit()
+		{
+			m_bOpen = false;
+			m_handles.Clear();
+		}
+
 		public static void Init (string _namespace)
 		{
 			m_current = new Application(_namespace);
 			m_current.m_currentDisplay = new Display(":0");
-		}
-		public void Exit()
-		{
-			m_bOpen = false;
 		}
 		public static void Run()
 		{
@@ -181,6 +183,7 @@ namespace X11.Widgets
 					//MainWindow.EventHandler.CallHandler("UserEvents", null, MainWindow);
 			}
 			MainWindow.Destroy();
+			m_current.m_handles.Clear();
 		}
 
 		static bool CheckEvent(IntPtr display, ref XEvent xevent, IntPtr userData)

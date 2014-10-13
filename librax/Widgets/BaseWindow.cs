@@ -164,6 +164,7 @@ namespace X11.Widgets
 		}
 		public virtual void Destroy()
 		{
+			Application.Current.UnRegisterHandle(Name);
 			m_bIsCreated = false;
 		}
 		public abstract void Show();
@@ -227,17 +228,6 @@ namespace X11.Widgets
 		}
 		protected virtual void OnClientMessage(XEvent args)
 		{
-			IntPtr protocolsAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_PROTOCOLS", false);
-			IntPtr deleteWindowAtom = Lib.XInternAtom(m_pDisplay.RawHandle, "WM_DELETE_WINDOW", false);
-
-			if(args.ClientMessageEvent.message_type == protocolsAtom && 
-			   args.ClientMessageEvent.ptr1 == deleteWindowAtom) 
-			{
-					//return false;
-
-			}
-					
-
 			if (ClientMessage != null)
 				ClientMessage(this, new XEventArgs());
 		}
@@ -489,7 +479,7 @@ namespace X11.Widgets
 					IntPtr deleteWindowAtom = Lib.XInternAtom(Display.RawHandle, "WM_DELETE_WINDOW", false);
 
 					if (xevent.ClientMessageEvent.message_type == protocolsAtom &&
-					   xevent.ClientMessageEvent.ptr1 == deleteWindowAtom)
+					    xevent.ClientMessageEvent.ptr1 == deleteWindowAtom)
 					{
 						return false;
 					}

@@ -141,9 +141,9 @@ namespace liboRg.OpenGL
 			glUniform4iARB = (Uniform4iARB)GetProc<Uniform4iARB>("glUniform4iARB");
 			glUniform1fvARB = (Uniform1fvARB)GetProc<Uniform1fvARB>("glUniform1fvARB");
 
-			//glUniform2fvARB = GetProc<Uniform2fvARB>("glUniform2fvARB");
-			//glUniform3fvARB = GetProc<Uniform3fvARB>("glUniform3fvARB");
-			//glUniform4fvARB = GetProc<Uniform4fvARB>("glUniform4fvARB");
+			glUniform2fvARB = (Uniform2fvARB)GetProc<Uniform2fvARB>("glUniform2fvARB");
+			glUniform3fvARB = (Uniform3fvARB)GetProc<Uniform3fvARB>("glUniform3fvARB");
+			glUniform4fvARB = (Uniform4fvARB)GetProc<Uniform4fvARB>("glUniform4fvARB");
 
 			glUniform1ivARB = (Uniform1ivARB)GetProc<Uniform1ivARB>("glUniform1ivARB");
 			glUniform2ivARB = (Uniform2ivARB)GetProc<Uniform2ivARB>("glUniform2ivARB");
@@ -152,7 +152,7 @@ namespace liboRg.OpenGL
 			glUniformMatrix2fvARB = (UniformMatrix2fvARB)GetProc<UniformMatrix2fvARB>("glUniformMatrix2fvARB");
 			glUniformMatrix3fvARB = (UniformMatrix3fvARB)GetProc<UniformMatrix3fvARB>("glUniformMatrix3fvARB");
 
-			//glUniformMatrix4fvARB = GetProc<UniformMatrix4fvARB>("glUniformMatrix4fvARB");
+			glUniformMatrix4fvARB = (UniformMatrix4fvARB)GetProc<UniformMatrix4fvARB>("glUniformMatrix4fvARB");
 
 			glGetObjectParameterfvARB = (GetObjectParameterfvARB)GetProc<GetObjectParameterfvARB>("glGetObjectParameterfvARB");
 			glGetObjectParameterivARB = (GetObjectParameterivARB)GetProc<GetObjectParameterivARB>("glGetObjectParameterivARB");

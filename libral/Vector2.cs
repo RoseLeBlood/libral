@@ -415,6 +415,13 @@ namespace System.Common
 			return vector;
 		}
 
+		public float[] ToArray()
+		{
+			return new float[]
+			{
+				X, Y
+			};
+		}
 	}
 }
 

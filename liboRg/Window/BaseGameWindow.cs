@@ -60,9 +60,6 @@ namespace liboRg.Window
 			Namespace = "liboRg";
 			ClassName = "BaseGameWindow";
 
-			if (style == (style & WindowStyle.NoResize))
-				Resizeable = false;
-			else if(style == (style & WindowStyle.Resize))
 				Resizeable = true;
 
 			this.EventMask = EventMask.FocusChangeMask | EventMask.ButtonPressMask | EventMask.ButtonReleaseMask |
@@ -76,7 +73,8 @@ namespace liboRg.Window
 			Resize += BaseGameWindow_Resize;
 			UserEvent += BaseGameWindow_UserEvents;
 			Move += BaseGameWindow_Move;
-		}
+		}	
+		
 		public override void Create()
 		{
 			base.Create();

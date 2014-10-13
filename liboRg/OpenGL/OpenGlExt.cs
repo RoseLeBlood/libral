@@ -48,7 +48,7 @@ namespace liboRg.OpenGL
 			DynamicRead 			= (uint)GL.DYNAMIC_READ_ARB,
 			DynamicCopy 			= (uint)GL.DYNAMIC_COPY_ARB,
 		}
-
+			
 		public delegate void ReleaseShaderCompiler();
 		public delegate void ShaderBinary(uint count, ref uint shaders, int binaryformat, IntPtr binary, uint length);
 		public delegate void GetShaderPrecisionFormat(uint shadertype, int precisiontype, ref int range, ref int precision);
@@ -67,11 +67,10 @@ namespace liboRg.OpenGL
 		public delegate void ProgramParameteri (uint program, int pname, int value);
 
 		public delegate IntPtr GetStringi(int n, uint index);
-		//public delegate int GetStringi(int n, uint index​);
 		public delegate void GenBuffersARB(int n, uint[] ids);
 		public delegate void BindBufferARB(VboTarget target, uint id);
-		public unsafe delegate void BufferDataARB(VboTarget target, int size, IntPtr data, VboUsage usage);
-		public unsafe delegate void BufferSubDataARB(VboTarget target, int offset, int size, void* data);
+		public delegate void BufferDataARB(VboTarget target, int size, byte[] data, VboUsage usage);
+		public delegate void BufferSubDataARB(VboTarget target, int offset, int size, byte[] data);
 		public delegate void DeleteBuffersARB(int n, uint[] ids);
 		public unsafe delegate void* MapBufferARB(VboTarget target, VboAccess access);
 		public delegate boolean UnmapBufferARB(VboTarget target);
@@ -111,7 +110,7 @@ namespace liboRg.OpenGL
 		public delegate void VertexAttrib4ubvARB(uint index, byte[] v);
 		public delegate void VertexAttrib4uivARB(uint index, uint[] v);
 		public delegate void VertexAttrib4usvARB(uint index, ushort[] v);
-		public unsafe delegate void VertexAttribPointerARB(uint index, int size, uint type, boolean normalized, int stride, void* pointer);
+		public delegate void VertexAttribPointerARB(uint index, int size, uint type, uint normalized, int stride, IntPtr pointer);
 		public delegate void EnableVertexAttribArrayARB(uint index);
 		public delegate void DisableVertexAttribArrayARB(uint index);
 		public delegate void ProgramStringARB(uint target, uint format, int len, [MarshalAs(UnmanagedType.LPWStr)] string code);
@@ -157,17 +156,17 @@ namespace liboRg.OpenGL
 		public delegate void Uniform2iARB(int location, int v0, int v1);
 		public delegate void Uniform3iARB(int location, int v0, int v1, int v2);
 		public delegate void Uniform4iARB(int location, int v0, int v1, int v2, int v3);
-		public delegate void Uniform1fvARB(int location, int count, ref float value);
-		//public delegate void Uniform2fvARB(int location, int count, ref Vector2 value);
-		//public delegate void Uniform3fvARB(int location, int count, ref Vector3 value);
-		//public delegate void Uniform4fvARB(int location, int count, ref Vector4 value);
+		public delegate void Uniform1fvARB(int location, int count, float[] value);
+		public delegate void Uniform2fvARB(int location, int count, float[] value);
+		public delegate void Uniform3fvARB(int location, int count, float[] value);
+		public delegate void Uniform4fvARB(int location, int count, float[] value);
 		public delegate void Uniform1ivARB(int location, int count, int[] value);
 		public delegate void Uniform2ivARB(int location, int count, int[] value);
 		public delegate void Uniform3ivARB(int location, int count, int[] value);
 		public delegate void Uniform4ivARB(int location, int count, int[] value);
 		public delegate void UniformMatrix2fvARB(int location, int count, boolean transpose, float[] value);
 		public delegate void UniformMatrix3fvARB(int location, int count, boolean transpose, float[] value);
-		//public delegate void UniformMatrix4fvARB(int location, int count, boolean transpose, ref Matrix value);
+		public delegate void UniformMatrix4fvARB(int location, int count, boolean transpose, float[] value);
 		public delegate void GetObjectParameterfvARB(IntPtr obj, uint pname, float[] parameters);
 		public delegate void GetObjectParameterivARB(IntPtr obj, uint pname, int[] parameters);
 		public delegate void GetInfoLogARB(IntPtr obj, int maxLength, ref int length, byte[] infoLog);
@@ -275,16 +274,16 @@ namespace liboRg.OpenGL
 		public static Uniform3iARB glUniform3iARB;
 		public static Uniform4iARB glUniform4iARB;
 		public static Uniform1fvARB glUniform1fvARB;
-		//public static Uniform2fvARB glUniform2fvARB;
-		//public static Uniform3fvARB glUniform3fvARB;
-		//public static Uniform4fvARB glUniform4fvARB;
+		public static Uniform2fvARB glUniform2fvARB;
+		public static Uniform3fvARB glUniform3fvARB;
+		public static Uniform4fvARB glUniform4fvARB;
 		public static Uniform1ivARB glUniform1ivARB;
 		public static Uniform2ivARB glUniform2ivARB;
 		public static Uniform3ivARB glUniform3ivARB;
 		public static Uniform4ivARB glUniform4ivARB;
 		public static UniformMatrix2fvARB glUniformMatrix2fvARB;
 		public static UniformMatrix3fvARB glUniformMatrix3fvARB;
-		//public static UniformMatrix4fvARB glUniformMatrix4fvARB;
+		public static UniformMatrix4fvARB glUniformMatrix4fvARB;
 		public static GetObjectParameterfvARB glGetObjectParameterfvARB;
 		public static GetObjectParameterivARB glGetObjectParameterivARB;
 		public static GetInfoLogARB glGetInfoLogARB;
@@ -316,6 +315,8 @@ namespace liboRg.OpenGL
 		public static  GetProgramBinary 		glGetProgramBinary;
 		public static  ProgramBinary 			glProgramBinary;
 		public static  ProgramParameteri 		glProgramParameteri;
+
+
 	}
 }
 

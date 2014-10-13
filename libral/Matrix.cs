@@ -45,6 +45,7 @@ namespace System.Common
 		public float M43 { get { return r4.Z; } set { r4.Z = value; } }
 		public float M44 { get { return r4.W; } set { r4.W = value; } }
 
+
 		public Vector3 Right
 		{
 			get
@@ -379,6 +380,55 @@ namespace System.Common
 			pout.M44 = 0.0f;
 			return pout;
 		}
+		public static Matrix CreateProjection(Size feld, float fNearPlane, float fFarPlane)
+		{
+			Matrix pout = Matrix.Identity;
+			pout.M11 = 2.0f * fNearPlane / feld.Width;
+			pout.M22 = 2.0f * fNearPlane / feld.Height;
+			pout.M33 = fFarPlane / (fNearPlane - fFarPlane);
+			pout.M43 = (fNearPlane * fFarPlane) / (fNearPlane - fFarPlane);
+			pout.M34 = -1.0f;
+			pout.M44 = 0.0f;
+			return pout;
+		}
+		public static Matrix CreateProjectionLH(Size feld, float fNearPlane, float fFarPlane)
+		{
+			Matrix pout = Matrix.Identity;
+			pout.M11 = 2.0f * fNearPlane / feld.Width;
+			pout.M22 = 2.0f * fNearPlane / feld.Height;
+			pout.M33 = fFarPlane / (fFarPlane - fNearPlane);
+			pout.M43 = (fNearPlane * fFarPlane) / (fNearPlane - fFarPlane);
+			pout.M34 = 1.0f;
+			pout.M44 = 0.0f;
+			return pout;
+		}
+		public static Matrix CreatePerspectiveOffCenterLH(float l, float r, float b, float t, float fNearPlane, float fFarPlane)
+		{
+			Matrix pout = Matrix.Identity;
+			pout.M11 = 2.0f * fNearPlane / (r - l);
+			pout.M22 = -2.0f * fNearPlane / (b - t);
+			pout.M31 = -1.0f - 2.0f * l / (r - l);
+			pout.M32 = 1.0f + 2.0f * t / (b - t);
+			pout.M33 = - fFarPlane / (fNearPlane - fFarPlane);
+			pout.M43 = (fNearPlane * fFarPlane) / (fNearPlane -fFarPlane);
+			pout.M34 = 1.0f;
+			pout.M44 = 0.0f;
+			return pout;
+		}
+
+		public static Matrix CreatePerspectiveOffCenter(float l, float r, float b, float t, float fNearPlane, float fFarPlane)
+		{
+			Matrix pout = Matrix.Identity;
+			pout.M11 = 2.0f * fNearPlane / (r - l);
+			pout.M22 = -2.0f * fNearPlane / (b - t);
+			pout.M31 = 1.0f + 2.0f * l / (r - l);
+			pout.M32 = -1.0f -2.0f * t / (b - t);
+			pout.M33 = fFarPlane / (fNearPlane - fFarPlane);
+			pout.M43 = (fNearPlane * fFarPlane) / (fNearPlane -fFarPlane);
+			pout.M34 = -1.0f;
+			pout.M44 = 0.0f;
+			return pout;
+		}
 		public static Matrix CreateBillboard( Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector )
 		{
 			Matrix result = new Matrix();
@@ -562,6 +612,43 @@ namespace System.Common
 			return new Matrix (xmm0, xmm3, xmm1, xmm4);
 		}
 
+
+
+		public static Matrix Transformation(Vector3 pscalingcenter, Quaternion pscalingrotation, 
+			Vector3 pscaling, Vector3 protationcenter, Quaternion protation, Vector3 ptranslation)
+		{
+			Matrix m1, m2, m3, m4, m5, m6, m7, p1, p2, p3, p4, p5;
+			Quaternion prc = ( protationcenter == null ? new Quaternion(Vector3.Zero, 1.0f) : 
+				new Quaternion(protationcenter, 1.0f));
+
+			Vector3 psc = ( pscalingcenter == null ? Vector3.Zero : pscalingcenter);
+			Vector3 pt = ( ptranslation == null ? Vector3.Zero : ptranslation);
+
+			m1 = Matrix.CreateTranslation(psc);
+
+
+			if (pscalingrotation == null)
+			{
+				m2 = m4 = Matrix.Identity;
+			}
+			else
+			{
+				m4 = Matrix.CreateRotation(pscalingrotation);
+				m2 = Matrix.Invert(m4);
+			}
+
+			m3 =  (pscaling == null ? Matrix.Identity : Matrix.CreateScale(pscaling));
+			m6 =  (protation == null ? Matrix.Identity : Matrix.CreateRotation(protation));
+
+			m5 = Matrix.CreateTranslation(new Vector3(psc.X - prc.X, psc.Y - prc.Y, psc.Z - prc.Z));
+			m7 = Matrix.CreateTranslation(new Vector3(prc.X + pt.X, prc.Y + pt.Y, prc.Z + pt.Z));
+			p1 = Matrix.Multiply(m1, m2);
+			p2 = Matrix.Multiply(p1, m3);
+			p3 = Matrix.Multiply(p2, m4);
+			p4 = Matrix.Multiply(p3, m5);
+			p5 = Matrix.Multiply(p4, m6);
+			return Matrix.Multiply(p5, m7);
+		}
 		public static Matrix Add (Matrix matrix1, Matrix matrix2)
 		{
 			return new Matrix()
@@ -706,6 +793,17 @@ namespace System.Common
 				M21, M22, M23, M24,
 				M31, M32, M33, M34,
 				M41, M42, M43, M44);
+		}
+
+		public float[] ToArray()
+		{
+			return new float[16]
+			{
+				M11, M12, M13, M14,
+				M21, M22, M23, M24,
+				M31, M32, M33, M34,
+				M41, M42, M43, M44
+			};
 		}
 	}
 }

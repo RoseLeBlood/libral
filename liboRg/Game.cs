@@ -58,28 +58,25 @@ namespace liboRg
 
 		public bool DepthMask
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return GameContext.DepthMask; }
+			set { GameContext.DepthMask = value; }
 		}
 
-		public bool VSync
+		public VSyncMode VSync
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return GameContext.VSync; }
+			set { GameContext.VSync = value; }
 		}
-		public float Time
+		public double Time
 		{
-			get { throw new NotImplementedException(); }
+			get { return (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds; }
 		}
 
 		public GameContext GameContext
 		{
 			get
 			{ 
-				if(Window is BaseGameWindow2)
-					return ((BaseGameWindow2)Window).Context; 
-				else
-					return ((BaseGameWindow)Window).Context; 
+				return Window.Context;
 			}
 		}
 

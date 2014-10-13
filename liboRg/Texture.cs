@@ -151,24 +151,21 @@ namespace liboRg
 		NearestMipmapLinear = (uint)GL.NEAREST_MIPMAP_LINEAR,
 		LinearMipmapLinear = (uint)GL.LINEAR_MIPMAP_LINEAR
 	}
-	public class Texture : Handle
+	public class Texture : GlHandle
 	{
-		private uint[] m_iObject;
-
 		public Texture(string name) 
-			: base(name)
+			: base("tex_" + name, GlHandleType.Texture)
 		{
-			m_iObject = new uint[1];
-			gl.glGenTextures(1, m_iObject);
+			Register(true);
 		}
 
-		public Texture(Image image, TextureInternalFormat internalFormat = TextureInternalFormat.RGBA )
-			: this(image.Name, image.ToByteArray(), TextureDataType.Byte, TextureFormat.RGBA, image.Size , internalFormat )
+		public Texture(Image image, TextureInternalFormat internalFormat = TextureInternalFormat.RGBA8 )
+			: this(image.Name.Replace("img_", ""), image.ToByteArray(), TextureDataType.UnsignedInt8888Rev, TextureFormat.RGBA, image.Size , internalFormat )
 		{
 		}
 		public Texture(string name, byte[] data, TextureDataType type, TextureFormat format, 
 			Size pSize, TextureInternalFormat internalFormat )
-			: this("tex_" + name)
+			: base("tex_" + name, GlHandleType.Texture)
 		{
 
 			gl.glBindTexture( (uint)GL.TEXTURE_2D, m_iObject[0] );
@@ -188,10 +185,7 @@ namespace liboRg
 		{
 			Dispose(false);
 		}
-		protected override void CleanUpManagedResources()
-		{
-			gl.glDeleteTextures(1, m_iObject);
-		}
+
 
 		public void SetWrapping( TextureWrapping s )
 		{
@@ -242,7 +236,7 @@ namespace liboRg
 			var x = PushState();
 
 			gl.glBindTexture( (uint)GL.TEXTURE_2D,  m_iObject[0] );
-			gl.glTexParameterfv( (uint)GL.TEXTURE_2D, (uint)GL.TEXTURE_BORDER_COLOR, color.fRGBA );
+			gl.glTexParameteri( (uint)GL.TEXTURE_2D, (uint)GL.TEXTURE_BORDER_COLOR, (int)color.ToRgba() );
 
 			PopState(x);
 

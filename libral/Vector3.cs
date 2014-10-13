@@ -544,7 +544,13 @@ namespace System.Common
 		{
 			return string.Format ("{0} {1} {2}", X, Y, Z);
 		}
-
+		public float[] ToArray()
+		{
+			return new float[]
+				{
+					X, Y, Z
+				};
+		}
 	}
 }
 

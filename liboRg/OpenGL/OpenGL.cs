@@ -38,6 +38,9 @@ namespace liboRg.OpenGL
 		[DllImport(DllName)]
 		public static extern void glAccum(uint op, float value);
 		[DllImport(DllName)]
+		public extern static int glGetAttribLocation(IntPtr program, string name);
+
+		[DllImport(DllName)]
 		public static extern void glAlphaFunc(uint func, float reference);
 		[DllImport(DllName)]
 		public static extern boolean glAreTexturesResident(int n, uint[] textures, boolean[] residences);
@@ -45,6 +48,8 @@ namespace liboRg.OpenGL
 		public static extern void glArrayElement(int i);
 		[DllImport(DllName)]
 		public static extern void glBegin(uint mode);
+		[DllImport(DllName)]
+		public static extern void glBindBufferBase(uint target, int index, uint buffer);
 		[DllImport(DllName)]
 		public static extern void glBindTexture(uint target, uint texture);
 		[DllImport(DllName)]
@@ -87,6 +92,8 @@ namespace liboRg.OpenGL
 		public static extern void glColor3i(int red, int green, int blue);
 		[DllImport(DllName)]
 		public static extern void glColor3iv(int[] v);
+		[DllImport(DllName)]
+		public static extern  void glBindVertexArray(uint vao);
 		[DllImport(DllName)]
 		public static extern void glColor3s(short red, short green, short blue);
 		[DllImport(DllName)]
@@ -158,6 +165,10 @@ namespace liboRg.OpenGL
 		[DllImport(DllName)]
 		public static extern void glDeleteTextures(int n, uint[] textures);
 		[DllImport(DllName)]
+		public static extern void glDeleteFramebuffers(	int n, uint[] framebuffers);
+		[DllImport(DllName)]
+		public static extern void glDeleteVertexArrays(	int n, uint[] vertexarrays);
+		[DllImport(DllName)]
 		public static extern void glDepthFunc(uint func);
 		[DllImport(DllName)]
 		public static extern void glDepthMask(boolean flag);
@@ -172,7 +183,7 @@ namespace liboRg.OpenGL
 		[DllImport(DllName)]
 		public static extern void glDrawBuffer(uint mode);
 		[DllImport(DllName)]
-		public static extern void glDrawElements(uint mode, int count, uint type, IntPtr indices);
+		public static extern void glDrawElements(uint mode, int count, uint type, int[] indices);
 		[DllImport(DllName)]
 		public static unsafe extern void glDrawPixels(int width, int height, uint format, uint type, void* pixels);
 		[DllImport(DllName)]
@@ -235,6 +246,16 @@ namespace liboRg.OpenGL
 		public static extern uint glGenLists(int range);
 		[DllImport(DllName)]
 		public static extern void glGenTextures(int n, uint[] textures);
+		[DllImport(DllName)]
+		public static extern void glGenFramebuffers(int n, uint[] framebuffers);
+		[DllImport(DllName)]
+		public static extern void glGenVertexArrays(int n, uint[] vertexarrays);
+		[DllImport(DllName)]
+		public static extern uint glCreateShader(uint shaderType);
+		[DllImport(DllName)]
+		public static extern void glGetShaderiv(IntPtr shader, uint i, ref int res);
+		[DllImport(DllName)]
+		public static extern void glGetProgramiv(IntPtr program, uint i, ref int res);
 		[DllImport(DllName)]
 		public static extern void glGetBooleanv(uint pname, boolean[] parameters);
 		[DllImport(DllName)]
@@ -664,6 +685,8 @@ namespace liboRg.OpenGL
 		[DllImport(DllName)]
 		public static extern void glTranslated(double x, double y, double z);
 		[DllImport(DllName)]
+		public static extern void glFramebufferTexture2D(uint target, uint attachment, uint textarget, uint texture, int level);
+		[DllImport(DllName)]
 		public static extern void glTranslatef(float x, float y, float z);
 		[DllImport(DllName)]
 		public static extern void glVertex2d(double x, double y);
@@ -723,6 +746,16 @@ namespace liboRg.OpenGL
 		public static extern void glEndTransformFeedback();
 		[DllImport(DllName)]
 		public static extern void glGenerateMipmap(uint i);
+		[DllImport(DllName)]
+		public static extern uint glCheckFramebufferStatus(uint i);
+		[DllImport(DllName)]
+		public static extern void glGetShaderInfoLog(IntPtr shader, Int32 bufsize, IntPtr length, byte[] infolog);
+		[DllImport(DllName)]
+		public static extern void glGetProgramInfoLog(IntPtr program, Int32 bufsize, IntPtr length, byte[] infolog);
+		[DllImport(DllName)]
+		public static extern void glTransformFeedbackVaryings(IntPtr program, uint count, byte[] varyings, uint i);
+		[DllImport(DllName)]
+		public static extern void glGetFramebufferAttachmentParameteriv(uint i, uint i2, uint i3, uint[] obj);
 
 		public static string glGetString(int name)
 		{

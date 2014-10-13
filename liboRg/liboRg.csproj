@@ -59,6 +59,15 @@
     <Compile Include="OpenGL\Extensions.cs" />
     <Compile Include="Window\BaseGameWindow2.cs" />
     <Compile Include="Window\IGameWindow.cs" />
+    <Compile Include="Framework\Framebuffer.cs" />
+    <Compile Include="glHandle.cs" />
+    <Compile Include="Framework\Shader.cs" />
+    <Compile Include="OpenGL\GLUtil.cs" />
+    <Compile Include="Framework\Program.cs" />
+    <Compile Include="Framework\VertexArray.cs" />
+    <Compile Include="Framework\VertexBuffer.cs" />
+    <Compile Include="Framework\VertexDataBuffer.cs" />
+    <Compile Include="Framework\Mesh.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -76,6 +85,7 @@
     <Folder Include="Window\" />
     <Folder Include="OpenGL\" />
     <Folder Include="OpenGL\GLX\" />
+    <Folder Include="Framework\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

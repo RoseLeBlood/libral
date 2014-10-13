@@ -42,7 +42,7 @@ namespace System.Common
 
 		public Matrix	    View
 		{ 
-			get { return Matrix.CreateLookAt(m_Position, m_Direction, Vector3.Up); }
+			get { return Matrix.CreateLookAt(m_Position, m_Position + m_Direction, Vector3.Up); }
 		}
 		public Matrix 		Projection 
 		{ 
@@ -87,13 +87,14 @@ namespace System.Common
 
 		public Light(Vector3 vPosition, Vector3 vDirection, Color DiffuseColor, Color AmbientColor)
 		{
-			m_Position = vPosition;
-			m_Direction = vDirection;
-			m_DiffuseColor = DiffuseColor;
-			m_AmbientColor = AmbientColor;
-			m_Attenuation = Vector4.One;
-			m_cosHalfPhi = (float)Math.Cos(Math.PI / 2);
-			m_cosHalfTheta = 0f;
+			m_Position = new Vector3(-10.0f, 2.0f, 0.0f);
+			m_Direction = new Vector3(1.0f, 0.0f, 0.0f);
+			m_DiffuseColor = new Color(0.9f);
+			m_AmbientColor= new Color(0.1f);
+			m_Attenuation= new Vector4(0, 0, 0.4f, 0);
+
+			m_cosHalfPhi = 0.4f;
+			m_cosHalfTheta = 0.9f;
 		}
 
 		public virtual void SetProjParams(float fFov, float fAspect, float fNearPlane, float fFarPlane)

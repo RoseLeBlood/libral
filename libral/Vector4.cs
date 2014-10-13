@@ -341,6 +341,13 @@ namespace System.Common
 			r0 = r0 + r0.Shuffle (ShuffleSel.RotateLeft);
 			return new Vector4( value.m_fVector4 / r0.Sqrt ());
 		}
+		public float[] ToArray()
+		{
+			return new float[]
+			{
+				X, Y, Z, W
+			};
+		}
 	}
 }
 

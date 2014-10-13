@@ -24,6 +24,7 @@ using System.Common;
 using liboRg.OpenGL;
 using liboRg.Window;
 using X11.Widgets;
+using liboRg.Framework;
 
 namespace liboRg.Context
 {
@@ -104,10 +105,7 @@ namespace liboRg.Context
 			get { return m_pNativeContext.VScyn; }
 			set { m_pNativeContext.VScyn = value; }
 		}
-		public double Time
-		{
-			get { return (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds; }
-		}
+
 
 		public IGLNativeContext Handle
 		{
@@ -179,12 +177,32 @@ namespace liboRg.Context
 		{
 			gl.glStencilOp((uint) fail, (uint)zfail, (uint)pass );
 		}
+		public void UseProgram( Program program )
+		{
+			gl.glUseProgramObjectARB(program.glObject);
+		}
+		public void BindFramebuffer( Framebuffer framebuffer )
+		{
+			gl.glBindFramebuffer( (uint)GL.DRAW_FRAMEBUFFER, framebuffer.glObject );
 
-		//void UseProgram(  ref Program program );
+			// Set viewport to frame buffer size
+			uint[] obj = new uint[1]; 
+			gl.glGetFramebufferAttachmentParameteriv( (uint)GL.DRAW_FRAMEBUFFER, (uint)GL.COLOR_ATTACHMENT0, 
+				(uint)GL.FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, obj );
 
-		//void BindTexture( ref Texture texture, byte unit );
+			int[] res = new int[1]; 
+			int[] width = new int[1];
+			int[] height = new int[1];
 
-		//void BindFramebuffer( ref Framebuffer framebuffer );
+			gl.glGetIntegerv( (uint)GL.TEXTURE_BINDING_2D, res );
+			gl.glBindTexture( (uint)GL.TEXTURE_BINDING_2D, obj[0] );
+			gl.glGetTexLevelParameteriv((uint)GL.TEXTURE_BINDING_2D, 0, (uint)GL.TEXTURE_WIDTH, width); 
+			gl.glGetTexLevelParameteriv((uint)GL.TEXTURE_BINDING_2D, 0, (uint)GL.TEXTURE_HEIGHT, height);
+
+			gl.glBindTexture( (uint)GL.TEXTURE_BINDING_2D,(uint)res[0] );
+
+			gl.glViewport( 0, 0, width[0], height[0] );
+		}
 		public virtual void BindFramebuffer()
 		{
 			gl.glBindFramebuffer( (uint)GL.DRAW_FRAMEBUFFER, 0 );
@@ -205,8 +223,16 @@ namespace liboRg.Context
 			gl.glEndTransformFeedback();
 		}
 
-		//void DrawArrays( VertexArray vao, Primitive mode, uint offset, uint vertices );
-		//void DrawElements( VertexArray vao, Primitive mode, IntPtr offset, uint count, uint type );
+		public void DrawArrays( VertexArray vao, Primitive mode, int offset, int vertices )
+		{
+			gl.glBindVertexArray( vao.glObject );
+			gl.glDrawArrays( (uint) mode, offset, vertices );
+		}
+		public void DrawElements( VertexArray vao, Primitive mode, int[] indices, int count, uint type )
+		{
+			gl.glBindVertexArray( vao.glObject );
+			gl.glDrawElements( (uint) mode, count, type, indices );
+		}
 
 	}
 }

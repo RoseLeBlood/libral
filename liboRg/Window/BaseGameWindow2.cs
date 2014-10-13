@@ -39,7 +39,7 @@ namespace liboRg.Window
 		private bool		m_bFullScreen;
 		private int 		m_iOldVideoMode;
 		private bool[] 		m_bMouse = new bool[3];
-		private bool[] 		m_bKeys= new bool[100];
+		private bool[] 		m_bKeys= new bool[512];
 
 		public GameContext Context
 		{
@@ -60,9 +60,6 @@ namespace liboRg.Window
 
 			m_bFullScreen = style == (style & WindowStyle.Fullscreen);
 
-			if (style == (style & WindowStyle.NoResize))
-				Resizeable = false;
-			else if(style == (style & WindowStyle.Resize))
 				Resizeable = true;
 
 			this.EventMask = EventMask.FocusChangeMask | EventMask.ButtonPressMask | EventMask.ButtonReleaseMask | EventMask.ButtonMotionMask | 
@@ -82,16 +79,13 @@ namespace liboRg.Window
 			attributes.event_mask = (TLong)EventMask; 
 			attributes.override_redirect = m_bFullScreen ? (TBoolean)1 : (TBoolean)0;
 
+			Rectangle.X = 0;
+			Rectangle.Y = 0;
+
 			if (m_bFullScreen)
 			{
-				Rectangle.X = 0;
-				Rectangle.Y = 0;
+				
 				EnableFullscreen(true, Rectangle.Width, Rectangle.Height);
-			}
-			else
-			{
-					Rectangle.X = Display.Screen.Width - Rectangle.Width / 2;
-					Rectangle.Y = Display.Screen.Height - Rectangle.Height / 2;
 			}
 			IntPtr desktop = Lib.XRootWindow( Display.RawHandle, (TInt)Display.Screen.ScreenNumber );
 			TInt depth = Lib.XDefaultDepth( Display.RawHandle, (TInt)Display.Screen.ScreenNumber );
@@ -99,7 +93,7 @@ namespace liboRg.Window
 
 			m_pHandle = Lib.XCreateWindow( Display.RawHandle, 
 				desktop, 
-				(TInt)Rectangle.X, (TInt)Rectangle.Y, (TUint)Rectangle.Width, (TUint)Rectangle.Height, 
+				(TInt)0, (TInt)0, (TUint)Rectangle.Width, (TUint)Rectangle.Height, 
 				(TUint)0, 
 				(TInt)depth,
 				(TUint)Lib.WindowClass.InputOutput, 
@@ -123,24 +117,26 @@ namespace liboRg.Window
 
 			}
 			// Set Size Hints
-			X11._internal.Lib.XSizeHints sizeHints = new Lib.XSizeHints();
-			sizeHints.flags = Lib.XSizeHintFlags.PPosition | Lib.XSizeHintFlags.PSize;
-			sizeHints.x = m_xRectangle.X;
-			sizeHints.y = m_xRectangle.Y;
-			sizeHints.width = m_xRectangle.Width;
-			sizeHints.height = m_xRectangle.Height;
 			if (!m_bIsResizeable)
-				{
-					// Min and max width and height are set to prevent window's resizing. In addition,
-					// this hides the 'restore' button on the title bar of the window.
-					sizeHints.flags = sizeHints.flags | Lib.XSizeHintFlags.PMinSize | Lib.XSizeHintFlags.PMaxSize;
-					sizeHints.min_width = m_xRectangle.Width;
-					sizeHints.min_height = m_xRectangle.Height;
-					sizeHints.max_width = m_xRectangle.Width;
-					sizeHints.max_height = m_xRectangle.Height;
-				}
-			//Lib.XSetWMNormalHints(m_pDisplay.RawHandle, m_pHandle, ref sizeHints ); -- geht net ???? Execption DLL NotFound ....
-			XSetWMNormalHints(m_pDisplay.RawHandle, m_pHandle, ref sizeHints);
+			{
+
+
+				X11._internal.Lib.XSizeHints sizeHints = new Lib.XSizeHints();
+				sizeHints.flags =  Lib.XSizeHintFlags.PMinSize | Lib.XSizeHintFlags.PMaxSize | 
+					Lib.XSizeHintFlags.PSize | Lib.XSizeHintFlags.PPosition;
+				sizeHints.x = 0;
+				sizeHints.y = 0;
+				sizeHints.width = m_xRectangle.Width;
+				sizeHints.height = m_xRectangle.Height;
+
+				sizeHints.min_width = m_xRectangle.Width;
+				sizeHints.min_height = m_xRectangle.Height;
+				sizeHints.max_width = m_xRectangle.Width;
+				sizeHints.max_height = m_xRectangle.Height;
+				//Lib.XSetWMNormalHints(m_pDisplay.RawHandle, m_pHandle, ref sizeHints ); -- geht net ???? Execption DLL NotFound ....
+				XSetWMNormalHints(m_pDisplay.RawHandle, m_pHandle, ref sizeHints);
+			}
+
 			// Set WM Hints
 			X11._internal.Lib.XWMHints wmHints = Lib.XAllocWMHints();
 			if (!System.IO.File.Exists(m_strIconPath))
