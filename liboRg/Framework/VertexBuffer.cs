@@ -65,6 +65,11 @@ namespace liboRg.Framework
 			gl.glBindBufferARB(gl.VboTarget.ArrayBuffer, glObject);
 			gl.glBufferDataARB(gl.VboTarget.ArrayBuffer, d.Length, d, (gl.VboUsage) usage);
 		}
+		public void Data( int lenght, BufferUsage usage )
+		{
+			gl.glBindBufferARB(gl.VboTarget.ArrayBuffer, glObject);
+			gl.glBufferDataARB(gl.VboTarget.ArrayBuffer, lenght, null, (gl.VboUsage) usage);
+		}
 		public void SubData( VertexDataBuffer data, int offset )
 		{
 			byte[] d = data.ToArray();

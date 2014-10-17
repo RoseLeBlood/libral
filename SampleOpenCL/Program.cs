@@ -1,5 +1,5 @@
 ﻿//
-//  X11Context.cs
+//  Program.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,23 +19,27 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11;
-using System.Common;
-using liboRg.OpenGL;
-using liboRg.Window;
 using X11.Widgets;
+using liboRg.OpenCL;
 
-namespace liboRg.Context
+namespace SampleOpenCL
 {
-	public class X11Context : GameContext
+	class MainClass
 	{
-		public X11Context(BaseWindow window, GameContextConfig pConfig)
-			: base("X11_CCONTEXT")
+		public static void Main(string[] args)
 		{
-			m_pNativeContext = new glxNativeContext(window, pConfig);
-
-			Register();
+			Application.Init("");
+			clPlatforms platforms = new clPlatforms();
+			foreach (var item in platforms)
+			{
+				Console.WriteLine(item);
+			
+				clDevices devices = new clDevices(item, OpenCLDeviceTyp.All);
+				foreach (var i in devices)
+				{
+					Console.WriteLine(i);
+				}
+			}
 		}
 	}
 }
-

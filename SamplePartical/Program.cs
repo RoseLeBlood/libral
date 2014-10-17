@@ -1,5 +1,5 @@
 ﻿//
-//  IGLContext.cs
+//  Program.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,40 +19,14 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11;
-using liboRg.Window;
-using System.Common;
-using liboRg.Context;
-using X11.Widgets;
 
-namespace liboRg.OpenGL
+namespace SamplePartical
 {
-	public enum VSyncMode : int
+	class MainClass
 	{
-		Enable = 1,
-		Disable = 0,
-		Adaptive = -1
-	}
-	public interface IGLNativeContext 
-	{
-		BaseWindow 			Window 				{ get; }
-		GameContextConfig 	GameConfig 			{ get; }
-		INativContextConfig NativeConfig 		{ get; }
-		bool 		   		Owned 				{ get; }
-		IntPtr		   		RawHandle 			{ get; }
-		Rectangle      		DefaultViewport 	{ get; }
-		Rectangle	   		Viewport 			{ get; set; }
-		VSyncMode	   		VScyn 				{ get; set; }
-
-
-		void Activate();
-		void DeActivate();
-
-		void Present();
-		void CreateContext();
-
-
-		INativContextConfigs GetConfigs();
+		public static void Main(string[] args)
+		{
+			Console.WriteLine("Hello World!");
+		}
 	}
 }
-

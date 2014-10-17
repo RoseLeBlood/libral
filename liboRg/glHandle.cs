@@ -30,6 +30,7 @@ namespace liboRg
 		Texture,
 		Framebuffer,
 		VertexArray,
+		Renderbuffer,
 		Buffer
 
 	}
@@ -68,6 +69,12 @@ namespace liboRg
 				case GlHandleType.Buffer:
 					gl.glGenBuffersARB(Length, m_iObject);
 					break;
+				case GlHandleType.Renderbuffer:
+					gl.glGenRenderbuffers(Length, m_iObject);
+					break;
+				default:
+					throw new System.Exception("");
+				
 			}
 			Register(true);
 		}
@@ -88,6 +95,9 @@ namespace liboRg
 					break;
 				case GlHandleType.Buffer:
 					gl.glDeleteBuffersARB(Length, m_iObject);
+					break;
+				case GlHandleType.Renderbuffer:
+					gl.glDeleteRenderbuffers(Length, m_iObject);
 					break;
 			}
 		}

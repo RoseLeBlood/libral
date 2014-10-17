@@ -1,5 +1,5 @@
 ﻿//
-//  glxContext.cs
+//  glxNativeContext.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -28,30 +28,11 @@ using X11.Widgets;
 using X11._internal;
 using liboRg.Context;
 using liboRg.Window;
-using liboRg.GLX;
+using liboRg.OpenGL;
+using liboRg.Platform;
 
-namespace liboRg.OpenGL
+namespace liboRg.Platform.Linux
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public struct XVisualInfo
-	{
-		public IntPtr Visual;
-		public IntPtr VisualID;
-		public int Screen;
-		public int Depth;
-		public int Class;
-		public long RedMask;
-		public long GreenMask;
-		public long blueMask;
-		public int ColormapSize;
-		public int BitsPerRgb;
-
-		public override string ToString()
-		{
-			return String.Format("VisualID: {0}, RedMask: {1} GreenMask: {2} blueMask: {3}  Depth: {4}",
-				VisualID,RedMask, GreenMask, blueMask, Depth);
-		}
-	}
 	public class glxNativeContext : UnmanagedHandle, IGLNativeContext
 	{
 		private BaseWindow 		m_pWindow;
@@ -93,19 +74,19 @@ namespace liboRg.OpenGL
 			set
 			{
 				if (glXSwapIntervalEXT != null)
-				{
-					glXSwapIntervalEXT(m_pWindow.Display.RawHandle, m_pWindow.RawHandle, (int)value);
-					m_bVsync = value;
-				}
+					{
+						glXSwapIntervalEXT(m_pWindow.Display.RawHandle, m_pWindow.RawHandle, (int)value);
+						m_bVsync = value;
+					}
 				else
-				{
-					#if DEBUG
-					Console.WriteLine("SwapIntervalEXT not Supported Fallback to SwapIntervalSGI");
-					#endif
-					value = (value == VSyncMode.Adaptive || value == VSyncMode.Enable ? VSyncMode.Enable : VSyncMode.Disable);
-					glXSwapIntervalSGI((int)value);
-					m_bVsync = value;
-				}
+					{
+						#if DEBUG
+						Console.WriteLine("SwapIntervalEXT not Supported Fallback to SwapIntervalSGI");
+						#endif
+						value = (value == VSyncMode.Adaptive || value == VSyncMode.Enable ? VSyncMode.Enable : VSyncMode.Disable);
+						glXSwapIntervalSGI((int)value);
+						m_bVsync = value;
+					}
 				#if DEBUG
 				Console.WriteLine("[GLX] Set VSync Mode: {0}", value);
 				#endif
@@ -146,17 +127,17 @@ namespace liboRg.OpenGL
 			m_pConfigs = new FBConfigs(m_pWindow, pConfig);
 
 			if (pConfig.GraphicConfigType == NativContextConfigTyp.Best)
-			{
+				{
 					m_pNativeConfig = m_pConfigs.Best;
-			}
+				}
 			else if (pConfig.GraphicConfigType == NativContextConfigTyp.Worst)
-			{
-				m_pNativeConfig = m_pConfigs.Worst;
-			}
+				{
+					m_pNativeConfig = m_pConfigs.Worst;
+				}
 			else
-			{
-				m_pNativeConfig = m_pConfigs.Configs[pConfig.NormalGraphicConfigTypeNumber];
-			}
+				{
+					m_pNativeConfig = m_pConfigs.Configs[pConfig.NormalGraphicConfigTypeNumber];
+				}
 
 			LoadExtension();
 		}
@@ -164,15 +145,15 @@ namespace liboRg.OpenGL
 		{
 			int glx_major, glx_minor;
 			if (!glXQueryVersion(m_pWindow.Display.RawHandle, out glx_major, out glx_minor) ||
-			    ((glx_major == 1) && (glx_minor < 3)) || (glx_major < 1))
-			{
-				Console.WriteLine("Invalid GLX version");
+				((glx_major == 1) && (glx_minor < 3)) || (glx_major < 1))
+				{
+					Console.WriteLine("Invalid GLX version");
 					throw new System.Exception("[GLX] not supported");
-				
-			}
+
+				}
 
 			Console.WriteLine("glX String: {0}.{1}", glx_major, glx_minor);
-		
+
 			Console.WriteLine("Using {0} Graphic Config", m_pNativeConfig.Typ);
 
 			IntPtr ctx_old = glXCreateContext( m_pWindow.Display.RawHandle, ((FBConfig)m_pNativeConfig).VisualInfo, IntPtr.Zero, true );
@@ -181,43 +162,43 @@ namespace liboRg.OpenGL
 			GLVersion(out glx_major, out glx_minor);
 
 			if (glXCreateContextAttribsARB == null)
-			{
-				Console.WriteLine("glXCreateContextAttribsARB() not found using old-style GLX context");
-				m_pHandle = ctx_old;
-			}
-			else
-			{
-				glXMakeCurrent( m_pWindow.Display.RawHandle, IntPtr.Zero, IntPtr.Zero );
-				glXDestroyContext( m_pWindow.Display.RawHandle, ctx_old );
-
-				IntPtr config = m_pNativeConfig.Config;
-
-				
-
-				int[] attribs =
 				{
-					(int)GLX.CONTEXT_MAJOR_VERSION_ARB, glx_major,
-					(int)GLX.CONTEXT_MINOR_VERSION_ARB, glx_minor,
-					
-					(int)GLX.CONTEXT_FLAGS_ARB, (int)GLX.CONTEXT_FORWARD_COMPATIBLE_BIT_ARB |
-					(int)GLX.CONTEXT_DEBUG_BIT_ARB,        
-					(int)GLX.CONTEXT_PROFILE_MASK_ARB, (int)GLX.CONTEXT_CORE_PROFILE_BIT_ARB,
-					0
-				};
-				m_pHandle = glXCreateContextAttribsARB(m_pWindow.Display.RawHandle, config, 
-					IntPtr.Zero, true, attribs);
-				if (m_pHandle == IntPtr.Zero)
-				{
-					Console.WriteLine("Failed to create GL {0}.{1} context using old-style GLX context",
-						glx_major, glx_minor);
-					m_pHandle = glXCreateContext( m_pWindow.Display.RawHandle, ((FBConfig)m_pNativeConfig).VisualInfo, IntPtr.Zero, true );
+					Console.WriteLine("glXCreateContextAttribsARB() not found using old-style GLX context");
+					m_pHandle = ctx_old;
 				}
-				glXMakeCurrent(m_pWindow.Display.RawHandle, m_pWindow.RawHandle, m_pHandle);
-			}
+			else
+				{
+					glXMakeCurrent( m_pWindow.Display.RawHandle, IntPtr.Zero, IntPtr.Zero );
+					glXDestroyContext( m_pWindow.Display.RawHandle, ctx_old );
+
+					IntPtr config = m_pNativeConfig.Config;
+
+
+
+					int[] attribs =
+						{
+							(int)GLX.CONTEXT_MAJOR_VERSION_ARB, glx_major,
+							(int)GLX.CONTEXT_MINOR_VERSION_ARB, glx_minor,
+
+							(int)GLX.CONTEXT_FLAGS_ARB, (int)GLX.CONTEXT_FORWARD_COMPATIBLE_BIT_ARB |
+							(int)GLX.CONTEXT_DEBUG_BIT_ARB,        
+							(int)GLX.CONTEXT_PROFILE_MASK_ARB, (int)GLX.CONTEXT_CORE_PROFILE_BIT_ARB,
+							0
+						};
+					m_pHandle = glXCreateContextAttribsARB(m_pWindow.Display.RawHandle, config, 
+						IntPtr.Zero, true, attribs);
+					if (m_pHandle == IntPtr.Zero)
+						{
+							Console.WriteLine("Failed to create GL {0}.{1} context using old-style GLX context",
+								glx_major, glx_minor);
+							m_pHandle = glXCreateContext( m_pWindow.Display.RawHandle, ((FBConfig)m_pNativeConfig).VisualInfo, IntPtr.Zero, true );
+						}
+					glXMakeCurrent(m_pWindow.Display.RawHandle, m_pWindow.RawHandle, m_pHandle);
+				}
 			if (!glXIsDirect(m_pWindow.Display.RawHandle, m_pHandle))
-			{
-				throw new System.Exception("Indirect GLX rendering context obtained");
-			}
+				{
+					throw new System.Exception("Indirect GLX rendering context obtained");
+				}
 
 			VScyn = m_pGameConfig.VSync;
 			Extensions.LoadExtensionsList();
@@ -235,8 +216,8 @@ namespace liboRg.OpenGL
 		}
 		public virtual void DeActivate()
 		{
-		if (Owned && glXGetCurrentContext() == RawHandle)
-			MakeOutdated();
+			if (Owned && glXGetCurrentContext() == RawHandle)
+				MakeOutdated();
 		}
 		public virtual void Present()
 		{
@@ -290,7 +271,7 @@ namespace liboRg.OpenGL
 			glXGetSwapIntervalMESA = (GetSwapIntervalMESA)gl.GetProc<GetSwapIntervalMESA>("glXGetSwapIntervalMESA");
 			glXSwapIntervalEXT = (SwapIntervalEXT)gl.GetProc<SwapIntervalEXT>("glXSwapIntervalEXT");
 			glXCreateContextAttribsARB = (CreateContextAttribsARB)gl.GetProc<CreateContextAttribsARB>("glXCreateContextAttribsARB");
-		
+
 			gl.LoadExtension();
 		}
 
@@ -324,7 +305,7 @@ namespace liboRg.OpenGL
 		[DllImport(DllName, EntryPoint = "glXDestroyContext")]
 		public static extern void glXDestroyContext(IntPtr dpy, IntPtr context);
 
-	
+
 
 		[DllImport(DllName, EntryPoint = "glXGetCurrentContext")]
 		public static extern IntPtr glXGetCurrentContext();

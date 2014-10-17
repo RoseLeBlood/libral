@@ -1,9 +1,12 @@
-﻿#version 150
-in vec4 inColor; 
-out vec4 outColor; 
+﻿#version 150 
+
+uniform sampler2D tex;
+
+smooth in vec3 theColor; 
+out vec4 outputColor; 
 
 void main() 
 { 
-	outColor = inColor; 
+   outputColor = texture(tex, gl_PointCoord) + vec4(theColor, 1.0); 
 }
 

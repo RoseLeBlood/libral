@@ -25,6 +25,7 @@ using liboRg.OpenGL;
 using liboRg.Window;
 using X11.Widgets;
 using liboRg.Framework;
+using liboRg.Platform;
 
 namespace liboRg.Context
 {
@@ -41,6 +42,7 @@ namespace liboRg.Context
 		Triangles = GL.TRIANGLES,
 		Lines = GL.LINES,
 		Points = GL.POINTS,
+		TrianglesStrip = GL.TRIANGLE_STRIP,
 	}
 
 	public enum Capability : ulong
@@ -120,11 +122,14 @@ namespace liboRg.Context
 			get { return m_pNativeContext.Viewport; }
 			set { m_pNativeContext.Viewport = value; }
 		}
-		public GameContext(string name)
-			: base(name)
+		public GameContext(BaseWindow window, GameContextConfig pConfig)
+			: base("GAME_CCONTEXT")
 		{
+			m_pNativeContext = liboRg.Platform.PlatformFactory.GetContext(window, pConfig);
 
+			Register();
 		}
+
 		public void CreateContext()
 		{
 			m_pNativeContext.CreateContext();
@@ -144,6 +149,28 @@ namespace liboRg.Context
 		public virtual void Disable( Capability capability )
 		{
 			gl.glDisable((uint)capability);
+		}
+		public void Clear(Buffer buffers, Color color, double depth, int stencil)
+		{
+			Activate();
+			gl.glClearColor(color.R, color.G, color.B, color.A);
+			gl.glClearDepth(depth);
+			gl.glClearStencil(stencil);
+			gl.glClear((int)buffers);
+		}
+
+		public void Clear(Buffer buffers, Color color, double depth)
+		{
+			Activate();
+			gl.glClearColor(color.R, color.G, color.B, color.A);
+			gl.glClearDepth(depth);
+			gl.glClear((int)buffers);
+		}
+		public void Clear(Buffer buffers, Color color)
+		{
+			Activate();
+			gl.glClearColor(color.R, color.G, color.B, color.A);
+			gl.glClear((int)buffers);
 		}
 
 		public void Clear( Buffer buffers = Buffer.Color | Buffer.Depth )

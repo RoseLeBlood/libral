@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{25597382-0180-4533-A05B-011563A7EF50}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SampleOpenCL</RootNamespace>
+    <AssemblyName>SampleOpenCL</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\liboRg\liboRg.csproj">
+      <Project>{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}</Project>
+      <Name>liboRg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\libral\libral.csproj">
+      <Project>{897E6333-D6C4-4BDA-B51E-5575A17E5291}</Project>
+      <Name>libral</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\librax\libx11.csproj">
+      <Project>{72080CDA-8E8B-4187-B5A3-6A42726F746E}</Project>
+      <Name>libx11</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

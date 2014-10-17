@@ -22,6 +22,7 @@ using System;
 using liboRg.Window;
 using liboRg.OpenGL;
 using X11;
+using liboRg.Platform;
 
 namespace liboRg.Context
 {

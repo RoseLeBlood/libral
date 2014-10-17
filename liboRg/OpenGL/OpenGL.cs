@@ -57,6 +57,14 @@ namespace liboRg.OpenGL
 		[DllImport(DllName)]
 		public static extern void glBlendFunc(uint sfactor, uint dfactor);
 		[DllImport(DllName)]
+		public static extern void glGenRenderbuffers(int length, uint[] iObject);
+		[DllImport(DllName)]
+		public static extern void glDeleteRenderbuffers(int length, uint[] m_iObject);
+		[DllImport(DllName)]
+		public static extern void glBindRenderbuffer(uint i, uint glObject);
+		[DllImport(DllName)]
+		public static extern void glRenderbufferStorage(uint i, TextureInternalFormat format, uint width, uint height);
+		[DllImport(DllName)]
 		public static extern void glCallList(uint list);
 		[DllImport(DllName)]
 		public static unsafe extern void glCallLists(int n, uint type, void* lists);
@@ -216,6 +224,8 @@ namespace liboRg.OpenGL
 		public static extern void glEvalCoord2f(float u, float v);
 		[DllImport(DllName)]
 		public static extern void glEvalCoord2fv(float[] u);
+		[DllImport(DllName)]
+		public static extern void glActiveTexture(uint i);
 		[DllImport(DllName)]
 		public static extern void glEvalMesh1(uint mode, int i1, int i2);
 		[DllImport(DllName)]

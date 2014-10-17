@@ -174,7 +174,7 @@ namespace liboRg.Window
 
 		protected void BaseGameWindow2_Created(Object sender, XEventArgs args)
 		{
-			m_pIContext = new X11Context(this, m_pGame.ContextConfig);
+			m_pIContext = new GameContext(this, m_pGame.ContextConfig);
 			m_pGame.DisableQue = true;
 			m_pGame.Create();
 		}

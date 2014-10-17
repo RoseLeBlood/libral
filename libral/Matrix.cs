@@ -578,7 +578,7 @@ namespace System.Common
 				M44 = 1.0f,
 			};
 		}
-		public static Matrix CreateWorld (ref Vector3 position, ref Vector3 forward, ref Vector3 up)
+		public static Matrix CreateWorld (Vector3 position, Vector3 forward, Vector3 up)
 		{
 			Vector3 x = Vector3.Normalize( Vector3.Cross (forward, up));
 			Vector3 y = Vector3.Normalize( Vector3.Cross (x, forward));

@@ -87,7 +87,10 @@ namespace liboRg.Framework
 			gl.glGetShaderiv( m_iObject, (uint)GL.COMPILE_STATUS, ref res );
 
 			if (res != (int)GL.TRUE)
+			{
+				var str = GetInfoLog();
 				throw new System.Exception(GetInfoLog());
+			}
 
 		}
 		public string GetInfoLog()

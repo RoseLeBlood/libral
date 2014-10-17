@@ -1,5 +1,5 @@
 ﻿//
-//  ICNativContextConfig.cs
+//  INativContextConfigs.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace liboRg.OpenGL
+namespace liboRg.Platform
 {
 	public enum NativContextConfigTyp
 	{

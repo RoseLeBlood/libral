@@ -26,7 +26,7 @@ using liboRg.Window;
 using liboRg.Context;
 using System.Runtime.InteropServices;
 
-namespace liboRg.GLX
+namespace liboRg.Platform.Linux
 {
 
 

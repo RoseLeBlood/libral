@@ -1,11 +1,13 @@
-﻿#version 150
+﻿#version 150 
 
-out vec4 inColor;
-in vec2 position; 
+in vec3 inPosition; 
+in vec3 inColor; 
+
+smooth out vec3 theColor; 
+
 void main() 
 { 
-	inColor = vec4( position*2, 0, 1.0 ); 
-	gl_Position = vec4( position, 0.0, 1.0 ); 
+   gl_Position = vec4(inPosition, 1.0); 
+   theColor = inColor; 
 }
-
 

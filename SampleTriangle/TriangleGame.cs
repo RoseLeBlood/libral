@@ -25,6 +25,7 @@ using liboRg.Framework;
 using liboRg.OpenGL;
 using liboRg.Window;
 using System.Common;
+using liboRg.Platform;
 
 namespace SampleTriangle
 {
@@ -34,38 +35,34 @@ namespace SampleTriangle
 		int nbFrames = 0;
 
 		VertexArray vao = null;
+		Program program;
 
 		public TriangleGame(int resid, bool fullscreen, bool mode) : base(":0", 
 			new GameContextConfig(Screens.PrimaryScreen[resid-1]),
 			"FPS: 0", fullscreen ? WindowStyle.Fullscreen :  WindowStyle.Fixed)
 		{
 			this.ContextConfig.GraphicConfigType = (mode ? NativContextConfigTyp.Best : NativContextConfigTyp.Worst);
-			Init();
 		}
 		public override void Create()
 		{
 			base.Create();
-			ClearColor = Colors.Black;
-
 			lastTime = this.Time;
 
-			Shader vertex = new Shader("vertex.sh", ShaderType.Vertex);
-			Shader frag = new Shader("frag.sh", ShaderType.Fragment);
-			Program program = new Program("program", vertex, frag);
-
-			float[] vertices = new float[]
-				{
-					0.5f,  -0.5f,
-					0.5f,  0.5f,
-					-0.5f, 0.5f,
-				};
-
-			VertexDataBuffer vboData = new VertexDataBuffer(); vboData.Floats(vertices);
-
 			vao = new VertexArray("vao");
-			vao.BindAttribute( program.Attribute( "position" ), 
-				new VertexBuffer("vbo", vboData, BufferUsage.StaticDraw), 
-				DataType.Float, 2, 0, IntPtr.Zero );
+
+			PositionColorVertexTextured triangle = new PositionColorVertexTextured();
+			triangle.Add(new Vector3(-0.8f, 0.0f, 0.0f), Colors.AliceBlue);
+			triangle.Add(new Vector3(0.8f, 0.0f, 0.0f), Colors.FireBrick);
+			triangle.Add(new Vector3(0.0f, 0.9f, 0.0f), Colors.Green);
+
+			program = new Program("program", 
+				new Shader("vertex.sh", ShaderType.Vertex), 
+				new Shader("frag.sh", ShaderType.Fragment)); 
+				
+			triangle.SetTexture(
+				program, "tex", GL.TEXTURE0_ARB, 
+				new Texture(new Image("imgParticel", 10, 10, Colors.DarkGoldenrod)));
+			triangle.BindAttribute(program, vao);
 		}
 
 		protected override bool Move()
@@ -82,9 +79,8 @@ namespace SampleTriangle
 		}
 		protected override bool Draw()
 		{
-			GameContext.Clear(liboRg.Context.Buffer.Color | liboRg.Context.Buffer.Depth);
-			GameContext.DrawArrays( vao, Primitive.Triangles, 0, 3 );
-
+			GameContext.Clear(liboRg.Context.Buffer.Color, Colors.Black);
+			GameContext.DrawArrays( vao, Primitive.TrianglesStrip, 0, 3 );
 			return base.Draw();
 		}
 	}

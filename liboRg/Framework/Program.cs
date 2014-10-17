@@ -58,7 +58,7 @@ namespace liboRg.Framework
 			if (fragment != null) Attach(fragment);
 			if (geometry != null) Attach(geometry);
 			Link();
-			gl.glUseProgramObjectARB(m_iObject);
+			Use();
 
 		}
 		public void Attach( Shader shader )
@@ -82,6 +82,10 @@ namespace liboRg.Framework
 			gl.glGetShaderiv( m_iObject, (uint)GL.INFO_LOG_LENGTH, ref bufSize );
 
 			return (bufSize > 0 ? gl.glGetProgramInfoLogARB(m_iObject, bufSize) : "");
+		}
+		public void Use()
+		{
+			gl.glUseProgramObjectARB(glObject);
 		}
 		public void TransformFeedbackVaryings(string strvaryings, uint count, TransformFeedbackMode mode = TransformFeedbackMode.InterleavedAttribs )
 		{

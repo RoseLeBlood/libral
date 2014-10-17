@@ -36,6 +36,12 @@ namespace liboRg.Framework
 
 			Bytes(byteArray);
 		}
+
+		public void Color3(Color color)
+		{
+			this.Vector3(new Vector3(color.Red, color.Green, color.Blue));
+		}
+
 		public void Int8( sbyte v ) 
 		{ 
 			byte[] pBytes = BitConverter.GetBytes(v);

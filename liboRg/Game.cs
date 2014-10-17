@@ -24,6 +24,7 @@ using liboRg.Window;
 using liboRg.Context;
 using System.Common;
 using liboRg.OpenGL;
+using liboRg.Platform;
 
 
 namespace liboRg
@@ -87,13 +88,8 @@ namespace liboRg
 			m_pContextConfig = pConfig;
 
 			m_pGameWindow = new BaseGameWindow(this, title, style );
-		}
-
-		public void Init()
-		{
 			m_pGameWindow.Create();
 		}
-
 		public virtual void Create()
 		{
 			GameContext.CreateContext();

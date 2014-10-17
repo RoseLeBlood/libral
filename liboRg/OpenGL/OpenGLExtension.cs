@@ -20,6 +20,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Runtime.InteropServices;
+using liboRg.Platform.Linux;
+using liboRg.Platform;
 
 namespace liboRg.OpenGL
 {
@@ -36,15 +38,7 @@ namespace liboRg.OpenGL
 		}
 		internal static Delegate GetProc<T>(string name)
 		{
-			return GetProcUnix<T>(name);
-		}
-		internal static Delegate GetProcUnix<T>(string name)
-		{
-			var ptr = glxNativeContext.glXGetProcAddressARB(name);
-			if (ptr == IntPtr.Zero)
-				return null;
-
-			return Marshal.GetDelegateForFunctionPointer(ptr, typeof(T));
+			return PlatformFactory.GetProcAdress<T>(name);
 		}
 		internal static void _LoadExtension()
 		{
