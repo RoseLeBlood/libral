@@ -33,11 +33,9 @@ namespace SampleOpenCL
 			foreach (var item in platforms)
 			{
 				Console.WriteLine(item);
-			
-				clDevices devices = new clDevices(item, OpenCLDeviceTyp.All);
-				foreach (var i in devices)
+				foreach (var device in item.Devices)
 				{
-					Console.WriteLine(i);
+							Console.WriteLine("\t" + device.ToString().Replace("\n", "\n\t"));
 				}
 			}
 		}

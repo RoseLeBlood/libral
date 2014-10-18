@@ -43,10 +43,16 @@ namespace liboRg.OpenCL
 		private int m_uiMaxComputeUnits;
 		private int m_uiMaxClockFrequency;
 		private long m_ulGlobalMemSize;
+		private OpenCLDeviceTyp m_enumType;
 
 		public string DeviceName
 		{
 			get { return m_strDeviceName; }
+		}
+		public OpenCLDeviceTyp DeviceType
+		{
+			get { return m_enumType; }
+			internal set { m_enumType = value; }
 		}
 		public string DeviceVendor
 		{
@@ -91,12 +97,17 @@ namespace liboRg.OpenCL
 		}
 		public override string ToString()
 		{
-			return string.Format("OpenCL Device:\n\tDeviceName={0}\n\tDeviceVendor={1}\n\tDeviceVersion={2}\n\tDriverVersion={3}\n\tMaxComputeUnits={4}\n\t" +
-				"MaxClockFrequency={5}\n\tGlobalMemSize={6}]", DeviceName, DeviceVendor, DeviceVersion, DriverVersion, MaxComputeUnits, MaxClockFrequency, GlobalMemSize);
+			return string.Format("{7} Device:\n\tDeviceName={0}\n\tDeviceVendor={1}\n\tDeviceVersion={2}\n\tDriverVersion={3}\n\tMaxComputeUnits={4}\n\t" +
+				"MaxClockFrequency={5}\n\tGlobalMemSize={6}]", DeviceName, DeviceVendor, DeviceVersion, DriverVersion, MaxComputeUnits, 
+				MaxClockFrequency, GlobalMemSize, m_enumType);
 		}
 	}
 	public class clDevices : List<clDevice>
 	{
+		public clDevices()
+		{
+		}
+
 		public clDevices(clPlatform pPlatform, OpenCLDeviceTyp type)
 		{
 			IntPtr[] devices = new IntPtr[100];
@@ -105,7 +116,9 @@ namespace liboRg.OpenCL
 			cl.clGetDeviceIDs(pPlatform.RawHandle, (uint)type, (uint)100, devices, out numDevices);
 			for (int i = 0; i < numDevices; i++)
 			{
-				this.Add(new clDevice(devices[i]));
+				var x = new clDevice(devices[i]);
+				x.DeviceType = type;
+				this.Add(x);
 			}
 		}
 	}
