@@ -20,24 +20,21 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using X11.Widgets;
-using liboRg.OpenCL;
 
-namespace SampleOpenCL
+namespace SampleOpenCL2
 {
 	class MainClass
 	{
+		private static Example m_pExample;
+
 		public static void Main(string[] args)
 		{
 			Application.Init("");
-			clPlatforms platforms = new clPlatforms();
-			foreach (var platform in platforms)
-			{
-				Console.WriteLine(platform);
-				foreach (var device in platform.Devices)
-				{
-					Console.WriteLine("\t" + device.ToString().Replace("\n", "\n\t"));
-				}
-			}
+			m_pExample = new Example();
+
+			m_pExample.LoadProgram("part1.cl");
+			m_pExample.popCorn();
+			m_pExample.runKernel();
 		}
 	}
 }

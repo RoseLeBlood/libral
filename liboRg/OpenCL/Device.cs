@@ -36,19 +36,19 @@ namespace liboRg.OpenCL
 
 	public class clDevice : UnmanagedHandle
 	{
-		private string m_strDeviceName;
-		private string m_strDeviceVendor;
-		private string m_strDeviceVersion;
-		private string m_strDriverVersion;
-		private int m_uiMaxComputeUnits;
-		private int m_uiMaxClockFrequency;
-		private long m_ulGlobalMemSize;
 		private OpenCLDeviceTyp m_enumType;
+		private clPlatform m_pPlatform;
 
 		public string DeviceName
 		{
-			get { return m_strDeviceName; }
+			get { return GetDeviceInfo(CL.DEVICE_NAME); }
 		}
+
+		public clPlatform Platform
+		{
+			get { return m_pPlatform; }
+		}
+
 		public OpenCLDeviceTyp DeviceType
 		{
 			get { return m_enumType; }
@@ -56,54 +56,83 @@ namespace liboRg.OpenCL
 		}
 		public string DeviceVendor
 		{
-			get { return m_strDeviceVendor; }
+			get { return GetDeviceInfo(CL.DEVICE_VENDOR); }
 		}
 		public string DeviceVersion
 		{
-			get { return m_strDeviceVersion; }
+			get { return GetDeviceInfo(CL.DEVICE_VERSION); }
 		}
 		public string DriverVersion
 		{
-			get { return m_strDriverVersion; }
+			get { return GetDeviceInfo(CL.DRIVER_VERSION); }
 		}
 		public int MaxComputeUnits
 		{
-			get { return m_uiMaxComputeUnits; }
+			get { return GetDeviceInfoAsInt(CL.DEVICE_MAX_COMPUTE_UNITS); }
 		}
 		public int MaxClockFrequency
 		{
-			get { return m_uiMaxClockFrequency; }
+			get { return GetDeviceInfoAsInt(CL.DEVICE_MAX_CLOCK_FREQUENCY); }
 		}
 		public long GlobalMemSize
 		{
-			get { return m_ulGlobalMemSize; }
+			get { return GetDeviceInfoAsLong(CL.DEVICE_GLOBAL_MEM_SIZE); }
 		}
 
-		internal clDevice(IntPtr pHandle)
+		internal clDevice(IntPtr pHandle, clPlatform pPlatform)
 			: base("", pHandle)
 		{
-			int sizeBuffer = 0;
-			cl.clGetDeviceInfo(m_pHandle, (uint)CL.DEVICE_NAME, 10240, out m_strDeviceName, ref sizeBuffer);
-			cl.clGetDeviceInfo(m_pHandle, (uint)CL.DEVICE_VENDOR, 10240,out m_strDeviceVendor, ref sizeBuffer);
-			cl.clGetDeviceInfo(m_pHandle, (uint)CL.DEVICE_VERSION, 10240, out m_strDeviceVersion, ref sizeBuffer);
-			cl.clGetDeviceInfo(m_pHandle, (uint)CL.DRIVER_VERSION, 10240, out m_strDriverVersion, ref sizeBuffer);
-
-			cl.clGetDeviceInfo(m_pHandle, (uint)CL.DEVICE_MAX_COMPUTE_UNITS, 10240, out m_uiMaxComputeUnits, ref sizeBuffer);
-			cl.clGetDeviceInfo(m_pHandle, (uint)CL.DEVICE_MAX_CLOCK_FREQUENCY, 10240, out m_uiMaxClockFrequency, ref sizeBuffer);
-			cl.clGetDeviceInfo(m_pHandle, (uint)CL.DEVICE_GLOBAL_MEM_SIZE, 10240, out m_ulGlobalMemSize, ref sizeBuffer);
-
-			Name = string.Format("clDevice_{0}_{1}", m_strDeviceVendor, m_strDeviceName);
+			m_pPlatform = pPlatform;
+			Name = string.Format("clDevice_{0}_{1}", DeviceVendor, DeviceName).Replace(" ", "_");
 			Register();
+		}
+		public clContext CreateContext()
+		{
+			return new clContext(this);
 		}
 		public override string ToString()
 		{
 			return string.Format("{7} Device:\n\tDeviceName={0}\n\tDeviceVendor={1}\n\tDeviceVersion={2}\n\tDriverVersion={3}\n\tMaxComputeUnits={4}\n\t" +
-				"MaxClockFrequency={5}\n\tGlobalMemSize={6}]", DeviceName, DeviceVendor, DeviceVersion, DriverVersion, MaxComputeUnits, 
+				"MaxClockFrequency={5}\n\tGlobalMemSize={6}", DeviceName, DeviceVendor, DeviceVersion, DriverVersion, MaxComputeUnits, 
 				MaxClockFrequency, GlobalMemSize, m_enumType);
+		}
+		public string GetDeviceInfo(CL param_name)
+		{
+			int sizeBuffer = 0;
+			string ret = "";
+			cl.clGetDeviceInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
+			return ret;
+		}
+		public int GetDeviceInfoAsInt(CL param_name)
+		{
+			int sizeBuffer = 0;
+			int ret = 0;
+			cl.clGetDeviceInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
+			return ret;
+		}
+		public long GetDeviceInfoAsLong(CL param_name)
+		{
+			int sizeBuffer = 0;
+			long ret = 0;
+			cl.clGetDeviceInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
+			return ret;
 		}
 	}
 	public class clDevices : List<clDevice>
 	{
+		public IntPtr[] Handles
+		{
+			get
+			{
+				IntPtr[] devices = new IntPtr[this.Count];
+				for (int i = 0; i < Count; i++)
+				{
+					devices[i] = this[i].RawHandle;
+				}
+				return devices;
+			}
+		}
+
 		public clDevices()
 		{
 		}
@@ -116,10 +145,14 @@ namespace liboRg.OpenCL
 			cl.clGetDeviceIDs(pPlatform.RawHandle, (uint)type, (uint)100, devices, out numDevices);
 			for (int i = 0; i < numDevices; i++)
 			{
-				var x = new clDevice(devices[i]);
+				var x = new clDevice(devices[i], pPlatform);
 				x.DeviceType = type;
 				this.Add(x);
 			}
+		}
+		public clContext CreateContext(string strName)
+		{
+			return new clContext(strName ,this.ToArray());
 		}
 	}
 }

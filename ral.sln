@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePartical", "SamplePar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleOpenCL", "SampleOpenCL\SampleOpenCL.csproj", "{25597382-0180-4533-A05B-011563A7EF50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleOpenCL2", "SampleOpenCL2\SampleOpenCL2.csproj", "{651DA41C-6244-4DFB-9605-3A0DC6692155}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{25597382-0180-4533-A05B-011563A7EF50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25597382-0180-4533-A05B-011563A7EF50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25597382-0180-4533-A05B-011563A7EF50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{651DA41C-6244-4DFB-9605-3A0DC6692155}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{651DA41C-6244-4DFB-9605-3A0DC6692155}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{651DA41C-6244-4DFB-9605-3A0DC6692155}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{651DA41C-6244-4DFB-9605-3A0DC6692155}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72080CDA-8E8B-4187-B5A3-6A42726F746E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72080CDA-8E8B-4187-B5A3-6A42726F746E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72080CDA-8E8B-4187-B5A3-6A42726F746E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,7 +57,7 @@ Global
 		{D2CEBFB6-661B-42EE-8F66-4F78E0A1639B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SampleOpenCL\SampleOpenCL.csproj
+		StartupItem = SampleOpenCL2\SampleOpenCL2.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

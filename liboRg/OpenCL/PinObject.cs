@@ -1,5 +1,5 @@
 ﻿//
-//  Program.cs
+//  PinObject.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,25 +19,37 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11.Widgets;
-using liboRg.OpenCL;
+using System.Runtime.InteropServices;
 
-namespace SampleOpenCL
+namespace liboRg.OpenCL
 {
-	class MainClass
+	public class PinObject : IDisposable
 	{
-		public static void Main(string[] args)
+		private readonly GCHandle m_pgcHandle;
+
+		public PinObject(object pObj)
 		{
-			Application.Init("");
-			clPlatforms platforms = new clPlatforms();
-			foreach (var platform in platforms)
-			{
-				Console.WriteLine(platform);
-				foreach (var device in platform.Devices)
-				{
-					Console.WriteLine("\t" + device.ToString().Replace("\n", "\n\t"));
-				}
-			}
+			m_pgcHandle = GCHandle.Alloc(pObj, GCHandleType.Pinned);
+		}
+		public void UnPin()
+		{
+			Dispose();
+		}
+		public void Dispose()
+		{
+			m_pgcHandle.Free();
+		}
+		public static implicit operator IntPtr(PinObject pinned)
+		{
+			return pinned.m_pgcHandle.AddrOfPinnedObject();
+		}
+	}
+	public static class PinnedHelper
+	{
+		public static PinObject Pin(this object obj)
+		{
+			return new PinObject(obj);
 		}
 	}
 }
+

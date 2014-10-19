@@ -26,11 +26,6 @@ namespace liboRg.OpenCL
 {
 	public class clPlatform : UnmanagedHandle
 	{
-		private string m_strProfil;
-		private string m_strVersion;
-		private string m_strclName;
-		private string m_strVendor;
-		private string m_strExtension;
 		private SortedDictionary<OpenCLDeviceTyp, clDevices> m_ddDevices;
 
 		public bool HaveDevices
@@ -67,37 +62,29 @@ namespace liboRg.OpenCL
 		}
 		public string Profil
 		{
-			get { return m_strProfil; }
+			get { return GetPlatformInfo(CL.PLATFORM_PROFILE); }
 		}
 		public string Version
 		{
-			get { return m_strVersion; }
+			get { return GetPlatformInfo(CL.PLATFORM_VERSION); }
 		}
 		public string CLName
 		{
-			get { return m_strclName; }
+			get { return GetPlatformInfo(CL.PLATFORM_NAME); }
 		}
 		public string Vendor
 		{
-			get { return m_strVendor; }
+			get { return GetPlatformInfo(CL.PLATFORM_VENDOR); }
 		}
 		public string Extension
 		{
-			get { return m_strExtension; }
+			get { return GetPlatformInfo(CL.PLATFORM_EXTENSIONS); }
 		}
 		internal clPlatform(IntPtr pPlatform)
 			: base("", pPlatform)
 		{
 			m_ddDevices = new SortedDictionary<OpenCLDeviceTyp, clDevices>();
-
-			int sizeBuffer = 0;
-			cl.clGetPlatformInfo(m_pHandle, (uint)CL.PLATFORM_PROFILE, 10240, out m_strProfil, ref sizeBuffer);
-			cl.clGetPlatformInfo(m_pHandle, (uint)CL.PLATFORM_VERSION, 10240, out m_strVersion, ref sizeBuffer);
-			cl.clGetPlatformInfo(m_pHandle, (uint)CL.PLATFORM_NAME, 10240, out m_strclName, ref sizeBuffer);
-			cl.clGetPlatformInfo(m_pHandle, (uint)CL.PLATFORM_VENDOR, 10240, out m_strVendor, ref sizeBuffer);
-			cl.clGetPlatformInfo(m_pHandle, (uint)CL.PLATFORM_EXTENSIONS, 10240, out m_strExtension, ref sizeBuffer);
-
-			Name = string.Format("clPlatform_{0}_{1}", m_strVendor, m_strclName);
+			Name = string.Format("clPlatform_{0}_{1}", Vendor, CLName).Replace(" ", "_");
 
 
 			m_ddDevices.Add(OpenCLDeviceTyp.Gpu, new clDevices(this, OpenCLDeviceTyp.Gpu));
@@ -112,6 +99,13 @@ namespace liboRg.OpenCL
 			return string.Format("OpenCL Platform\n\tProfil:{0}\n\tVersion:{1}\n\tName:{2}\n\tVendor:{3}" +
 				"\n\tExtension:{4}\n\tHaveDevices:{5}", Profil,Version, CLName, Vendor, Extension, HaveDevices);
 		}
+		public string GetPlatformInfo(CL param_name)
+		{
+			string ret = ""; int sizeBuffer = 0;
+			cl.clGetPlatformInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
+			return ret;
+		}
+
 	}
 	public class clPlatforms : List<clPlatform>
 	{

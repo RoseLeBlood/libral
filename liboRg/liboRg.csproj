@@ -76,6 +76,10 @@
     <Compile Include="Framework\Renderbuffer.cs" />
     <Compile Include="OpenCL\Platform.cs" />
     <Compile Include="OpenCL\Device.cs" />
+    <Compile Include="OpenCL\Context.cs" />
+    <Compile Include="OpenCL\OpenCLFunction.cs" />
+    <Compile Include="OpenCL\Program.cs" />
+    <Compile Include="OpenCL\PinObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

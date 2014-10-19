@@ -27,6 +27,8 @@ namespace liboRg.OpenCL
 	{
 		public const string DllName = "libOpenCL.so";
 
+		public delegate void ProgramNotify(IntPtr pProgram, IntPtr user_data);
+
 		[DllImport(DllName)]
 		public static extern int clGetPlatformIDs(uint num_entries, IntPtr cl_platform_id, out uint num_platforms);
 		[DllImport(DllName)]
@@ -34,40 +36,54 @@ namespace liboRg.OpenCL
 			out uint num_platforms);
 
 		[DllImport(DllName)]
-		public extern static unsafe int clBuildProgram(IntPtr program, uint num_devices, IntPtr* device_list, String options, IntPtr pfn_notify, IntPtr user_data);
+		public static extern uint clBuildProgram(IntPtr program,
+			uint numDevices,
+			[In] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.SysUInt, SizeParamIndex = 1)] IntPtr[] deviceList,
+			[In] [MarshalAs(UnmanagedType.LPStr)] string options,
+			ProgramNotify pfnNotify,
+			IntPtr userData);
 
 		[DllImport(DllName)]
-		public extern static unsafe IntPtr clCreateBuffer(IntPtr context, uint flags, IntPtr size, IntPtr host_ptr, [OutAttribute] uint errcode_ret);
+		public extern static unsafe IntPtr clCreateBuffer(IntPtr context, uint flags, IntPtr size, IntPtr host_ptr, out uint errcode_ret);
 
 		[DllImport(DllName)]
-		public extern static unsafe IntPtr clCreateCommandQueue(IntPtr context, IntPtr device, uint properties, [OutAttribute] uint errcode_ret);
+		public extern static unsafe IntPtr clCreateCommandQueue(IntPtr context, IntPtr device, uint properties, out uint errcode_ret);
 
 		[DllImport(DllName)]
-		public extern static unsafe IntPtr clCreateContext(IntPtr* properties, uint num_devices, IntPtr* devices, IntPtr pfn_notify, IntPtr user_data, [OutAttribute] uint errcode_ret);
+		public extern static unsafe IntPtr clCreateContext([MarshalAs(UnmanagedType.LPArray)] IntPtr[] properties, uint num_devices, 
+			[MarshalAs(UnmanagedType.LPArray)] IntPtr[] devices, IntPtr pfn_notify, IntPtr user_data, out uint errcode_ret);
 
 		[DllImport(DllName)]
-		public extern static unsafe IntPtr clCreateContextFromType(IntPtr* properties, uint device_type, IntPtr pfn_notify, IntPtr user_data, [OutAttribute] uint errcode_ret);
+		public extern static unsafe IntPtr clCreateContext(IntPtr properties, uint num_devices, 
+			[MarshalAs(UnmanagedType.LPArray)] IntPtr[] devices, IntPtr pfn_notify, IntPtr user_data, out uint errcode_ret);
+
+		[DllImport(DllName)]
+		public extern static unsafe IntPtr clCreateContextFromType(IntPtr* properties, uint device_type, IntPtr pfn_notify, IntPtr user_data, out uint errcode_ret);
 
 		[DllImport(DllName, EntryPoint = "clCreateImage2D")]
-		public extern static unsafe IntPtr clCreateImage2D(IntPtr context, uint flags, uint* image_format, IntPtr image_width, IntPtr image_height, IntPtr image_row_pitch, IntPtr host_ptr, [OutAttribute] int* errcode_ret);
+		public extern static unsafe IntPtr clCreateImage2D(IntPtr context, uint flags, uint* image_format, IntPtr image_width, IntPtr image_height, IntPtr image_row_pitch, IntPtr host_ptr, out int errcode_ret);
 
 		[DllImport(DllName, EntryPoint = "clCreateImage3D")]
-		public extern static unsafe IntPtr clCreateImage3D(IntPtr context, uint flags, uint* image_format, IntPtr image_width, IntPtr image_height, IntPtr image_depth, IntPtr image_row_pitch, IntPtr image_slice_pitch, IntPtr host_ptr, [OutAttribute] int* errcode_ret);
+		public extern static unsafe IntPtr clCreateImage3D(IntPtr context, uint flags, uint* image_format, IntPtr image_width, IntPtr image_height, IntPtr image_depth, IntPtr image_row_pitch, IntPtr image_slice_pitch, IntPtr host_ptr, out int errcode_ret);
 
 		[DllImport(DllName, EntryPoint = "clCreateKernel")]
-		public extern static unsafe IntPtr clCreateKernel(IntPtr program, String kernel_name, [OutAttribute] uint errcode_ret);
+		public extern static unsafe IntPtr clCreateKernel(IntPtr program, String kernel_name, out uint errcode_ret);
 
 		[DllImport(DllName, EntryPoint = "clCreateKernelsInProgram")]
 		public extern static unsafe int clCreateKernelsInProgram(IntPtr program, uint num_kernels, IntPtr* kernels, [OutAttribute] uint* num_kernels_ret);
 
 		[DllImport(DllName, EntryPoint = "clCreateProgramWithBinary")]
-		public extern static unsafe IntPtr clCreateProgramWithBinary(IntPtr context, uint num_devices, IntPtr* device_list, IntPtr* lengths, byte** binaries, int* binary_status, [OutAttribute] uint errcode_ret);
+		public extern static unsafe IntPtr clCreateProgramWithBinary(IntPtr context, uint num_devices, IntPtr* device_list, IntPtr* lengths, byte** binaries, int* binary_status, out uint errcode_ret);
 
-		[DllImport(DllName, EntryPoint = "clCreateProgramWithSource")]
-		public extern static unsafe IntPtr clCreateProgramWithSource(IntPtr context, uint count, String[] strings, IntPtr* lengths, [OutAttribute] uint errcode_ret);
+		[DllImport(DllName)]
+		public static extern IntPtr clCreateProgramWithSource(IntPtr context,
+			uint count,
+			[In] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPStr, SizeParamIndex = 1)] string[] strings,
+			[In] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.SysUInt, SizeParamIndex = 1)] IntPtr[] lengths,
+			out uint errcodeRet);
 
 		[DllImport(DllName, EntryPoint = "clCreateSampler")]
-		public extern static unsafe IntPtr clCreateSampler(IntPtr context, bool normalized_coords, uint addressing_mode, uint filter_mode, [OutAttribute] int* errcode_ret);
+		public extern static unsafe IntPtr clCreateSampler(IntPtr context, bool normalized_coords, uint addressing_mode, uint filter_mode, out int errcode_ret);
 
 		[DllImport(DllName, EntryPoint = "clEnqueueBarrier")]
 		public extern static int clEnqueueBarrier(IntPtr command_queue);
@@ -85,22 +101,52 @@ namespace liboRg.OpenCL
 		public extern static unsafe int clEnqueueCopyImageToBuffer(IntPtr command_queue, IntPtr src_image, IntPtr dst_buffer, IntPtr** src_origin, IntPtr** region, IntPtr dst_offset, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event);
 
 		[DllImport(DllName, EntryPoint = "clEnqueueMapBuffer")]
-		public extern static unsafe System.IntPtr clEnqueueMapBuffer(IntPtr command_queue, IntPtr buffer, bool blocking_map, uint map_flags, IntPtr offset, IntPtr cb, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event, [OutAttribute] int* errcode_ret);
+		public extern static unsafe System.IntPtr clEnqueueMapBuffer(IntPtr command_queue, IntPtr buffer, bool blocking_map, uint map_flags, IntPtr offset, IntPtr cb, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event, out int errcode_ret);
 
 		[DllImport(DllName, EntryPoint = "clEnqueueMapImage")]
-		public extern static unsafe System.IntPtr clEnqueueMapImage(IntPtr command_queue, IntPtr image, bool blocking_map, uint map_flags, IntPtr** origin, IntPtr** region, IntPtr* image_row_pitch, IntPtr* image_slice_pitch, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event, [OutAttribute] int* errcode_ret);
+		public extern static unsafe System.IntPtr clEnqueueMapImage(IntPtr command_queue, IntPtr image, bool blocking_map, uint map_flags, IntPtr** origin, IntPtr** region, IntPtr* image_row_pitch, IntPtr* image_slice_pitch, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event, out int errcode_ret);
 
 		[DllImport(DllName, EntryPoint = "clEnqueueMarker")]
 		public extern static unsafe int clEnqueueMarker(IntPtr command_queue, IntPtr* @event);
 
 		[DllImport(DllName, EntryPoint = "clEnqueueNativeKernel")]
 		public extern static unsafe int clEnqueueNativeKernel(IntPtr command_queue, IntPtr user_func, IntPtr args, IntPtr cb_args, uint num_mem_objects, IntPtr* mem_list, IntPtr args_mem_loc, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event);
-
-		[DllImport(DllName, EntryPoint = "clEnqueueNDRangeKernel")]
-		public extern static unsafe int clEnqueueNDRangeKernel(IntPtr command_queue, IntPtr kernel, uint work_dim, IntPtr* global_work_offset, IntPtr* global_work_size, IntPtr* local_work_size, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event);
+		[DllImport(DllName)]
+		public static extern uint clEnqueueNDRangeKernel(IntPtr commandQueue,
+			IntPtr kernel,
+			uint workDim,
+			[In] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] IntPtr[] globalWorkOffset,
+			[In] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] IntPtr[] globalWorkSize,
+			[In] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] IntPtr[] localWorkSize,
+			uint numEventsInWaitList,
+			[In] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.SysUInt, SizeParamIndex = 6)] IntPtr[] eventWaitList,
+			[Out] [MarshalAs(UnmanagedType.Struct)] out IntPtr e);
+	
 
 		[DllImport(DllName, EntryPoint = "clEnqueueReadBuffer")]
-		public extern static unsafe int clEnqueueReadBuffer(IntPtr command_queue, IntPtr buffer, bool blocking_read, IntPtr offset, IntPtr cb, IntPtr ptr, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event);
+		public extern static unsafe int clEnqueueReadBuffer(IntPtr commandQueue, 
+		                                                    IntPtr buffer,
+		                                                    bool blockingRead,
+		                                                    IntPtr offsetInBytes,
+		                                                    IntPtr lengthInBytes,
+		                                                    IntPtr ptr,
+		                                                    uint numEventsInWaitList,
+		                                                    [In] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.SysUInt, SizeParamIndex = 6)] IntPtr[] eventWaitList,
+		                                                    [Out] [MarshalAs(UnmanagedType.Struct)] out IntPtr e);
+		public static int clEnqueueReadBuffer(IntPtr commandQueue,
+											IntPtr buffer,
+											bool blockingRead,
+											IntPtr offsetInBytes,
+											IntPtr lengthInBytes,
+											object data,
+											uint numEventsInWaitList,
+											IntPtr[] eventWaitList,
+											out IntPtr e)
+		{
+			using (var dataPtr = data.Pin())
+				return clEnqueueReadBuffer(commandQueue, buffer, 
+					blockingRead, offsetInBytes, lengthInBytes, dataPtr, numEventsInWaitList, eventWaitList, out e);
+		}
 
 		[DllImport(DllName, EntryPoint = "clEnqueueReadImage")]
 		public extern static unsafe int clEnqueueReadImage(IntPtr command_queue, IntPtr image, bool blocking_read, IntPtr** origin, IntPtr** region, IntPtr row_pitch, IntPtr slice_pitch, IntPtr ptr, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event);
@@ -115,7 +161,15 @@ namespace liboRg.OpenCL
 		public extern static unsafe int clEnqueueWaitForEvents(IntPtr command_queue, uint num_events, IntPtr* event_list);
 
 		[DllImport(DllName, EntryPoint = "clEnqueueWriteBuffer")]
-		public extern static unsafe int clEnqueueWriteBuffer(IntPtr command_queue, IntPtr buffer, bool blocking_write, IntPtr offset, IntPtr cb, IntPtr ptr, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event);
+		public extern static unsafe int clEnqueueWriteBuffer(IntPtr commandQueue,
+			IntPtr buffer,
+			bool blockingWrite,
+			IntPtr offsetInBytes,
+			IntPtr lengthInBytes,
+			IntPtr ptr,
+			uint numEventsInWaitList,
+			[In] [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.SysUInt, SizeParamIndex = 6)] IntPtr[] eventWaitList,
+			[Out] [MarshalAs(UnmanagedType.Struct)] out IntPtr e);
 
 		[DllImport(DllName, EntryPoint = "clEnqueueWriteImage")]
 		public extern static unsafe int clEnqueueWriteImage(IntPtr command_queue, IntPtr image, bool blocking_write, IntPtr** origin, IntPtr** region, IntPtr input_row_pitch, IntPtr input_slice_pitch, IntPtr ptr, uint num_events_in_wait_list, IntPtr* event_wait_list, IntPtr* @event);
@@ -216,8 +270,13 @@ namespace liboRg.OpenCL
 		[DllImport(DllName, EntryPoint = "clSetCommandQueueProperty")]
 		public extern static unsafe int clSetCommandQueueProperty(IntPtr command_queue, uint properties, bool enable, uint* old_properties);
 
-		[DllImport(DllName, EntryPoint = "clSetKernelArg")]
-		public extern static int clSetKernelArg(IntPtr kernel, uint arg_index, IntPtr arg_size, IntPtr arg_value);
+		[DllImport(DllName)]
+		private static extern uint clSetKernelArg(IntPtr kernel, uint argIndex, IntPtr argSize, IntPtr argValue);
+		public static uint clSetKernelArg(IntPtr kernel, uint argIndex, IntPtr argSize, object argValue)
+		{
+			using (var argPtr = argValue.Pin())
+				return clSetKernelArg(kernel, argIndex, argSize, argValue == null ? IntPtr.Zero : argPtr);
+		}
 
 		[DllImport(DllName, EntryPoint = "clUnloadCompiler")]
 		public extern static int clUnloadCompiler();
@@ -227,66 +286,7 @@ namespace liboRg.OpenCL
 
 
 
-		public static int clGetPlatformInfo(IntPtr platform, uint param_name, int param_value_size, out string param_value, ref int param_value_size_ret) 
-		{
-			param_value = null;
-			var ptr = Marshal.AllocHGlobal(param_value_size);
-			try 
-			{
-				var ret = clGetPlatformInfo(platform, param_name, param_value_size, ptr, ref param_value_size_ret);
-				param_value = Marshal.PtrToStringAnsi(ptr);
-				return ret;
-			} 
-			finally 
-			{ 
-				Marshal.FreeHGlobal(ptr);
-			}
-		}
-		public static int clGetDeviceInfo(IntPtr device, uint param_name, int param_value_size, out string param_value, ref int param_value_size_ret)
-		{
-			param_value = null;
-			var ptr = Marshal.AllocHGlobal(param_value_size);
-			try 
-			{
-				var ret = clGetDeviceInfo(device, param_name, (uint)param_value_size, ptr, ref param_value_size_ret);
-				param_value = Marshal.PtrToStringAnsi(ptr);
-				return ret;
-			} 
-			finally 
-			{ 
-				Marshal.FreeHGlobal(ptr);
-			}
 
-		}
-		public static int clGetDeviceInfo(IntPtr device, uint param_name, int param_value_size, out int param_value, ref int param_value_size_ret)
-		{
-			param_value = 0;
-			var ptr = Marshal.AllocHGlobal(param_value_size);
-			try 
-			{
-				var ret = clGetDeviceInfo(device, param_name, (uint)param_value_size, ptr, ref param_value_size_ret);
-				param_value = Marshal.ReadInt32(ptr);
-				return ret;
-			} 
-			finally 
-			{ 
-				Marshal.FreeHGlobal(ptr);
-			}
-		}public static int clGetDeviceInfo(IntPtr device, uint param_name, int param_value_size, out long param_value, ref int param_value_size_ret)
-		{
-			param_value = 0;
-			var ptr = Marshal.AllocHGlobal(param_value_size);
-			try 
-			{
-				var ret = clGetDeviceInfo(device, param_name, (uint)param_value_size, ptr, ref param_value_size_ret);
-				param_value = Marshal.ReadInt64(ptr);
-				return ret;
-			} 
-			finally 
-			{ 
-				Marshal.FreeHGlobal(ptr);
-			}
-		}
 	}
 }
 
