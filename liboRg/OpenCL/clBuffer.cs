@@ -1,5 +1,5 @@
 ﻿//
-//  Program.cs
+//  clBuffer.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,21 +19,24 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11.Widgets;
 
-namespace SampleOpenCL2
+namespace liboRg.OpenCL
 {
-	class MainClass
+	[Flags()]
+	public enum BufferFlags : uint
 	{
-		private static Example m_pExample;
+		ReadWrite = CL.MEM_READ_WRITE,
+		WriteOnly = CL.MEM_WRITE_ONLY,
+		ReadOnly = CL.MEM_READ_ONLY,
+		UseHostPtr = CL.MEM_USE_HOST_PTR,
+		AllocHostPtr = CL.MEM_ALLOC_HOST_PTR,
+		CopyHostPtr = CL.MEM_COPY_HOST_PTR,
+		Reserved = (1 << 6),
 
-		public static void Main(string[] args)
-		{
-			Application.Init("");
-			m_pExample = new Example("part1.cl");
+		HostWriteOnly = CL.MEM_HOST_WRITE_ONLY,
+		HostReadOnly = CL.MEM_HOST_READ_ONLY,
+		HostNoAccess = CL.MEM_HOST_NO_ACCESS,
 
-			m_pExample.popCorn();
-			m_pExample.runKernel();
-		}
 	}
 }
+

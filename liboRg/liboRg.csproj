@@ -80,6 +80,8 @@
     <Compile Include="OpenCL\OpenCLFunction.cs" />
     <Compile Include="OpenCL\Program.cs" />
     <Compile Include="OpenCL\PinObject.cs" />
+    <Compile Include="OpenCL\CommandQueue.cs" />
+    <Compile Include="OpenCL\clBuffer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

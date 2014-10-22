@@ -21,6 +21,7 @@
 using System;
 using System.Xml.Serialization;
 using X11.Widgets;
+using System.Collections.Generic;
 
 namespace X11
 {
@@ -95,8 +96,83 @@ namespace X11
 			m_pHandle = handle;
 			Register(eindeutig);
 		}
-	}
 
+		public static implicit operator IntPtr ( UnmanagedHandle handle)
+		{
+			return handle.m_pHandle;
+		}
+	}
+	public class UnmanagedHandles : Handle, IList<IntPtr>
+	{
+		private List<IntPtr> m_pListHandles;
+
+		public int Count
+		{
+			get { return m_pListHandles.Count; }
+		}
+		public bool IsReadOnly
+		{
+			get { return (m_pListHandles as IList<IntPtr>).IsReadOnly; }
+		}
+		public IntPtr this[int index]
+		{
+			get { return m_pListHandles[index]; }
+			set { m_pListHandles[index] = value; }
+		}
+
+		internal UnmanagedHandles() : base()
+		{
+			m_pListHandles = new List<IntPtr>();
+		}
+		public UnmanagedHandles(string strName)  
+			: base(strName)
+		{
+			m_pListHandles = new List<IntPtr>();
+		}
+
+		public int IndexOf(IntPtr item)
+		{
+			return m_pListHandles.IndexOf(item);
+		}
+		public void Insert(int index, IntPtr item)
+		{
+			m_pListHandles.Insert(index, item);
+		}
+		public void RemoveAt(int index)
+		{
+			m_pListHandles.RemoveAt(index);
+		}
+
+		public void Add(IntPtr item)
+		{
+			m_pListHandles.Add(item);
+		}
+		public void Clear()
+		{
+			m_pListHandles.Clear();
+		}
+		public bool Contains(IntPtr item)
+		{
+			return m_pListHandles.Contains(item);
+		}
+		public void CopyTo(IntPtr[] array, int arrayIndex)
+		{
+			m_pListHandles.CopyTo(array, arrayIndex);
+		}
+		public bool Remove(IntPtr item)
+		{
+			return m_pListHandles.Remove(item);
+		}
+
+		public IEnumerator<IntPtr> GetEnumerator()
+		{
+			return m_pListHandles.GetEnumerator();
+		}
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return (System.Collections.IEnumerator)m_pListHandles.GetEnumerator();
+		}
+	}
 	[Serializable]
 	public class XHandle : UnmanagedHandle
 	{

@@ -30,6 +30,12 @@ namespace liboRg.OpenCL
 		private int[] m_iBuildStatus;
 		private string[] m_strBuildLog;
 		private clDevices m_pDevices;
+		private uint       m_iErrorCode;
+
+		public uint ErrorCode
+		{
+			get { return m_iErrorCode; }
+		}
 
 		public int[] BuildStatus
 		{
@@ -49,6 +55,7 @@ namespace liboRg.OpenCL
 		internal clProgram(string strName, IntPtr pHandle)
 			: base("clProgram_" + strName, pHandle)
 		{
+			m_iErrorCode = 0;
 			Register(true);
 		}
 
@@ -65,19 +72,21 @@ namespace liboRg.OpenCL
 			m_pDevices = pDevice;
 			var x = cl.clBuildProgram(RawHandle, (uint)pDevice.Count, pDevice.Handles, 
 				options, null, (userdata.HasValue ? userdata.Value : IntPtr.Zero));
-
-			int errorCode = 0;
-
+				
 			m_iBuildStatus = new int[pDevice.Count];
 			m_strBuildLog = new string[pDevice.Count];
 
 			for (int i = 0; i < pDevice.Count; i++)
 			{
-				cl.clGetProgramBuildInfo(RawHandle, pDevice.Handles[i], (uint)CL.PROGRAM_BUILD_STATUS, out m_iBuildStatus[i], ref errorCode);
-				cl.clGetProgramBuildInfo(RawHandle, pDevice.Handles[i], (uint)CL.PROGRAM_BUILD_LOG, out m_strBuildLog[i], ref errorCode);
+				cl.clGetProgramBuildInfo(RawHandle, pDevice.Handles[i], (uint)CL.PROGRAM_BUILD_STATUS, out m_iBuildStatus[i], ref m_iErrorCode);
+				cl.clGetProgramBuildInfo(RawHandle, pDevice.Handles[i], (uint)CL.PROGRAM_BUILD_LOG, out m_strBuildLog[i], ref m_iErrorCode);
 			}
 			 
 			return (int)x;
+		}
+		public IntPtr CreateKernel(string strKernelName)
+		{
+			return cl.clCreateKernel(this, strKernelName, out m_iErrorCode);
 		}
 	}
 }

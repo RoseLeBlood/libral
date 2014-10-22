@@ -23,10 +23,13 @@ using X11;
 
 namespace liboRg.OpenCL
 {
+
+
 	public class clContext : UnmanagedHandle
 	{
 		private uint m_iErrorCode;
 		private long m_lNumDevices;
+		private clDevices m_pDevices;
 
 		public long NumDevices
 		{
@@ -39,18 +42,30 @@ namespace liboRg.OpenCL
 		}
 
 		public clContext(clDevice pDevice)
-			: this("Context_of_" + pDevice.Name, new clDevice[] { pDevice })
+			: base("Context_of_" + pDevice.Name, IntPtr.Zero)
 		{
-		}
-		public clContext(string strName, clDevice[] pDevice)
-			: base("clContext_" + strName, IntPtr.Zero)
-		{
-			IntPtr[] rawDevices = new IntPtr[pDevice.Length];
+			m_pDevices = new clDevices();
+			m_pDevices.Add(pDevice);
+
+			IntPtr[] rawDevices = new IntPtr[m_pDevices.Count];
 			for (int i = 0; i < rawDevices.Length; i++)
-				rawDevices[i] = pDevice[i].RawHandle;
+				rawDevices[i] = m_pDevices[i].RawHandle;
 
 			m_pHandle = cl.clCreateContext(IntPtr.Zero, 
-				(uint)pDevice.Length, rawDevices, IntPtr.Zero, IntPtr.Zero, out m_iErrorCode);
+				(uint)m_pDevices.Count, rawDevices, IntPtr.Zero, IntPtr.Zero, out m_iErrorCode);
+			Register(true);
+		}
+		public clContext(string strName, clDevices pDevices)
+			: base("clContext_" + strName, IntPtr.Zero)
+		{
+			m_pDevices = pDevices;
+
+			IntPtr[] rawDevices = new IntPtr[pDevices.Count];
+			for (int i = 0; i < rawDevices.Length; i++)
+				rawDevices[i] = pDevices[i].RawHandle;
+
+			m_pHandle = cl.clCreateContext(IntPtr.Zero, 
+				(uint)pDevices.Count, rawDevices, IntPtr.Zero, IntPtr.Zero, out m_iErrorCode);
 	
 			Register(true);
 		}
@@ -78,24 +93,51 @@ namespace liboRg.OpenCL
 
 			return new clProgram(name, x);
 		}
+		public CommandQueue CreateCommandQueue()
+		{
+			CommandQueue queue = new CommandQueue(Name.Replace("Context_of", "CommandQueue_of"));
 
+			foreach (var item in m_pDevices)
+			{
+				uint errorCode = 0;
+				IntPtr pHandle = cl.clCreateCommandQueue(this, item, 0, out errorCode);
+				if (pHandle != IntPtr.Zero)
+					queue.Add(pHandle);
+
+			}
+			return queue;
+		}
+		public IntPtr CreateBuffer(BufferFlags flags, int size, Object host_ptr = null)
+		{
+			if (host_ptr != null)
+			{
+				using (var xa = host_ptr.Pin())
+				{
+					return cl.clCreateBuffer(this, (uint)(flags), (IntPtr)size, xa, out m_iErrorCode);
+				}
+			}
+			else
+			{
+				return cl.clCreateBuffer(this, (uint)(flags), (IntPtr)size, IntPtr.Zero, out m_iErrorCode);
+			}
+		}
 		public string GetContextInfo(CL param_name)
 		{
-			int sizeBuffer = 0;
+			uint sizeBuffer = 0;
 			string ret = "";
 			cl.clGetContextInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
 			return ret;
 		}
 		public int GetContextInfoAsInt(CL param_name)
 		{
-			int sizeBuffer = 0;
+			uint sizeBuffer = 0;
 			int ret = 0;
 			cl.clGetContextInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
 			return ret;
 		}
 		public long GetContextInfoAsLong(CL param_name)
 		{
-			int sizeBuffer = 0;
+			uint sizeBuffer = 0;
 			long ret = 0;
 			cl.clGetContextInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
 			return ret;

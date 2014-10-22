@@ -101,7 +101,7 @@ namespace liboRg.OpenCL
 		}
 		public string GetPlatformInfo(CL param_name)
 		{
-			string ret = ""; int sizeBuffer = 0;
+			string ret = ""; uint sizeBuffer = 0;
 			cl.clGetPlatformInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
 			return ret;
 		}

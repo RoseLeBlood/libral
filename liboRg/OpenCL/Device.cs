@@ -98,21 +98,21 @@ namespace liboRg.OpenCL
 		}
 		public string GetDeviceInfo(CL param_name)
 		{
-			int sizeBuffer = 0;
+			uint sizeBuffer = 0;
 			string ret = "";
 			cl.clGetDeviceInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
 			return ret;
 		}
 		public int GetDeviceInfoAsInt(CL param_name)
 		{
-			int sizeBuffer = 0;
+			uint sizeBuffer = 0;
 			int ret = 0;
 			cl.clGetDeviceInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
 			return ret;
 		}
 		public long GetDeviceInfoAsLong(CL param_name)
 		{
-			int sizeBuffer = 0;
+			uint sizeBuffer = 0;
 			long ret = 0;
 			cl.clGetDeviceInfo(m_pHandle, (uint)param_name, out ret, ref sizeBuffer);
 			return ret;
@@ -152,7 +152,7 @@ namespace liboRg.OpenCL
 		}
 		public clContext CreateContext(string strName)
 		{
-			return new clContext(strName ,this.ToArray());
+			return new clContext(strName ,this);
 		}
 	}
 }

@@ -18,6 +18,7 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+using X11;
 using System;
 using liboRg.OpenCL;
 using System.Runtime.InteropServices;
@@ -26,105 +27,94 @@ namespace SampleOpenCL2
 {
   public class Example
   {
-    clDevice	m_pDevice;
-    clContext 	m_pContext;
+	    clDevice	m_pDevice;
+	    clContext 	m_pContext;
+		CommandQueue m_pCommandQueue;
 
-    IntPtr	m_pCommandQueue;
-    clProgram	m_pProgram;
+	   // IntPtr	m_pCommandQueue;
+	    clProgram	m_pProgram;
 
-    IntPtr	m_a, m_b, m_c;
-    IntPtr	m_pKernel;
+	    IntPtr	m_a, m_b, m_c;
+	    IntPtr	m_pKernel;
 
-    int[] 	workGroupSize = new int[1];
+	    int[] 	workGroupSize = new int[1];
 
-    public Example()
-    {
-      clPlatforms platforms = new clPlatforms();
-      foreach (var platform in platforms)
-      {
-	if (platform.HaveDevices)
-	{
-	  m_pDevice = platform.Devices[0];
-	  break;
-	}
-      }
+		public Example(string path)
+		{
+			clPlatforms platforms = new clPlatforms();
+			foreach (var platform in platforms)
+			{
+				if (platform.HaveDevices)
+				{
+					m_pDevice = platform.Devices[0];
+					break;
+				}
+			}
 
-      if (m_pDevice == null)
-	      throw new System.Exception("No OpenCL Device found ");
+			if (m_pDevice == null)
+				throw new System.Exception("No OpenCL Device found ");
 
-      m_pContext = m_pDevice.CreateContext();
+			m_pContext = m_pDevice.CreateContext();
+			m_pCommandQueue = m_pContext.CreateCommandQueue();
 
-      uint errorCode = 0;
-      m_pCommandQueue = cl.clCreateCommandQueue(m_pContext.RawHandle, m_pDevice.RawHandle, 0, out errorCode);
-    }
-    public void LoadProgram(string path)
-    {
-      m_pProgram =  m_pContext.CreateProgramFromSource(System.IO.File.ReadAllText(path),"testProgramm");
-      m_pProgram.Build(m_pDevice, null);
-    }
-    public void popCorn()
-    {
-      uint errorCode = 0;
-      m_pKernel = cl.clCreateKernel(m_pProgram.RawHandle, "add", out errorCode);
+			m_pProgram = m_pContext.CreateProgramFromSource(System.IO.File.ReadAllText(path), "testProgramm");
+			m_pProgram.Build(m_pDevice, null);
+			m_pKernel = m_pProgram.CreateKernel("add");
+		}
 
-      float[] a = new float[10];
-      float[] b = new float[10];
+   		 public void popCorn()
+		{
+			uint errorCode = 0;
 
-      for (int i = 0; i < 10; i++)
-      {
-	a[i] = 1.0f * i;
-	b[i] = 1.0f * i;
-      }
-		      
-      using (var xa = a.Pin())
-      {
-	m_a = cl.clCreateBuffer(m_pContext.RawHandle, (uint)(CL.MEM_READ_ONLY | CL.MEM_COPY_HOST_PTR),
-		(IntPtr)(sizeof(float) * 10), xa, out errorCode);
+			float[] a = new float[10];
+			float[] b = new float[10];
 
-	m_b = cl.clCreateBuffer(m_pContext.RawHandle, (uint)(CL.MEM_READ_ONLY),
-		(IntPtr)(sizeof(float) * 10), IntPtr.Zero, out errorCode);
-	m_c = cl.clCreateBuffer(m_pContext.RawHandle, (uint)(CL.MEM_WRITE_ONLY),
-		(IntPtr)(sizeof(float) * 10), IntPtr.Zero, out errorCode);
-      }
-      IntPtr ev;
+			for (int i = 0; i < 10; i++)
+			{
+				a[i] = 1.0f * i;
+				b[i] = 1.0f * i;
+			}
+			m_a = m_pContext.CreateBuffer(BufferFlags.ReadOnly | BufferFlags.CopyHostPtr, (sizeof(float) * 10), a);
+			m_b = m_pContext.CreateBuffer(BufferFlags.ReadOnly, (sizeof(float) * 10));
+			m_c = m_pContext.CreateBuffer(BufferFlags.WriteOnly, (sizeof(float) * 10));
 
-      using (var xb = b.Pin())
-      {
-	cl.clEnqueueWriteBuffer(m_pCommandQueue, m_b, true, (IntPtr)0, (IntPtr)(sizeof(float) * 10),
-		xb, 0, null, out ev);
-      }
-      cl.clReleaseEvent(ev);
+			IntPtr ev;
 
-      int intPtrSize = 0;
-      intPtrSize = Marshal.SizeOf(typeof(IntPtr));
+			m_pCommandQueue.EnqueueWriteBuffer(m_b, true, 0, (sizeof(float) * 10), b, 0, null, out ev); 
+				
+			cl.clReleaseEvent(ev);
 
-      CL err  = (CL)cl.clSetKernelArg(m_pKernel, 0, new IntPtr(intPtrSize), m_a);
-	err  = (CL)cl.clSetKernelArg(m_pKernel, 1, new IntPtr(intPtrSize), m_b);
-	err  = (CL)cl.clSetKernelArg(m_pKernel, 2, new IntPtr(intPtrSize), m_c);
+			int intPtrSize = 0; 
+			intPtrSize = Marshal.SizeOf(typeof(IntPtr));
 
-      cl.clFinish(m_pCommandQueue);
-      workGroupSize[0] = 10;
-    }
+			cl.clSetKernelArg(m_pKernel, 0, new IntPtr(intPtrSize), m_a);
+			cl.clSetKernelArg(m_pKernel, 1, new IntPtr(intPtrSize), m_b);
+			cl.clSetKernelArg(m_pKernel, 2, new IntPtr(intPtrSize), m_c);
+
+			m_pCommandQueue.Finish();
+
+			workGroupSize[0] = 10;
+		}
     public void runKernel()
-    {
-      IntPtr ev;
-      cl.clEnqueueNDRangeKernel(m_pCommandQueue, m_pKernel, 1, null, new IntPtr[]{ (IntPtr)workGroupSize[0] } , null, 0, null, out ev);
-      cl.clReleaseEvent(ev);
+		{
+			IntPtr ev;
+			cl.clEnqueueNDRangeKernel(m_pCommandQueue[0], m_pKernel, 1, null, new IntPtr[]{ (IntPtr)workGroupSize[0] }, null, 0, null, out ev);
+			cl.clReleaseEvent(ev);
 
-      cl.clFinish(m_pCommandQueue);
+			m_pCommandQueue.Finish();
 
-      float[] cl_done = new float[10];
+			float[] cl_done = new float[10];
 
-      cl.clEnqueueReadBuffer(m_pCommandQueue, m_c, true, (IntPtr)0, (IntPtr)(sizeof(float) * 10), 
-	      cl_done, 0, null, out ev);
+			cl.clEnqueueReadBuffer(m_pCommandQueue[0], m_c, true, (IntPtr)0, (IntPtr)(sizeof(float) * 10), 
+				cl_done, 0, null, out ev);
 
-      cl.clReleaseEvent(ev);
+			cl.clReleaseEvent(ev);
 
-      for (int i = 0; i < 10; i++)
-      {
-	Console.WriteLine("c_done[{0}] = {1}", i, cl_done[i]);
-      }
-    }
-  }
+			for (int i = 0; i < 10; i++)
+			{
+				Console.WriteLine("c_done[{0}] = {1}", i, cl_done[i]);
+			}
+		}
+	}
 }
 

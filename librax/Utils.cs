@@ -20,10 +20,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Reflection.Emit;
 
 namespace X11
 {
-	public class Utils
+	public static class Utils
 	{
 		public static string CallProgram(string prg, string args)
 		{

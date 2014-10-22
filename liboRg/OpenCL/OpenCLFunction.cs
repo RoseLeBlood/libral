@@ -25,7 +25,7 @@ namespace liboRg.OpenCL
 {
 	public partial class cl
 	{
-		public static int clGetPlatformInfo(IntPtr platform, uint param_name, out string param_value, ref int param_value_size_ret) 
+		public static int clGetPlatformInfo(IntPtr platform, uint param_name, out string param_value, ref uint param_value_size_ret) 
 		{
 			param_value = null;
 			var ptr = Marshal.AllocHGlobal(10240);
@@ -40,7 +40,7 @@ namespace liboRg.OpenCL
 				Marshal.FreeHGlobal(ptr);
 			}
 		}
-		public static int clGetDeviceInfo(IntPtr device, uint param_name, out string param_value, ref int param_value_size_ret)
+		public static int clGetDeviceInfo(IntPtr device, uint param_name, out string param_value, ref uint param_value_size_ret)
 		{
 			param_value = null;
 			var ptr = Marshal.AllocHGlobal(10240);
@@ -56,7 +56,7 @@ namespace liboRg.OpenCL
 			}
 
 		}
-		public static int clGetDeviceInfo(IntPtr device, uint param_name, out int param_value, ref int param_value_size_ret)
+		public static int clGetDeviceInfo(IntPtr device, uint param_name, out int param_value, ref uint param_value_size_ret)
 		{
 			param_value = 0;
 			var ptr = Marshal.AllocHGlobal(sizeof(int));
@@ -71,7 +71,7 @@ namespace liboRg.OpenCL
 				Marshal.FreeHGlobal(ptr);
 			}
 		}
-		public static int clGetDeviceInfo(IntPtr device, uint param_name, out long param_value, ref int param_value_size_ret)
+		public static int clGetDeviceInfo(IntPtr device, uint param_name, out long param_value, ref uint param_value_size_ret)
 		{
 			param_value = 0;
 			var ptr = Marshal.AllocHGlobal(sizeof(long));
@@ -87,7 +87,7 @@ namespace liboRg.OpenCL
 			}
 		}
 
-		public static int clGetContextInfo(IntPtr platform, uint param_name,  out long param_value, ref int param_value_size_ret)
+		public static int clGetContextInfo(IntPtr platform, uint param_name,  out long param_value, ref uint param_value_size_ret)
 		{
 			param_value = 0;
 			var ptr = Marshal.AllocHGlobal(sizeof(long));
@@ -102,7 +102,7 @@ namespace liboRg.OpenCL
 				Marshal.FreeHGlobal(ptr);
 			}
 		}
-		public static int clGetContextInfo(IntPtr platform, uint param_name, out int param_value, ref int param_value_size_ret)
+		public static int clGetContextInfo(IntPtr platform, uint param_name, out int param_value, ref uint param_value_size_ret)
 		{
 			param_value = 0;
 			var ptr = Marshal.AllocHGlobal(sizeof(int));
@@ -118,7 +118,7 @@ namespace liboRg.OpenCL
 			}
 
 		}
-		public static int clGetContextInfo(IntPtr platform, uint param_name, out string param_value, ref int param_value_size_ret)
+		public static int clGetContextInfo(IntPtr platform, uint param_name, out string param_value, ref uint param_value_size_ret)
 		{
 			param_value = null;
 			var ptr = Marshal.AllocHGlobal(10240);
@@ -135,7 +135,7 @@ namespace liboRg.OpenCL
 
 		}
 		public static int clGetProgramBuildInfo(IntPtr platform, IntPtr device, uint param_name, out string param_value, 
-			ref int param_value_size_ret)
+			ref uint param_value_size_ret)
 		{
 			param_value = null;
 			var ptr = Marshal.AllocHGlobal(10240);
@@ -150,7 +150,7 @@ namespace liboRg.OpenCL
 				Marshal.FreeHGlobal(ptr);
 			}
 		}
-		public static int clGetProgramBuildInfo(IntPtr platform, IntPtr device, uint param_name,  out long param_value, ref int param_value_size_ret)
+		public static int clGetProgramBuildInfo(IntPtr platform, IntPtr device, uint param_name,  out long param_value, ref uint param_value_size_ret)
 		{
 			param_value = 0;
 			var ptr = Marshal.AllocHGlobal(sizeof(long));
@@ -165,7 +165,7 @@ namespace liboRg.OpenCL
 				Marshal.FreeHGlobal(ptr);
 			}
 		}
-		public static int clGetProgramBuildInfo(IntPtr platform, IntPtr device, uint param_name, out int param_value, ref int param_value_size_ret)
+		public static int clGetProgramBuildInfo(IntPtr platform, IntPtr device, uint param_name, out int param_value, ref uint param_value_size_ret)
 		{
 			param_value = 0;
 			var ptr = Marshal.AllocHGlobal(sizeof(int));

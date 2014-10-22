@@ -181,46 +181,46 @@ namespace liboRg.OpenCL
 		public extern static int clFlush(IntPtr command_queue);
 
 		[DllImport(DllName, EntryPoint = "clGetCommandQueueInfo")]
-		public extern static unsafe int clGetCommandQueueInfo(IntPtr command_queue, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetCommandQueueInfo(IntPtr command_queue, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetContextInfo")]
-		public extern static unsafe int clGetContextInfo(IntPtr context, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetContextInfo(IntPtr context, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetDeviceIDs")]
 		public extern static unsafe int clGetDeviceIDs(IntPtr platform, uint device_type, uint num_entries, [MarshalAs(UnmanagedType.LPArray)] IntPtr[] devices, out uint num_devices);
 
 		[DllImport(DllName, EntryPoint = "clGetDeviceInfo")]
-		public extern static unsafe int clGetDeviceInfo(IntPtr device, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetDeviceInfo(IntPtr device, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetEventInfo")]
-		public extern static unsafe int clGetEventInfo(IntPtr @event, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetEventInfo(IntPtr @event, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetEventProfilingInfo")]
-		public extern static unsafe int clGetEventProfilingInfo(IntPtr @event, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetEventProfilingInfo(IntPtr @event, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetImageInfo")]
-		public extern static unsafe int clGetImageInfo(IntPtr image, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetImageInfo(IntPtr image, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetKernelInfo")]
-		public extern static unsafe int clGetKernelInfo(IntPtr kernel, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetKernelInfo(IntPtr kernel, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetKernelWorkGroupInfo")]
-		public extern static unsafe int clGetKernelWorkGroupInfo(IntPtr kernel, IntPtr device, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetKernelWorkGroupInfo(IntPtr kernel, IntPtr device, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetMemObjectInfo")]
-		public extern static unsafe int clGetMemObjectInfo(IntPtr memobj, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetMemObjectInfo(IntPtr memobj, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetPlatformInfo")]
-		internal extern static unsafe int clGetPlatformInfo(IntPtr platform, uint param_name, int param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		internal extern static unsafe int clGetPlatformInfo(IntPtr platform, uint param_name, int param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetProgramBuildInfo")]
-		public extern static unsafe int clGetProgramBuildInfo(IntPtr program, IntPtr device, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetProgramBuildInfo(IntPtr program, IntPtr device, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetProgramInfo")]
-		public extern static unsafe int clGetProgramInfo(IntPtr program, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetProgramInfo(IntPtr program, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetSamplerInfo")]
-		public extern static unsafe int clGetSamplerInfo(IntPtr sampler, uint param_name, uint param_value_size, IntPtr param_value, ref int param_value_size_ret);
+		public extern static unsafe int clGetSamplerInfo(IntPtr sampler, uint param_name, uint param_value_size, IntPtr param_value, ref uint param_value_size_ret);
 
 		[DllImport(DllName, EntryPoint = "clGetSupportedImageFormats")]
 		public extern static unsafe int clGetSupportedImageFormats(IntPtr context, uint flags, uint image_type, uint num_entries, uint* image_formats, uint* num_image_formats);
