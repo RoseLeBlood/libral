@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>liboRg</RootNamespace>
+    <RootNamespace>System</RootNamespace>
     <AssemblyName>liboRg</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,79 +32,132 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Mono.Simd" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="Window\GameResolution.cs" />
-    <Compile Include="Window\WindowStyle.cs" />
-    <Compile Include="Screens.cs" />
-    <Compile Include="OpenGL\GLEnum.cs" />
-    <Compile Include="OpenGL\OpenGL.cs" />
-    <Compile Include="OpenGL\OpenGlExt.cs" />
-    <Compile Include="OpenGL\GLEnumExt.cs" />
-    <Compile Include="OpenGL\GLXEnum.cs" />
-    <Compile Include="Context\GameContext.cs" />
-    <Compile Include="Context\GameContextConfig.cs" />
-    <Compile Include="Texture.cs" />
-    <Compile Include="Image.cs" />
-    <Compile Include="ImageHandle.cs" />
-    <Compile Include="OpenGL\OpenGLExtension.cs" />
-    <Compile Include="OpenGL\Extensions.cs" />
-    <Compile Include="Window\IGameWindow.cs" />
-    <Compile Include="Framework\Framebuffer.cs" />
-    <Compile Include="glHandle.cs" />
-    <Compile Include="Framework\Shader.cs" />
-    <Compile Include="OpenGL\GLUtil.cs" />
-    <Compile Include="Framework\Program.cs" />
-    <Compile Include="Framework\VertexArray.cs" />
-    <Compile Include="Framework\VertexBuffer.cs" />
-    <Compile Include="Framework\VertexDataBuffer.cs" />
-    <Compile Include="Framework\Mesh.cs" />
-    <Compile Include="Window\BaseGameWindow.cs" />
-    <Compile Include="Framework\PositionColorVertex.cs" />
-    <Compile Include="Framework\PositionColorVertexTextured.cs" />
-    <Compile Include="Platform\Linux\glxNativeContext.cs" />
-    <Compile Include="Platform\Linux\XVisualInfo.cs" />
-    <Compile Include="Platform\IGLNativeContext.cs" />
-    <Compile Include="Platform\INativContextConfigs.cs" />
-    <Compile Include="Platform\PlatformFactory.cs" />
-    <Compile Include="Platform\Linux\FBConfig.cs" />
-    <Compile Include="OpenCL\CLEnum.cs" />
-    <Compile Include="OpenCL\OpenCL.cs" />
-    <Compile Include="OpenCL\OpenCL_gl.cs" />
-    <Compile Include="Framework\Renderbuffer.cs" />
-    <Compile Include="OpenCL\Platform.cs" />
-    <Compile Include="OpenCL\Device.cs" />
-    <Compile Include="OpenCL\Context.cs" />
-    <Compile Include="OpenCL\OpenCLFunction.cs" />
-    <Compile Include="OpenCL\Program.cs" />
-    <Compile Include="OpenCL\PinObject.cs" />
-    <Compile Include="OpenCL\CommandQueue.cs" />
-    <Compile Include="OpenCL\clBuffer.cs" />
+    <Compile Include="System\Math\BoundingBox.cs" />
+    <Compile Include="System\Math\BoundingSphere.cs" />
+    <Compile Include="System\Math\Color.cs" />
+    <Compile Include="System\Math\Colors.cs" />
+    <Compile Include="System\Math\IPhysikRenderObject.cs" />
+    <Compile Include="System\Math\Light.cs" />
+    <Compile Include="System\Math\Matrix.cs" />
+    <Compile Include="System\Math\Physik.cs" />
+    <Compile Include="System\Math\Plane.cs" />
+    <Compile Include="System\Math\Point.cs" />
+    <Compile Include="System\Math\Quaternion.cs" />
+    <Compile Include="System\Math\Ray.cs" />
+    <Compile Include="System\Math\Rectangle.cs" />
+    <Compile Include="System\Math\Size.cs" />
+    <Compile Include="System\Math\Util.cs" />
+    <Compile Include="System\Math\Vector2.cs" />
+    <Compile Include="System\Math\Vector3.cs" />
+    <Compile Include="System\Math\Vector4.cs" />
+    <Compile Include="System\API\OpenCL\clBuffer.cs" />
+    <Compile Include="System\API\OpenCL\CLEnum.cs" />
+    <Compile Include="System\API\OpenCL\CommandQueue.cs" />
+    <Compile Include="System\API\OpenCL\Context.cs" />
+    <Compile Include="System\API\OpenCL\Device.cs" />
+    <Compile Include="System\API\OpenCL\OpenCL.cs" />
+    <Compile Include="System\API\OpenCL\OpenCL_gl.cs" />
+    <Compile Include="System\API\OpenCL\OpenCLExtension.cs" />
+    <Compile Include="System\API\OpenCL\OpenCLFunction.cs" />
+    <Compile Include="System\API\OpenCL\OpenCLHandle.cs" />
+    <Compile Include="System\API\OpenCL\Platform.cs" />
+    <Compile Include="System\API\OpenCL\Program.cs" />
+    <Compile Include="System\Framework\Framebuffer.cs" />
+    <Compile Include="System\Framework\Mesh.cs" />
+    <Compile Include="System\Framework\PositionColorVertex.cs" />
+    <Compile Include="System\Framework\PositionColorVertexTextured.cs" />
+    <Compile Include="System\Framework\Program.cs" />
+    <Compile Include="System\Framework\Renderbuffer.cs" />
+    <Compile Include="System\Framework\Shader.cs" />
+    <Compile Include="System\Framework\VertexArray.cs" />
+    <Compile Include="System\Framework\VertexBuffer.cs" />
+    <Compile Include="System\Framework\VertexDataBuffer.cs" />
+    <Compile Include="System\API\OpenGL\Extensions.cs" />
+    <Compile Include="System\API\OpenGL\GLEnum.cs" />
+    <Compile Include="System\API\OpenGL\GLEnumExt.cs" />
+    <Compile Include="System\API\OpenGL\glHandle.cs" />
+    <Compile Include="System\API\OpenGL\GLUtil.cs" />
+    <Compile Include="System\API\OpenGL\GLXEnum.cs" />
+    <Compile Include="System\API\OpenGL\OpenGL.cs" />
+    <Compile Include="System\API\OpenGL\OpenGlExt.cs" />
+    <Compile Include="System\API\OpenGL\OpenGLExtension.cs" />
+    <Compile Include="System\API\OpenGL\OpenGLHandle.cs" />
+    <Compile Include="System\API\Platform\IGLNativeContext.cs" />
+    <Compile Include="System\API\Platform\INativContextConfigs.cs" />
+    <Compile Include="System\API\Platform\Linux\FBConfig.cs" />
+    <Compile Include="System\API\Platform\Linux\glxNativeContext.cs" />
+    <Compile Include="System\API\Platform\Linux\XVisualInfo.cs" />
+    <Compile Include="System\API\Platform\PlatformFactory.cs" />
+    <Compile Include="System\Game\Context\GameContext.cs" />
+    <Compile Include="System\Game\Context\GameContextConfig.cs" />
+    <Compile Include="System\Game\Window\BaseGameWindow.cs" />
+    <Compile Include="System\Game\Window\GameResolution.cs" />
+    <Compile Include="System\Game\Window\IGameWindow.cs" />
+    <Compile Include="System\Game\Window\WindowStyle.cs" />
+    <Compile Include="System\Game.cs" />
+    <Compile Include="System\Image.cs" />
+    <Compile Include="System\ImageHandle.cs" />
+    <Compile Include="System\Screens.cs" />
+    <Compile Include="System\Texture.cs" />
+    <Compile Include="System\API\Platform\Linux\Contracts.cs" />
+    <Compile Include="System\API\Platform\Linux\Keys.cs" />
+    <Compile Include="System\API\Platform\Linux\Monitor.cs" />
+    <Compile Include="System\API\Platform\Linux\MonitorList.cs" />
+    <Compile Include="System\API\Platform\Linux\MonitorMode.cs" />
+    <Compile Include="System\API\Platform\Linux\Type.cs" />
+    <Compile Include="System\API\Platform\Linux\Utils.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\Event\Event.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\Lib\lib.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\Utils\IntPtrToByteArray.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\Xinerama\Xinerama.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\XInput\XInput.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\Xkb\Xkb.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\Xpm\Xpm.cs" />
+    <Compile Include="System\API\Platform\Linux\internal\XRandR.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\BaseWindow.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Colormap.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\CommandLine.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Display.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XEventArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XKeyEventArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XMotionEventArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XMouseButtonPressArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XMouseButtonReleaseArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XMouseScrollArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XMoveEventArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XResizeEventArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Event\XUnknownEventArgs.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\EventHandler.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Exception.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Icon.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Pixmap.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\PixmapManager.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Screen.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\SimpleWindow.cs" />
+    <Compile Include="System\API\Platform\Linux\Widgets\Xlock.cs" />
+    <Compile Include="System\PinObject.cs" />
+    <Compile Include="System\Application.cs" />
+    <Compile Include="System\Handle.cs" />
+    <Compile Include="System\API\Platform\IWindow.cs" />
+    <Compile Include="System\API\Platform\IDisplay.cs" />
+    <Compile Include="System\API\Platform\IScreen.cs" />
+    <Compile Include="System\Framework\OpenCL\Environment.cs" />
+    <Compile Include="System\Framework\MeshVertex.cs" />
+    <Compile Include="System\Framework\IVertex.cs" />
+    <Compile Include="System\Framework\Vertex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\librax\libx11.csproj">
-      <Project>{72080CDA-8E8B-4187-B5A3-6A42726F746E}</Project>
-      <Name>libx11</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\libral\libral.csproj">
-      <Project>{897E6333-D6C4-4BDA-B51E-5575A17E5291}</Project>
-      <Name>libral</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Context\" />
-    <Folder Include="Window\" />
-    <Folder Include="OpenGL\" />
-    <Folder Include="Framework\" />
-    <Folder Include="Platform\" />
-    <Folder Include="Platform\Windows\" />
-    <Folder Include="Platform\Linux\" />
-    <Folder Include="Platform\Mac\" />
-    <Folder Include="Platform\Other\" />
-    <Folder Include="OpenCL\" />
+    <Folder Include="System\" />
+    <Folder Include="System\API\" />
+    <Folder Include="System\Game\" />
+    <Folder Include="System\API\OpenAL\" />
+    <Folder Include="System\Framework\OpenCL\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

@@ -19,8 +19,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using X11.Widgets;
-using liboRg.OpenCL;
+using System.API.OpenCL;
 
 namespace SampleOpenCL
 {
@@ -29,7 +28,7 @@ namespace SampleOpenCL
 		public static void Main(string[] args)
 		{
 			Application.Init("");
-			clPlatforms platforms = new clPlatforms();
+			Platforms platforms = new Platforms();
 			foreach (var platform in platforms)
 			{
 				Console.WriteLine(platform);

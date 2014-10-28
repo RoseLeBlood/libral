@@ -19,13 +19,13 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.API.OpenGL;
+using System.API.Platform;
+using System.Common;
+using System.Framework;
 using liboRg;
 using liboRg.Context;
-using liboRg.Framework;
-using liboRg.OpenGL;
 using liboRg.Window;
-using System.Common;
-using liboRg.Platform;
 
 namespace SampleTriangle
 {
@@ -39,7 +39,7 @@ namespace SampleTriangle
 
 		public TriangleGame(int resid, bool fullscreen, bool mode) : base(":0", 
 			new GameContextConfig(Screens.PrimaryScreen[resid-1]),
-			"FPS: 0", fullscreen ? WindowStyle.Fullscreen :  WindowStyle.Fixed)
+			"FPS: 0", fullscreen ? WindowStyle.Fullscreen :  WindowStyle.Resize)
 		{
 			this.ContextConfig.GraphicConfigType = (mode ? NativContextConfigTyp.Best : NativContextConfigTyp.Worst);
 		}
@@ -50,10 +50,10 @@ namespace SampleTriangle
 
 			vao = new VertexArray("vao");
 
-			PositionColorVertexTextured triangle = new PositionColorVertexTextured();
+			PositionColorVertexTextured triangle = new PositionColorVertexTextured("TriangleGameVertex");
 			triangle.Add(new Vector3(-0.8f, 0.0f, 0.0f), Colors.AliceBlue);
 			triangle.Add(new Vector3(0.8f, 0.0f, 0.0f), Colors.FireBrick);
-			triangle.Add(new Vector3(0.0f, 0.9f, 0.0f), Colors.Green);
+			triangle.Add(new Vector3(0.0f, 0.8f, 0.0f), Colors.Green);
 
 			program = new Program("program", 
 				new Shader("vertex.sh", ShaderType.Vertex), 
@@ -80,7 +80,8 @@ namespace SampleTriangle
 		protected override bool Draw()
 		{
 			GameContext.Clear(liboRg.Context.Buffer.Color, Colors.Black);
-			GameContext.DrawArrays( vao, Primitive.TrianglesStrip, 0, 3 );
+
+			GameContext.DrawArrays( vao, Primitive.Triangles, 0, 3 );
 			return base.Draw();
 		}
 	}

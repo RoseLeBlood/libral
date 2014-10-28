@@ -1,14 +1,19 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="SampleOpenCL2/Example.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="liboRg/System/Framework/IVertex.cs">
     <Files>
-      <File FileName="SampleOpenCL2/Example.cs" Line="52" Column="10" />
+      <File FileName="liboRg/System/Framework/Mesh.cs" Line="33" Column="3" />
+      <File FileName="liboRg/System/Framework/MeshVertex.cs" Line="47" Column="40" />
+      <File FileName="liboRg/System/Framework/PositionColorVertex.cs" Line="45" Column="4" />
+      <File FileName="liboRg/System/Framework/IVertex.cs" Line="27" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/home/annasophia/rasLinux/librax/Widgets/Color.cs" line="365" column="1" />
       <Breakpoint file="/home/annasophia/rasLinux/SampleOpenCL2/Example.cs" line="51" column="1" />
+      <Breakpoint file="/home/annasophia/ralinux/liboRg/OpenCL/OpenCLExtension.cs" line="128" column="1" />
+      <Breakpoint file="/home/annasophia/ralinux/liboRg/System/API/OpenCL/Context.cs" line="76" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

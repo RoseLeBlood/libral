@@ -30,6 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -41,14 +42,6 @@
     <ProjectReference Include="..\liboRg\liboRg.csproj">
       <Project>{B5A072BD-BA17-4B5A-B099-AC70DF9DB832}</Project>
       <Name>liboRg</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\libral\libral.csproj">
-      <Project>{897E6333-D6C4-4BDA-B51E-5575A17E5291}</Project>
-      <Name>libral</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\librax\libx11.csproj">
-      <Project>{72080CDA-8E8B-4187-B5A3-6A42726F746E}</Project>
-      <Name>libx11</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

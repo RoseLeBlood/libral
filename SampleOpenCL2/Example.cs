@@ -18,70 +18,47 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using X11;
 using System;
-using liboRg.OpenCL;
 using System.Runtime.InteropServices;
+using System.API.OpenCL;
+using System.Framework.OpenCL;
+using Microsoft.Build.Framework;
 
 namespace SampleOpenCL2
 {
   public class Example
   {
-	    clDevice	m_pDevice;
-	    clContext 	m_pContext;
+		const int WORKGROUP_SIZE = 100;
 		CommandQueue m_pCommandQueue;
-
-	   // IntPtr	m_pCommandQueue;
-	    clProgram	m_pProgram;
+		clProgram	 m_pProgram;
 
 	    IntPtr	m_a, m_b, m_c;
 	    IntPtr	m_pKernel;
 
-	    int[] 	workGroupSize = new int[1];
-
 		public Example(string path)
 		{
-			clPlatforms platforms = new clPlatforms();
-			foreach (var platform in platforms)
-			{
-				if (platform.HaveDevices)
-				{
-					m_pDevice = platform.Devices[0];
-					break;
-				}
-			}
-
-			if (m_pDevice == null)
-				throw new System.Exception("No OpenCL Device found ");
-
-			m_pContext = m_pDevice.CreateContext();
-			m_pCommandQueue = m_pContext.CreateCommandQueue();
-
-			m_pProgram = m_pContext.CreateProgramFromSource(System.IO.File.ReadAllText(path), "testProgramm");
-			m_pProgram.Build(m_pDevice, null);
+			OpenCLEnvironment.SetupSingleDevice("Advanced Micro Devices", OpenCLDeviceTyp.Cpu);
+			m_pCommandQueue = OpenCLEnvironment.CreateCommandQueue();
+			m_pProgram = OpenCLEnvironment.CreateProgramFromSource(System.IO.File.ReadAllText(path), "testProgramm");
+			m_pProgram.Build(0, null);
 			m_pKernel = m_pProgram.CreateKernel("add");
 		}
 
    		 public void popCorn()
 		{
-			uint errorCode = 0;
+			float[] a = new float[WORKGROUP_SIZE];
+			float[] b = new float[WORKGROUP_SIZE];
 
-			float[] a = new float[10];
-			float[] b = new float[10];
-
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < WORKGROUP_SIZE; i++)
 			{
 				a[i] = 1.0f * i;
 				b[i] = 1.0f * i;
 			}
-			m_a = m_pContext.CreateBuffer(BufferFlags.ReadOnly | BufferFlags.CopyHostPtr, (sizeof(float) * 10), a);
-			m_b = m_pContext.CreateBuffer(BufferFlags.ReadOnly, (sizeof(float) * 10));
-			m_c = m_pContext.CreateBuffer(BufferFlags.WriteOnly, (sizeof(float) * 10));
+			m_a = OpenCLEnvironment.CreateBuffer(BufferFlags.ReadOnly | BufferFlags.CopyHostPtr, (sizeof(float) * WORKGROUP_SIZE), a);
+			m_b = OpenCLEnvironment.CreateBuffer(BufferFlags.ReadOnly, (sizeof(float) * WORKGROUP_SIZE));
+			m_c = OpenCLEnvironment.CreateBuffer(BufferFlags.WriteOnly, (sizeof(float) * WORKGROUP_SIZE));
 
-			IntPtr ev;
-
-			m_pCommandQueue.EnqueueWriteBuffer(m_b, true, 0, (sizeof(float) * 10), b, 0, null, out ev); 
-				
+			IntPtr ev = m_pCommandQueue.EnqueueWriteBuffer(m_b, true, 0, (sizeof(float) * WORKGROUP_SIZE), b, 0, null); 
 			cl.clReleaseEvent(ev);
 
 			int intPtrSize = 0; 
@@ -92,13 +69,11 @@ namespace SampleOpenCL2
 			cl.clSetKernelArg(m_pKernel, 2, new IntPtr(intPtrSize), m_c);
 
 			m_pCommandQueue.Finish();
-
-			workGroupSize[0] = 10;
 		}
     public void runKernel()
 		{
 			IntPtr ev;
-			cl.clEnqueueNDRangeKernel(m_pCommandQueue[0], m_pKernel, 1, null, new IntPtr[]{ (IntPtr)workGroupSize[0] }, null, 0, null, out ev);
+			cl.clEnqueueNDRangeKernel(m_pCommandQueue[0], m_pKernel, 1, null, new IntPtr[]{ (IntPtr)WORKGROUP_SIZE }, null, 0, null, out ev);
 			cl.clReleaseEvent(ev);
 
 			m_pCommandQueue.Finish();
