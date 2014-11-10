@@ -1,5 +1,5 @@
 //
-//  VertexBuffer.cs
+//  CommandQueue.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,43 +19,30 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.IO;
-using System.Common;
-using System.Runtime.InteropServices;
-using System.API.OpenGL;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.API.Platform.Linux;
 
-namespace System.Framework
+namespace System.API.OpenCL
 {
-
-	public class Mesh : OpenGLHandle
+	public class Events : OpenCLHandles<Event>
 	{
-		protected MeshVertex		m_lstVertices;
-		protected Byte[]			m_arData;
-
-		public MeshVertex Vertices
+		public Events(string strName, Event[] pEvent)
+			: base(strName)
 		{
-			get { return m_lstVertices; }
+			base.AddRange(pEvent);
 		}
 
-		public Mesh(string filename)
-			: base("Mesh_" + System.IO.Path.GetFileName(filename))
+		public void ReleaseEvents()
 		{
-			var t = Application.Current.GetHandle<Mesh>(this.Name);
-			if (t != null)
+			foreach (var pHandle in m_pHandles)
 			{
-				m_lstVertices = t.m_lstVertices;
-				m_arData = t.m_arData;
-				return;
+				pHandle.Release();
 			}
-			if (!File.Exists(filename))
-			{
-
-			}
-			m_arData = File.ReadAllBytes(filename);
-			m_lstVertices = new MeshVertex(this);
-			Register(true);
+			this.Clear();
+			Dispose();
 		}
 	}
+
 }
 

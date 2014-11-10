@@ -35,43 +35,36 @@ namespace System.API.OpenCL
 
 		#region EnqueueWriteBuffer
 
-		public void EnqueueWriteBuffer(int Queue, IntPtr cl_buffer, bool blockingWrite,
-			int offsetInBytes, int lengthInBytes, Object data, uint numEventsInWaitList,
-			IntPtr[] eventWaitList, out IntPtr cl_event)
-		{
-			using (var xb = data.Pin())
-			{
-				cl.clEnqueueWriteBuffer(this[Queue], cl_buffer, 
-					blockingWrite, (IntPtr)offsetInBytes, (IntPtr)lengthInBytes, xb, numEventsInWaitList,
-					eventWaitList, out cl_event);
-			}
-		}
-		public IntPtr EnqueueWriteBuffer(IntPtr cl_buffer, bool blockingWrite,
-			int offsetInBytes, int lengthInBytes, Object data, uint numEventsInWaitList,
-			IntPtr[] eventWaitList)
+	
+		public Events EnqueueWriteBuffer(System.API.OpenCL.Buffer cl_buffer, bool blockingWrite,
+			int offsetInBytes, int lengthInBytes, Object data, uint numEventsInWaitList = 0,
+			IntPtr[] eventWaitList = null)
 		{
 			IntPtr cl_event = IntPtr.Zero;
-			for(int i = 0; i < Count; i++)
+			Event[] _event = new Event[Count];
+
+			for (int i = 0; i < Count; i++)
 			{
 				using (var xb = data.Pin())
 				{
-					cl.clEnqueueWriteBuffer(this[i], cl_buffer, 
+							cl.clEnqueueWriteBuffer(this[i], cl_buffer.RawHandle, 
 						blockingWrite, (IntPtr)offsetInBytes, (IntPtr)lengthInBytes, xb, numEventsInWaitList,
 						eventWaitList, out cl_event);
+					_event[i] = new Event(m_strName, cl_event);
 				}
 			}
-			return cl_event;
+			return new Events(m_strName, _event);
 		}
-	
+
 
 		#endregion
 
 		public void Finish()
 		{
 			for (int i = 0; i < Count; i++)
-			{
-				cl.clFinish(this[i]);
-			}
+				{
+					cl.clFinish(this[i]);
+				}
 		}
 	}
 }

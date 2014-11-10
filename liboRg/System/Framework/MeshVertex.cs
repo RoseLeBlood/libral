@@ -34,7 +34,7 @@ namespace System.Framework
 		public MeshVertex(Mesh mesh)
 			: base("MeshVertex_" + mesh.Name)
 		{
-
+			Register(true);
 		}
 		public void Add(Vector3 vPosition, Vector2 vTexture, Vector3 vNormal)
 		{

@@ -1,5 +1,5 @@
-//
-//  VertexBuffer.cs
+﻿//
+//  Kernel.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -18,43 +18,29 @@
 //
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-using System;
-using System.IO;
-using System.Common;
 using System.Runtime.InteropServices;
-using System.API.OpenGL;
-using System.Collections.Generic;
 
-namespace System.Framework
+namespace System.API.OpenCL
 {
-
-	public class Mesh : OpenGLHandle
+	public class Kernel : OpenCLHandle
 	{
-		protected MeshVertex		m_lstVertices;
-		protected Byte[]			m_arData;
+		protected Program m_pProgram;
+		private readonly int intPtrSize;
 
-		public MeshVertex Vertices
+		public Kernel(string strProgramName, Program pProgram )
+			: base(pProgram.Name + "_" + strProgramName)
 		{
-			get { return m_lstVertices; }
+			intPtrSize = Marshal.SizeOf(typeof(IntPtr));
+
+			m_pProgram = pProgram;
+			m_pHandle  = cl.clCreateKernel(m_pProgram.RawHandle, strProgramName, out m_iErrorCode);
+
+			Register(true);
 		}
 
-		public Mesh(string filename)
-			: base("Mesh_" + System.IO.Path.GetFileName(filename))
+		public void SetArgumente(int iIndex, Buffer buffer)
 		{
-			var t = Application.Current.GetHandle<Mesh>(this.Name);
-			if (t != null)
-			{
-				m_lstVertices = t.m_lstVertices;
-				m_arData = t.m_arData;
-				return;
-			}
-			if (!File.Exists(filename))
-			{
-
-			}
-			m_arData = File.ReadAllBytes(filename);
-			m_lstVertices = new MeshVertex(this);
-			Register(true);
+			cl.clSetKernelArg(RawHandle, (uint)iIndex, new IntPtr(intPtrSize), buffer.RawHandle);
 		}
 	}
 }

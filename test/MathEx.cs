@@ -1,5 +1,5 @@
-//
-//  VertexBuffer.cs
+﻿//
+//  MathEx.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,42 +19,24 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.IO;
-using System.Common;
-using System.Runtime.InteropServices;
-using System.API.OpenGL;
-using System.Collections.Generic;
 
-namespace System.Framework
+namespace test
 {
-
-	public class Mesh : OpenGLHandle
+	public static class MathEx
 	{
-		protected MeshVertex		m_lstVertices;
-		protected Byte[]			m_arData;
-
-		public MeshVertex Vertices
+		public static byte round(float f)
 		{
-			get { return m_lstVertices; }
+			throw new NotImplementedException();
 		}
 
-		public Mesh(string filename)
-			: base("Mesh_" + System.IO.Path.GetFileName(filename))
+		public static float exp(double d)
 		{
-			var t = Application.Current.GetHandle<Mesh>(this.Name);
-			if (t != null)
-			{
-				m_lstVertices = t.m_lstVertices;
-				m_arData = t.m_arData;
-				return;
-			}
-			if (!File.Exists(filename))
-			{
+			throw new NotImplementedException();
+		}
 
-			}
-			m_arData = File.ReadAllBytes(filename);
-			m_lstVertices = new MeshVertex(this);
-			Register(true);
+		public static double hypot(double a, double b)
+		{
+			return Math.Sqrt(Math.Pow(a, 2) + Math.Pow(b, 2));
 		}
 	}
 }

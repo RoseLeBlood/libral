@@ -38,10 +38,12 @@ namespace liboRg.Context
 
 	public enum Primitive : ulong
 	{
+		Quads = GL.QUADS,
 		Triangles = GL.TRIANGLES,
 		Lines = GL.LINES,
 		Points = GL.POINTS,
 		TrianglesStrip = GL.TRIANGLE_STRIP,
+		LineStrip = GL.LINE_STRIP,
 	}
 
 	public enum Capability : ulong

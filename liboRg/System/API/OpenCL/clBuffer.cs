@@ -39,10 +39,47 @@ namespace System.API.OpenCL
 
 	}
 
-	/*public class Buffer<T> : OpenCLHandles<T>
+	public class Buffer : OpenCLHandle
 	{
+		private BufferFlags m_pBufferFlags;
+		private int m_iSize;
+		private Context m_pContext;
 
+		public BufferFlags BufferFlags
+		{
+			get { return m_pBufferFlags; }
+		}
 
-	}*/
+		public int Size
+		{
+			get { return m_iSize; }
+		}
+
+		public Context Context
+		{
+			get { return m_pContext; }
+		}
+
+		internal Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName)
+		{
+			m_pBufferFlags = flags;
+			m_iSize = iSize;
+			m_pContext = pContext;
+
+			if (host_ptr != null)
+			{
+				using (var xa = host_ptr.Pin())
+				{
+					m_pHandle = cl.clCreateBuffer(pContext.RawHandle, (uint)(flags), (IntPtr)iSize, xa, out m_iErrorCode);
+				}
+			}
+			else
+			{
+				m_pHandle = cl.clCreateBuffer(pContext.RawHandle, (uint)(flags), (IntPtr)iSize, IntPtr.Zero, out m_iErrorCode);
+			}
+			Register(true);
+		}
+	}
 }
 

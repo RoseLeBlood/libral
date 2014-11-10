@@ -50,7 +50,7 @@ namespace SampleTriangle
 
 			vao = new VertexArray("vao");
 
-			PositionColorVertexTextured triangle = new PositionColorVertexTextured("TriangleGameVertex");
+			PositionColorVertex triangle = new PositionColorVertex("TriangleGameVertex");
 			triangle.Add(new Vector3(-0.8f, 0.0f, 0.0f), Colors.AliceBlue);
 			triangle.Add(new Vector3(0.8f, 0.0f, 0.0f), Colors.FireBrick);
 			triangle.Add(new Vector3(0.0f, 0.8f, 0.0f), Colors.Green);
@@ -58,10 +58,7 @@ namespace SampleTriangle
 			program = new Program("program", 
 				new Shader("vertex.sh", ShaderType.Vertex), 
 				new Shader("frag.sh", ShaderType.Fragment)); 
-				
-			triangle.SetTexture(
-				program, "tex", GL.TEXTURE0_ARB, 
-				new Texture(new Image("imgParticel", 10, 10, Colors.DarkGoldenrod)));
+
 			triangle.BindAttribute(program, vao);
 		}
 

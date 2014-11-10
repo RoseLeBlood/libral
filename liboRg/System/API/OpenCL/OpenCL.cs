@@ -270,12 +270,12 @@ namespace System.API.OpenCL
 		[DllImport(DllName, EntryPoint = "clSetCommandQueueProperty")]
 		public extern static unsafe int clSetCommandQueueProperty(IntPtr command_queue, uint properties, bool enable, uint* old_properties);
 
-		[DllImport(DllName)]
-		private static extern uint clSetKernelArg(IntPtr kernel, uint argIndex, IntPtr argSize, IntPtr argValue);
+		[DllImport(DllName, EntryPoint = "clSetKernelArg")]
+		private static extern uint SetKernelArg(IntPtr kernel, uint argIndex, IntPtr argSize, IntPtr argValue);
 		public static uint clSetKernelArg(IntPtr kernel, uint argIndex, IntPtr argSize, object argValue)
 		{
 			using (var argPtr = argValue.Pin())
-				return clSetKernelArg(kernel, argIndex, argSize, argValue == null ? IntPtr.Zero : argPtr);
+				return SetKernelArg(kernel, argIndex, argSize, argValue == null ? IntPtr.Zero : argPtr);
 		}
 
 		[DllImport(DllName, EntryPoint = "clUnloadCompiler")]

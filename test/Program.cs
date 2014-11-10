@@ -20,109 +20,75 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Common;
-using X11;
-using X11.Widgets;
 using liboRg;
 using liboRg.Context;
-using liboRg.Framework;
 using liboRg.Window;
-using liboRg.OpenGL;
 using liboRg.Context;
+using System.Framework;
+using System.API.OpenGL;
+using System.API.Platform;
+using System.Framework.Meshes;
+using System.API.Platform.Linux;
 
 
 namespace test
 {
 	public class TestGame : Game
 	{
-		double lastTime;
-		int nbFrames = 0;
-
 		VertexArray vao = null;
+		Program program;
 
 		public TestGame(int resid, bool fullscreen, bool mode) : base(":0", 
 			new GameContextConfig(Screens.PrimaryScreen[resid-1]),
 			"FPS: 0", fullscreen ? WindowStyle.Fullscreen :  WindowStyle.Fixed)
 		{
-			this.ContextConfig.GraphicConfigType = (mode ? NativContextConfigTyp.Best : NativContextConfigTyp.Worst);
-			Init();
+			this.ContextConfig.GraphicConfigType = NativContextConfigTyp.Best;
 		}
+
+		uint[] texture_id = new uint[1];
+
 		public override void Create()
 		{
 			base.Create();
-			ClearColor = Colors.Black;
-
-			lastTime = this.Time;
-
-			Shader vertex = new Shader("vertex", ShaderType.Vertex, 
-				"#version 150\nout vec4 inColor;in vec2 position;  void main() { inColor = vec4( position*2, 0, 1.0 ); " +
-				"gl_Position = vec4( position, 0.0, 1.0 ); }");
-			Shader frag = new Shader( "frag", ShaderType.Fragment, 
-				"#version 150\nin vec4 inColor; out vec4 outColor; void main() { outColor = inColor; }" );
-			Program program = new Program("program", vertex, frag);
-
-			float[] vertices = new float[]
-			{
-					0.5f,  -0.5f,
-					0.5f,  0.5f,
-					-0.5f, 0.5f,
-			};
-
-			VertexDataBuffer vboData = new VertexDataBuffer(); vboData.Floats(vertices);
 
 			vao = new VertexArray("vao");
-			vao.BindAttribute( program.Attribute( "position" ), 
-				new VertexBuffer("vbo", vboData, BufferUsage.StaticDraw), 
-				DataType.Float, 2, 0, IntPtr.Zero );
+
+			PositionColorVertexTextured triangle = new PositionColorVertexTextured("TriangleGameVertex");
+			triangle.Add(new Vector3(-0.5f, 0.0f, 0.0f), Colors.Black);
+			triangle.Add(new Vector3(0.5f, 0.0f, 0.0f), Colors.Black);
+			triangle.Add(new Vector3(-0.5f, 0.5f, 0.0f), Colors.Black);
+
+			triangle.Add(new Vector3(0.5f, -0.5f, 0.0f), Colors.Wheat);
+			triangle.Add(new Vector3(0.5f, 0.0f, 0.0f), Colors.Wheat);
+			triangle.Add(new Vector3(-0.5f, 0.0f, 0.0f), Colors.Wheat);
+
+			program = new Program("program", 
+				new Shader("vertex.sh", ShaderType.Vertex), 
+				new Shader("frag.sh", ShaderType.Fragment)); 
+
+			triangle.SetTexture(
+				program, "tex", GL.TEXTURE0_ARB, 
+				new Texture(new Image("imgParticel", 10, 10, Colors.Goldenrod)));
+			triangle.BindAttribute(program, vao);
+
 		}
 
 		protected override bool Move()
 		{
-			double currentTime = this.Time;
-			nbFrames++;
-			if (currentTime - lastTime >= 1.0)
-			{ 
-					this.Window.Title = string.Format("FPS: {0} {1}", nbFrames, this.ContextConfig);
-				nbFrames = 0;
-				lastTime += 1;
-			}
-			if (Window.IsKeyDown(Keys.F1))
-				Console.WriteLine("Hallo F1");
-
 
 			return base.Move();
 		}
-		private float x = 0.5f;
 		protected override bool Draw()
 		{
-	
-			gl.glClearColor(x, x, x, x);
-
-		
-
 			GameContext.Clear(liboRg.Context.Buffer.Color | liboRg.Context.Buffer.Depth);
-			GameContext.DrawArrays( vao, Primitive.Triangles, 0, 6 );
-
+			GameContext.DrawArrays( vao, Primitive.TrianglesStrip, 0, 6 );
 			return base.Draw();
 		}
 		public static void Main (string[] args)
 		{
 			Application.Init("test");
 
-			var x = Screens.PrimaryScreen.Modes;
-			Console.WriteLine("Reselutions: ");
-			for (int i = 0; i < x.Count; i++)
-			{
-					Console.WriteLine("\t{0}. {1}", i+1, x[i]);
-			}
-			int res = 3; int.TryParse(Console.ReadLine(), out res);
-
-			Console.Write("FullScreen [Y/n]: ");
-			bool fullscreen = (Console.ReadLine().ToUpper() == "Y");
-
-			Console.Write("GraphicMode [Best/low]: ");
-			bool mode = (Console.ReadLine().ToUpper() == "BEST");
-
-			Game game = new TestGame(res, fullscreen, mode);
+			Game game = new TestGame(8, false, true);
 			Application.Run();
 			game.Destroy();
 		}

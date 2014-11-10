@@ -68,18 +68,18 @@ namespace System.Framework.OpenCL
 		{
 			return m_pContext.CreateCommandQueue();
 		}
-		public static clProgram CreateProgramFromSource(string source, string name)
+		public static System.API.OpenCL.Program CreateProgramFromSource(string source, string name)
 		{
 			return CreateProgramFromSource(new string[] { source }, name);
 		}
-		public static clProgram CreateProgramFromSource(string[] sources, string name)
+		public static System.API.OpenCL.Program CreateProgramFromSource(string[] sources, string name)
 		{
 			return m_pContext.CreateProgramFromSource(sources, name);
 		}
 
-		public static IntPtr CreateBuffer(BufferFlags bufferFlags, int size, Object host_ptr = null)
+		public static System.API.OpenCL.Buffer CreateBuffer(string strName, BufferFlags bufferFlags, int size, Object host_ptr = null)
 		{
-			return m_pContext.CreateBuffer(bufferFlags, size, host_ptr);
+			return m_pContext.CreateBuffer(strName, bufferFlags, size, host_ptr);
 		}
 	}
 }

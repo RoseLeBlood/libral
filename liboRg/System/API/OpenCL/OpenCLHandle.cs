@@ -47,7 +47,7 @@ namespace System.API.OpenCL
 	public class OpenCLHandles<T> : OpenCLHandle, IList<T>
 		where T : OpenCLHandle
 	{
-		private List<T> m_pHandles;
+		protected List<T> m_pHandles;
 
 		public IntPtr[] Handles
 		{
@@ -107,9 +107,9 @@ namespace System.API.OpenCL
 		public void Clear()
 		{
 			foreach (var item in m_pHandles)
-			{
-				item.Dispose();
-			}
+				{
+					item.Dispose();
+				}
 			m_pHandles.Clear();
 		}
 

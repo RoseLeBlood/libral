@@ -112,7 +112,7 @@ namespace System.API.OpenCL
 	public class Platforms : OpenCLHandles<Platform>
 	{
 		public Platforms()
-			: base("Palatforms")
+			: base("Platforms")
 		{
 			IntPtr[] platforms = new IntPtr[100];
 			uint  platforms_n = 0;
@@ -120,9 +120,9 @@ namespace System.API.OpenCL
 			cl.clGetPlatformIDs(100, platforms, out platforms_n);
 
 			for (int i = 0; i < platforms_n; i++)
-			{
+				{
 					this.Add(new Platform(platforms[i]));
-			}
+				}
 		}
 	}
 }

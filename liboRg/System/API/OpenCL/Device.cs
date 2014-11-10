@@ -135,9 +135,6 @@ namespace System.API.OpenCL
 		{
 
 		}
-
-
-
 		public Devices(Platform pPlatform, OpenCLDeviceTyp type)
 			: base("Devices")
 		{
@@ -146,11 +143,11 @@ namespace System.API.OpenCL
 
 			cl.clGetDeviceIDs(pPlatform.RawHandle, (uint)type, (uint)100, devices, out numDevices);
 			for (int i = 0; i < numDevices; i++)
-			{
-				var x = new Device(devices[i], pPlatform);
-				x.DeviceType = type;
-				this.Add(x);
-			}
+				{
+					var x = new Device(devices[i], pPlatform);
+					x.DeviceType = type;
+					this.Add(x);
+				}
 		}
 		public Context CreateContext(string strName)
 		{

@@ -72,7 +72,7 @@ namespace System.API.OpenCL
 
 			m_pHandle = cl.clCreateContext(IntPtr.Zero, 
 				(uint)pDevices.Count, rawDevices, IntPtr.Zero, IntPtr.Zero, out m_iErrorCode);
-	
+
 			cl.LoadExtensions();
 
 			Register(true);
@@ -90,11 +90,11 @@ namespace System.API.OpenCL
 			cl.clReleaseContext(RawHandle);
 		}
 
-		public clProgram CreateProgramFromSource(string source, string name)
+		public Program CreateProgramFromSource(string source, string name)
 		{
 			return CreateProgramFromSource(new string[] { source }, name);
 		}
-		public clProgram CreateProgramFromSource(string[] sources, string name)
+		public Program CreateProgramFromSource(string[] sources, string name)
 		{
 			uint errorCode = 0;
 			var x = cl.clCreateProgramWithSource(RawHandle, (uint)sources.Length, sources, 
@@ -103,7 +103,7 @@ namespace System.API.OpenCL
 			if (errorCode != 0)
 				throw new System.Exception(errorCode.ToString());
 
-			return new clProgram(name, x, this);
+			return new Program(name, x, this);
 
 		}
 		public CommandQueue CreateCommandQueue()
@@ -120,19 +120,9 @@ namespace System.API.OpenCL
 			}
 			return queue;
 		}
-		public IntPtr CreateBuffer(BufferFlags flags, int size, Object host_ptr = null)
+		public System.API.OpenCL.Buffer CreateBuffer(string strName, BufferFlags flags, int size, Object host_ptr = null)
 		{
-			if (host_ptr != null)
-			{
-				using (var xa = host_ptr.Pin())
-				{
-					return cl.clCreateBuffer(this, (uint)(flags), (IntPtr)size, xa, out m_iErrorCode);
-				}
-			}
-			else
-			{
-				return cl.clCreateBuffer(this, (uint)(flags), (IntPtr)size, IntPtr.Zero, out m_iErrorCode);
-			}
+			return new System.API.OpenCL.Buffer(strName, this, flags, size, host_ptr);
 		}
 		public string GetContextInfo(CL param_name)
 		{

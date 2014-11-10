@@ -24,7 +24,7 @@ using System.Collections.ObjectModel;
 
 namespace System.API.OpenCL
 {
-	public class clProgram : UnmanagedHandle
+	public class Program : UnmanagedHandle
 	{
 		private int[] 		m_iBuildStatus;
 		private string[] 	m_strBuildLog;
@@ -47,12 +47,12 @@ namespace System.API.OpenCL
 			get { return m_strBuildLog; }
 		}
 
-		public IList<Device> Devices
+		public Devices Devices
 		{
-			get { return m_pDevices.AsReadOnly(); }
-		}
+			get { return m_pDevices; }
+		}			
 
-		internal clProgram(string strName, IntPtr pHandle, Context pContext)
+		internal Program(string strName, IntPtr pHandle, Context pContext)
 			: base("Program_" + strName, pHandle)
 		{
 			m_iErrorCode = 0;
@@ -61,7 +61,7 @@ namespace System.API.OpenCL
 		}
 		public int Build(int iDevice, IntPtr? userdata, string options = "")
 		{
-			return Build(m_pContext.Devices[iDevice], userdata, options);
+			return Build(new IntPtr[] { m_pContext.Devices[iDevice] }, userdata, options);
 		}
 		public int Build(Device pDevice, IntPtr? userdata, string options = "")
 		{
@@ -88,9 +88,26 @@ namespace System.API.OpenCL
 			 
 			return (int)x;
 		}
-		public IntPtr CreateKernel(string strKernelName)
+		internal int Build(IntPtr[] pDevices, IntPtr? userdata, string options = "")
 		{
-			return cl.clCreateKernel(this, strKernelName, out m_iErrorCode);
+			var x = cl.clBuildProgram(RawHandle, (uint)pDevices.Length, pDevices, 
+				options, null, (userdata.HasValue ? userdata.Value : IntPtr.Zero));
+
+			m_iBuildStatus = new int[pDevices.Length];
+			m_strBuildLog = new string[pDevices.Length];
+
+			for (int i = 0; i < pDevices.Length; i++)
+				{
+					cl.clGetProgramBuildInfo(RawHandle, pDevices[i], (uint)CL.PROGRAM_BUILD_STATUS, out m_iBuildStatus[i], ref m_iErrorCode);
+					cl.clGetProgramBuildInfo(RawHandle, pDevices[i], (uint)CL.PROGRAM_BUILD_LOG, out m_strBuildLog[i], ref m_iErrorCode);
+				}
+
+			return (int)x;
+
+		}
+		public Kernel CreateKernel(string strKernelName)
+		{
+			return new Kernel(strKernelName, this);
 		}
 	}
 }

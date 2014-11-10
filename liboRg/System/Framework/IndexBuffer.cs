@@ -1,5 +1,5 @@
-//
-//  VertexBuffer.cs
+﻿//
+//  IndexBuffer.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,42 +19,32 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.IO;
-using System.Common;
-using System.Runtime.InteropServices;
 using System.API.OpenGL;
-using System.Collections.Generic;
 
 namespace System.Framework
 {
-
-	public class Mesh : OpenGLHandle
+	public class IndexBuffer : GlHandle
 	{
-		protected MeshVertex		m_lstVertices;
-		protected Byte[]			m_arData;
-
-		public MeshVertex Vertices
+		public IndexBuffer(string strName)
+			: base(strName, GlHandleType.Buffer)
 		{
-			get { return m_lstVertices; }
 		}
-
-		public Mesh(string filename)
-			: base("Mesh_" + System.IO.Path.GetFileName(filename))
+		public IndexBuffer(string strName, IndexDataBuffer data, BufferUsage usage )
+			: base(strName, GlHandleType.Buffer)
 		{
-			var t = Application.Current.GetHandle<Mesh>(this.Name);
-			if (t != null)
-			{
-				m_lstVertices = t.m_lstVertices;
-				m_arData = t.m_arData;
-				return;
-			}
-			if (!File.Exists(filename))
-			{
+			Data(data, usage);
+		}
+		public void Data( IndexDataBuffer data, BufferUsage usage )
+		{
+			byte[] d = data.ToArray();
 
-			}
-			m_arData = File.ReadAllBytes(filename);
-			m_lstVertices = new MeshVertex(this);
-			Register(true);
+			gl.glBindBufferARB(gl.VboTarget.ElementArrayBuffer, glObject);
+			gl.glBufferDataARB(gl.VboTarget.ElementArrayBuffer, d.Length, d, (gl.VboUsage) usage);
+		}
+		public void Data( int lenght, BufferUsage usage )
+		{
+			gl.glBindBufferARB(gl.VboTarget.ElementArrayBuffer, glObject);
+			gl.glBufferDataARB(gl.VboTarget.ElementArrayBuffer, lenght, null, (gl.VboUsage) usage);
 		}
 	}
 }

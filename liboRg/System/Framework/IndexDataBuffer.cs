@@ -1,5 +1,5 @@
-﻿//
-//  VertexDataBuffer.cs
+//
+//  IndexBuffer.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,28 +19,14 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Common;
+using System.API.OpenGL;
 using System.IO;
 
 namespace System.Framework
 {
-	public class VertexDataBuffer
+	public class IndexDataBuffer
 	{
 		private MemoryStream m_stream = new MemoryStream();
-
-
-		public void Floats( float[] v ) 
-		{ 
-			var byteArray = new byte[v.Length * 4];
-			Buffer.BlockCopy(v, 0, byteArray, 0, byteArray.Length);
-
-			Bytes(byteArray);
-		}
-
-		public void Color3(Color color)
-		{
-			this.Vector3(new Vector3(color.Red, color.Green, color.Blue));
-		}
 
 		public void Int8( sbyte v ) 
 		{ 
@@ -86,24 +72,11 @@ namespace System.Framework
 
 			Bytes(pBytes); 
 		}
-		public void Float( float v ) 		{ Floats(new float[] { v }); }
-		public void Vector2( Vector2 v ) 	{ Floats(v.ToArray()); }
-		public void Vector3( Vector3 v ) 	{ Floats(v.ToArray()); }
-		public void Vector4( Vector4 v ) 	{ Floats(v.ToArray()); }
-		public void Matrix( Matrix m ) 		{ Floats(m.ToArray()); }
-		public void Color( Color v )  		{ Floats(v.ToArray()); }
-
-
-		public void Vector2( Vector2[] v ) 	 {  foreach (var item in v) { Floats(item.ToArray()); } }
-		public void Vector3( Vector3[] v ) 	 {  foreach (var item in v) { Floats(item.ToArray()); } }
-		public void Vector4( Vector4[] v ) 	 {  foreach (var item in v) { Floats(item.ToArray()); } }
-		public void Matrix( Matrix[] m ) 	 {  foreach (var item in m) { Floats(item.ToArray()); } }
-		public void Color( Color[] v )  	 {  foreach (var item in v) { Floats(item.ToArray()); } }
+		private void Bytes( byte[] bytes ) 	{ m_stream.Write(bytes, 0, bytes.Length); }
 
 		public byte[] ToArray()  			{ return m_stream.ToArray(); }
 		public long Length() 				{ return m_stream.Length; }
-
-		private void Bytes( byte[] bytes ) 	{ m_stream.Write(bytes, 0, bytes.Length); }
 	}
+
 }
 

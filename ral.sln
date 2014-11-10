@@ -45,7 +45,7 @@ Global
 		{D2CEBFB6-661B-42EE-8F66-4F78E0A1639B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SampleTriangle\SampleTriangle.csproj
+		StartupItem = SampleOpenCL2\SampleOpenCL2.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

@@ -47,7 +47,7 @@ namespace System.API.OpenCL
 			foreach (string extension in extensions)
 			{
 				string extensionName = extension;
-				if (extensionName.StartsWith("cl_"))
+				if (extensionName.StartsWith("public bool Is"))
 					extensionName = extensionName.Substring(3);
 				var info = this.GetType().GetField("Is" + extensionName);
 				if (info != null)
@@ -72,6 +72,15 @@ namespace System.API.OpenCL
 
 	public class OpenCLDeviceExtension 
 	{
+		public bool IsAPPLE_SetMemObjectDestructor= false;
+		public bool IsAPPLE_ContextLoggingFunctions = false;
+		public bool IsAPPLE_clut= false;
+		public bool IsAPPLE_query_kernel_names= false;
+		public bool IsAPPLE_gl_sharing= false;
+		public bool IsAPPLE_fp64_basic_ops= false;
+		public bool IsAPPLE_ycbcr_422 = false;
+		public bool IsAPPLE_rgb_422= false;
+
 		public bool Iskhr_fp64= false;
 		public bool Isamd_fp64= false;
 		public bool Isamd_device_attribute_query= false;
@@ -79,8 +88,17 @@ namespace System.API.OpenCL
 		public bool Isamd_printf= false;
 		public bool Isamd_media_ops= false;
 		public bool Isamd_popcnt= false;
+		public bool Isamd_media_ops2 = false;
+
+		public bool Isnv_d3d9_sharing = false;
+		public bool Isnv_d3d10_sharing = false;
+		public bool Isnv_d3d11_sharing = false;
+		public bool Isnv_compiler_options= false; 
+		public bool Isnv_device_attribute_query = false;
+		public bool Isnv_pragma_unroll = false;
 
 		public bool Isext_device_fission= false;
+		public bool Isext_atomic_counters_32 = false;
 
 		public bool Isintel_exec_by_local_thread= false;
 
@@ -102,7 +120,11 @@ namespace System.API.OpenCL
 		public bool Iskhr_spir= false;
 		public bool Iskhr_depth_images= false;
 		public bool Iskhr_3d_image_writes= false;
-
+		public bool Iskhr_image2d_from_buffer = false;
+		public bool Iskhr_subgroups = false;
+		public bool Iskhr_gl_depth_images = false;
+		public bool Iskhr_gl_msaa_sharing = false;
+	
 		internal OpenCLDeviceExtension(string strExtension)
 		{
 			string[] extensions = strExtension.Split(new char[] { ' ' });
@@ -110,7 +132,7 @@ namespace System.API.OpenCL
 			foreach (string extension in extensions)
 			{
 				string extensionName = extension;
-				if (extensionName.StartsWith("cl_"))
+				if (extensionName.StartsWith("public bool Is"))
 					extensionName = extensionName.Substring(3);
 				var info = this.GetType().GetField("Is" + extensionName);
 				if (info != null)

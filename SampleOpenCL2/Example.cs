@@ -30,10 +30,10 @@ namespace SampleOpenCL2
   {
 		const int WORKGROUP_SIZE = 100;
 		CommandQueue m_pCommandQueue;
-		clProgram	 m_pProgram;
 
-	    IntPtr	m_a, m_b, m_c;
-	    IntPtr	m_pKernel;
+		System.API.OpenCL.Program	 m_pProgram;
+		System.API.OpenCL.Buffer	m_a, m_b, m_c;
+		System.API.OpenCL.Kernel	m_pKernel;
 
 		public Example(string path)
 		{
@@ -54,26 +54,23 @@ namespace SampleOpenCL2
 				a[i] = 1.0f * i;
 				b[i] = 1.0f * i;
 			}
-			m_a = OpenCLEnvironment.CreateBuffer(BufferFlags.ReadOnly | BufferFlags.CopyHostPtr, (sizeof(float) * WORKGROUP_SIZE), a);
-			m_b = OpenCLEnvironment.CreateBuffer(BufferFlags.ReadOnly, (sizeof(float) * WORKGROUP_SIZE));
-			m_c = OpenCLEnvironment.CreateBuffer(BufferFlags.WriteOnly, (sizeof(float) * WORKGROUP_SIZE));
+			m_a = OpenCLEnvironment.CreateBuffer("bufferA", BufferFlags.ReadOnly | BufferFlags.CopyHostPtr, (sizeof(float) * WORKGROUP_SIZE), a);
+			m_b = OpenCLEnvironment.CreateBuffer("bufferB", BufferFlags.ReadOnly, (sizeof(float) * WORKGROUP_SIZE));
+			m_c = OpenCLEnvironment.CreateBuffer("bufferC", BufferFlags.WriteOnly, (sizeof(float) * WORKGROUP_SIZE));
 
-			IntPtr ev = m_pCommandQueue.EnqueueWriteBuffer(m_b, true, 0, (sizeof(float) * WORKGROUP_SIZE), b, 0, null); 
-			cl.clReleaseEvent(ev);
+			Events ev = m_pCommandQueue.EnqueueWriteBuffer(m_b, true, 0, (sizeof(float) * WORKGROUP_SIZE), b);
+			ev.ReleaseEvents();
 
-			int intPtrSize = 0; 
-			intPtrSize = Marshal.SizeOf(typeof(IntPtr));
-
-			cl.clSetKernelArg(m_pKernel, 0, new IntPtr(intPtrSize), m_a);
-			cl.clSetKernelArg(m_pKernel, 1, new IntPtr(intPtrSize), m_b);
-			cl.clSetKernelArg(m_pKernel, 2, new IntPtr(intPtrSize), m_c);
+			m_pKernel.SetArgumente(0, m_a);
+			m_pKernel.SetArgumente(1, m_b);
+			m_pKernel.SetArgumente(2, m_c);
 
 			m_pCommandQueue.Finish();
 		}
     public void runKernel()
 		{
 			IntPtr ev;
-			cl.clEnqueueNDRangeKernel(m_pCommandQueue[0], m_pKernel, 1, null, new IntPtr[]{ (IntPtr)WORKGROUP_SIZE }, null, 0, null, out ev);
+			cl.clEnqueueNDRangeKernel(m_pCommandQueue[0], m_pKernel.RawHandle, 1, null, new IntPtr[]{ (IntPtr)WORKGROUP_SIZE }, null, 0, null, out ev);
 			cl.clReleaseEvent(ev);
 
 			m_pCommandQueue.Finish();

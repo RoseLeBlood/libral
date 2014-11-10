@@ -34,6 +34,7 @@
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="Mono.Simd" />
+    <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -150,6 +151,12 @@
     <Compile Include="System\Framework\MeshVertex.cs" />
     <Compile Include="System\Framework\IVertex.cs" />
     <Compile Include="System\Framework\Vertex.cs" />
+    <Compile Include="System\Framework\Meshes\OBJ\ObjMesh.cs" />
+    <Compile Include="System\Framework\IndexBuffer.cs" />
+    <Compile Include="System\Framework\IndexDataBuffer.cs" />
+    <Compile Include="System\API\OpenCL\clEvent.cs" />
+    <Compile Include="System\API\OpenCL\Events.cs" />
+    <Compile Include="System\API\OpenCL\Kernel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -158,6 +165,8 @@
     <Folder Include="System\Game\" />
     <Folder Include="System\API\OpenAL\" />
     <Folder Include="System\Framework\OpenCL\" />
+    <Folder Include="System\Framework\Meshes\" />
+    <Folder Include="System\Framework\Meshes\OBJ\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

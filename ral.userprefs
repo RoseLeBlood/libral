@@ -1,11 +1,10 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="liboRg/System/Framework/IVertex.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SampleOpenCL2/Example.cs">
     <Files>
-      <File FileName="liboRg/System/Framework/Mesh.cs" Line="33" Column="3" />
-      <File FileName="liboRg/System/Framework/MeshVertex.cs" Line="47" Column="40" />
-      <File FileName="liboRg/System/Framework/PositionColorVertex.cs" Line="45" Column="4" />
-      <File FileName="liboRg/System/Framework/IVertex.cs" Line="27" Column="3" />
+      <File FileName="SampleOpenCL2/Example.cs" Line="42" Column="32" />
+      <File FileName="liboRg/System/API/OpenCL/Kernel.cs" Line="31" Column="11" />
+      <File FileName="liboRg/System/API/OpenCL/CommandQueue.cs" Line="41" Column="33" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

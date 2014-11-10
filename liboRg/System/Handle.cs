@@ -106,6 +106,19 @@ namespace System
 	{
 		private List<IntPtr> m_pListHandles;
 
+		public IntPtr[] Handles
+		{
+			get
+			{
+				return m_pListHandles.ToArray();
+			}
+		}
+
+		public IntPtr[] ToArray()
+		{
+			return m_pListHandles.ToArray();
+		}
+
 		public int Count
 		{
 			get { return m_pListHandles.Count; }
@@ -146,6 +159,10 @@ namespace System
 		public void Add(IntPtr item)
 		{
 			m_pListHandles.Add(item);
+		}
+		public void AddRange(IntPtr[] pDevices)
+		{
+			m_pListHandles.AddRange(pDevices);
 		}
 		public void Clear()
 		{
