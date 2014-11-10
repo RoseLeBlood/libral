@@ -69,18 +69,16 @@ namespace SampleOpenCL2
 		}
     public void runKernel()
 		{
-			IntPtr ev;
-			cl.clEnqueueNDRangeKernel(m_pCommandQueue[0], m_pKernel.RawHandle, 1, null, new IntPtr[]{ (IntPtr)WORKGROUP_SIZE }, null, 0, null, out ev);
-			cl.clReleaseEvent(ev);
-
+			Event ev = m_pCommandQueue.EnqueueNDRangeKernel(0, m_pKernel, 1, 
+				null, new IntPtr[]{(IntPtr)WORKGROUP_SIZE}, null, 0, null);
+			ev.Release();
 			m_pCommandQueue.Finish();
 
 			float[] cl_done = new float[10];
 
-			cl.clEnqueueReadBuffer(m_pCommandQueue[0], m_c, true, (IntPtr)0, (IntPtr)(sizeof(float) * 10), 
-				cl_done, 0, null, out ev);
-
-			cl.clReleaseEvent(ev);
+			ev = m_pCommandQueue.EnqueueReadBuffer(0, m_c, true, 0, (sizeof(float) * 10),
+				cl_done, 0, null);
+			ev.Release();
 
 			for (int i = 0; i < 10; i++)
 			{

@@ -167,6 +167,7 @@
     <Folder Include="System\Framework\OpenCL\" />
     <Folder Include="System\Framework\Meshes\" />
     <Folder Include="System\Framework\Meshes\OBJ\" />
+    <Folder Include="System\API\LUA\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

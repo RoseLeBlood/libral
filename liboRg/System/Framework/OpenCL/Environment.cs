@@ -42,7 +42,7 @@ namespace System.Framework.OpenCL
 				{
 					foreach (var item in platform.Devices)
 					{
-						if (item.DriverVersion.Contains("2.0") && item.DeviceType == deviceType)
+						if ( item.DeviceType == deviceType)
 						{
 							m_pDevice = item;
 							break;

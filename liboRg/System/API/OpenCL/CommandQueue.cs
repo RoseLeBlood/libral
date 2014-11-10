@@ -59,6 +59,40 @@ namespace System.API.OpenCL
 
 		#endregion
 
+		#region EnqueueNDRangeKernel
+
+		public Event EnqueueNDRangeKernel(int qID, Kernel pKernel,uint workDim, IntPtr[] globalWorkOffset,
+			IntPtr[] globalWorkSize, 
+			IntPtr[] localWorkSize,
+			uint numEventsInWaitList,
+			IntPtr[] eventWaitList)
+		{
+			IntPtr ev;
+			cl.clEnqueueNDRangeKernel(this[qID], 
+				pKernel.RawHandle, workDim, globalWorkOffset, globalWorkSize, localWorkSize, numEventsInWaitList, eventWaitList, out ev);
+
+			return new Event(m_strName, ev);
+		}
+
+		#endregion
+
+		#region EnqueueReadBuffer
+
+		public Event EnqueueReadBuffer(int qID, Buffer pBuffer, bool blockingRead, int offsetInBytes,
+			int lengthInBytes, object ptr, uint numEventsInWaitList, IntPtr[] eventWaitList)
+		{
+			/*cl.clEnqueueReadBuffer(m_pCommandQueue[0], m_c, true, (IntPtr)0, (IntPtr)(sizeof(float) * 10), 
+				cl_done, 0, null, out ev);*/
+			IntPtr cl_event = IntPtr.Zero;
+			using (var dataPtr = ptr.Pin())
+				cl.clEnqueueReadBuffer(this[qID], pBuffer.RawHandle, blockingRead,
+					(IntPtr)offsetInBytes, (IntPtr)lengthInBytes, dataPtr, numEventsInWaitList, eventWaitList, out cl_event);
+
+			return new Event(m_strName, cl_event);
+		}
+
+
+		#endregion
 		public void Finish()
 		{
 			for (int i = 0; i < Count; i++)
