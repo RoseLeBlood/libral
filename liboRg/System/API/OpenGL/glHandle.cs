@@ -41,7 +41,7 @@ namespace System.API.OpenGL
 		{
 			get { return m_iObject[0]; }
 		}
-		public int Length
+		public int ObjectsLenght
 		{
 			get { return m_iObject.Length; }
 		}
@@ -56,19 +56,19 @@ namespace System.API.OpenGL
 			switch (m_eType)
 			{
 				case GlHandleType.Texture:
-					gl.glGenTextures(Length, m_iObject);
+					gl.glGenTextures(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.Framebuffer:
-					gl.glGenFramebuffers(Length, m_iObject);
+					gl.glGenFramebuffers(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.VertexArray:
-					gl.glGenVertexArrays(Length, m_iObject);
+					gl.glGenVertexArrays(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.Buffer:
-					gl.glGenBuffersARB(Length, m_iObject);
+					gl.glGenBuffersARB(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.Renderbuffer:
-					gl.glGenRenderbuffers(Length, m_iObject);
+					gl.glGenRenderbuffers(ObjectsLenght, m_iObject);
 					break;
 				default:
 					throw new System.Exception("");
@@ -83,19 +83,19 @@ namespace System.API.OpenGL
 			switch (m_eType)
 			{
 				case GlHandleType.Texture:
-					gl.glDeleteTextures(Length, m_iObject);
+					gl.glDeleteTextures(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.Framebuffer:
-					gl.glDeleteFramebuffers(Length, m_iObject);
+					gl.glDeleteFramebuffers(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.VertexArray:
-					gl.glDeleteVertexArrays(Length, m_iObject);
+					gl.glDeleteVertexArrays(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.Buffer:
-					gl.glDeleteBuffersARB(Length, m_iObject);
+					gl.glDeleteBuffersARB(ObjectsLenght, m_iObject);
 					break;
 				case GlHandleType.Renderbuffer:
-					gl.glDeleteRenderbuffers(Length, m_iObject);
+					gl.glDeleteRenderbuffers(ObjectsLenght, m_iObject);
 					break;
 			}
 		}
