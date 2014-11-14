@@ -142,8 +142,9 @@ namespace System.API.Platform.Linux.Widgets
 		{
 			return Lib.XGrabServer(m_pHandle);
 		}
-		public void Close()
+		public new void Close()
 		{
+			base.Close();
 			Lib.XCloseDisplay(RawHandle);
 		}
 		
