@@ -120,9 +120,33 @@ namespace System.API.OpenCL
 			}
 			return queue;
 		}
-		public System.API.OpenCL.Buffer CreateBuffer(string strName, BufferFlags flags, int size, Object host_ptr = null)
+		public System.API.OpenCL.Buffer CreateBuffer(string strName, BufferFlags flags, int size, BufferType eBufferType,
+			Object host_ptr = null)
 		{
-			return new System.API.OpenCL.Buffer(strName, this, flags, size, host_ptr);
+			switch (eBufferType)
+			{
+				case BufferType.Float:
+					return (Buffer)new FloatBuffer(strName, this, flags, size, host_ptr);
+				case BufferType.Double:
+					return (Buffer)new DoubleBuffer(strName, this, flags, size, host_ptr);
+				case BufferType.Int64:
+					return (Buffer)new Int64Buffer(strName, this, flags, size, host_ptr);
+				case BufferType.Int32:
+					return (Buffer)new Int32Buffer(strName, this, flags, size, host_ptr);
+				case BufferType.Int16:
+					return (Buffer)new Int16Buffer(strName, this, flags, size, host_ptr);
+				case BufferType.UInt64:
+					return (Buffer)new UInt64Buffer(strName, this, flags, size, host_ptr);
+				case BufferType.UInt32:
+					return (Buffer)new UInt32Buffer(strName, this, flags, size, host_ptr);
+				case BufferType.UInt16:
+					return (Buffer)new UInt16Buffer(strName, this, flags, size, host_ptr);
+				case BufferType.Byte:
+					return (Buffer)new ByteBuffer(strName, this, flags, size, host_ptr);
+				case BufferType.SByte:
+					return (Buffer)new SByteBuffer(strName, this, flags, size, host_ptr);
+			}
+			return null;
 		}
 		public string GetContextInfo(CL param_name)
 		{

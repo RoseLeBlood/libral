@@ -36,13 +36,16 @@ namespace System.Framework.OpenCL
 		public static void SetupSingleDevice(string strVendorFilter, OpenCLDeviceTyp deviceType)
 		{
 			Platforms platforms = new Platforms();
+			if (!strVendorFilter.Contains("*"))
+				strVendorFilter += "*";
+
 			foreach (var platform in platforms)
 			{
-				if (platform.HaveDevices && platform.Vendor.Contains(strVendorFilter))
+				if (platform.HaveDevices && platform.Vendor.IsWildcardMatch(strVendorFilter))
 				{
 					foreach (var item in platform.Devices)
 					{
-						if ( item.DeviceType == deviceType)
+						if (item.DeviceType == deviceType)
 						{
 							m_pDevice = item;
 							break;
@@ -77,9 +80,10 @@ namespace System.Framework.OpenCL
 			return m_pContext.CreateProgramFromSource(sources, name);
 		}
 
-		public static System.API.OpenCL.Buffer CreateBuffer(string strName, BufferFlags bufferFlags, int size, Object host_ptr = null)
+		public static System.API.OpenCL.Buffer CreateBuffer(string strName, BufferFlags bufferFlags, int size, BufferType eBufferType, Object host_ptr = null)
 		{
-			return m_pContext.CreateBuffer(strName, bufferFlags, size, host_ptr);
+
+			return m_pContext.CreateBuffer(strName, bufferFlags, size, eBufferType, host_ptr);
 		}
 	}
 }

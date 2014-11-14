@@ -23,21 +23,22 @@ using System.Runtime.InteropServices;
 using System.API.OpenCL;
 using System.Framework.OpenCL;
 using Microsoft.Build.Framework;
+using CL = System.API.OpenCL;
 
 namespace SampleOpenCL2
 {
   public class Example
   {
 		const int WORKGROUP_SIZE = 100;
-		CommandQueue m_pCommandQueue;
 
-		System.API.OpenCL.Program	 m_pProgram;
-		System.API.OpenCL.Buffer	m_a, m_b, m_c;
-		System.API.OpenCL.Kernel	m_pKernel;
+		CL.CommandQueue m_pCommandQueue;
+		CL.Program	 m_pProgram;
+		CL.Buffer	m_a, m_b, m_c;
+		CL.Kernel	m_pKernel;
 
 		public Example(string path)
 		{
-			OpenCLEnvironment.SetupSingleDevice("Advanced Micro Devices", OpenCLDeviceTyp.Cpu);
+			OpenCLEnvironment.SetupSingleDevice("*A*", OpenCLDeviceTyp.Cpu);
 			m_pCommandQueue = OpenCLEnvironment.CreateCommandQueue();
 			m_pProgram = OpenCLEnvironment.CreateProgramFromSource(System.IO.File.ReadAllText(path), "testProgramm");
 			m_pProgram.Build(0, null);
@@ -54,9 +55,12 @@ namespace SampleOpenCL2
 				a[i] = 1.0f * i;
 				b[i] = 1.0f * i;
 			}
-			m_a = OpenCLEnvironment.CreateBuffer("bufferA", BufferFlags.ReadOnly | BufferFlags.CopyHostPtr, (sizeof(float) * WORKGROUP_SIZE), a);
-			m_b = OpenCLEnvironment.CreateBuffer("bufferB", BufferFlags.ReadOnly, (sizeof(float) * WORKGROUP_SIZE));
-			m_c = OpenCLEnvironment.CreateBuffer("bufferC", BufferFlags.WriteOnly, (sizeof(float) * WORKGROUP_SIZE));
+			m_a = OpenCLEnvironment.CreateBuffer("bufferA", BufferFlags.ReadOnly | BufferFlags.CopyHostPtr, 
+				WORKGROUP_SIZE, BufferType.Float, a);
+			m_b = OpenCLEnvironment.CreateBuffer("bufferB", BufferFlags.ReadOnly, 
+				WORKGROUP_SIZE, BufferType.Float);
+			m_c = OpenCLEnvironment.CreateBuffer("bufferC", BufferFlags.WriteOnly, 
+				WORKGROUP_SIZE, BufferType.Float);
 
 			Events ev = m_pCommandQueue.EnqueueWriteBuffer(m_b, true, 0, (sizeof(float) * WORKGROUP_SIZE), b);
 			ev.ReleaseEvents();
@@ -64,10 +68,10 @@ namespace SampleOpenCL2
 			m_pKernel.SetArguments(0, m_a, m_b, m_c);
 			m_pCommandQueue.Finish();
 		}
-    public void runKernel()
+    	public void runKernel()
 		{
 			Event ev = m_pCommandQueue.EnqueueNDRangeKernel(0, m_pKernel, 1, 
-				null, new IntPtr[]{(IntPtr)WORKGROUP_SIZE}, null, 0, null);
+				           null, new IntPtr[]{ (IntPtr)WORKGROUP_SIZE }, null, 0, null);
 			ev.Release();
 			m_pCommandQueue.Finish();
 

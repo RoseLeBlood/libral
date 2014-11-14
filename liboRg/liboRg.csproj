@@ -157,6 +157,7 @@
     <Compile Include="System\API\OpenCL\clEvent.cs" />
     <Compile Include="System\API\OpenCL\Events.cs" />
     <Compile Include="System\API\OpenCL\Kernel.cs" />
+    <Compile Include="StringUtils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -38,16 +38,39 @@ namespace System.API.OpenCL
 		HostNoAccess = CL.MEM_HOST_NO_ACCESS,
 
 	}
-
-	public class Buffer : OpenCLHandle
+	public enum BufferType
+	{
+		Float,
+		Double,
+		Int64,
+		Int32,
+		Int16,
+		UInt64,
+		UInt32,
+		UInt16,
+		Byte,
+		SByte
+	}
+	public interface IBuffer : IHandle
+	{
+		int Size { get; }
+		Context Context  { get; }
+	}
+	public class Buffer : OpenCLHandle, IBuffer
 	{
 		private BufferFlags m_pBufferFlags;
 		private int m_iSize;
 		private Context m_pContext;
+		private BufferType m_eBufferType;
 
 		public BufferFlags BufferFlags
 		{
 			get { return m_pBufferFlags; }
+		}
+
+		public BufferType BufferType
+		{
+			get { return m_eBufferType; }
 		}
 
 		public int Size
@@ -60,13 +83,14 @@ namespace System.API.OpenCL
 			get { return m_pContext; }
 		}
 
-		internal Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+		internal Buffer(string strName, Context pContext, BufferFlags flags, int iSize,
+			BufferType eBufferType, Object host_ptr = null)
 			: base(strName)
 		{
 			m_pBufferFlags = flags;
 			m_iSize = iSize;
 			m_pContext = pContext;
-
+			m_eBufferType = eBufferType;
 			if (host_ptr != null)
 			{
 				using (var xa = host_ptr.Pin())
@@ -79,6 +103,92 @@ namespace System.API.OpenCL
 				m_pHandle = cl.clCreateBuffer(pContext.RawHandle, (uint)(flags), (IntPtr)iSize, IntPtr.Zero, out m_iErrorCode);
 			}
 			Register(true);
+		}
+	}
+
+
+	public class FloatBuffer : Buffer
+	{
+		internal FloatBuffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(float),BufferType.Float, host_ptr)
+		{
+
+		}
+	}
+	public class DoubleBuffer : Buffer
+	{
+		internal DoubleBuffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(double),BufferType.Double, host_ptr)
+		{
+
+		}
+	}
+	public class Int64Buffer : Buffer
+	{
+		internal Int64Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(Int64), BufferType.Int64, host_ptr)
+		{
+
+		}
+	}
+	public class Int32Buffer : Buffer
+	{
+		internal Int32Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(Int32), BufferType.Int32, host_ptr)
+		{
+
+		}
+	}
+	public class Int16Buffer : Buffer
+	{
+		internal Int16Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(Int16), BufferType.Int16, host_ptr)
+		{
+
+		}
+	}
+
+
+
+	public class UInt64Buffer : Buffer
+	{
+		internal UInt64Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(UInt64), BufferType.UInt64, host_ptr)
+		{
+
+		}
+	}
+	public class UInt32Buffer : Buffer
+	{
+		internal UInt32Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(UInt32), BufferType.UInt32, host_ptr)
+		{
+
+		}
+	}
+	public class UInt16Buffer : Buffer
+	{
+		internal UInt16Buffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(UInt16), BufferType.UInt16, host_ptr)
+		{
+
+		}
+	}
+
+	public class ByteBuffer : Buffer
+	{
+		internal ByteBuffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(byte), BufferType.Byte, host_ptr)
+		{
+
+		}
+	}
+	public class SByteBuffer : Buffer
+	{
+		internal SByteBuffer(string strName, Context pContext, BufferFlags flags, int iSize, Object host_ptr = null)
+			: base(strName, pContext, flags, iSize * sizeof(SByte), BufferType.SByte, host_ptr)
+		{
+
 		}
 	}
 }
