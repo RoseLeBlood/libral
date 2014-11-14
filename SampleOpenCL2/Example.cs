@@ -65,7 +65,7 @@ namespace SampleOpenCL2
 			Events ev = m_pCommandQueue.EnqueueWriteBuffer(m_b, true, 0, (sizeof(float) * WORKGROUP_SIZE), b);
 			ev.ReleaseEvents();
 
-			m_pKernel.SetArguments(0, m_a, m_b, m_c);
+			m_pKernel.SetArguments(m_a, m_b, m_c);
 			m_pCommandQueue.Finish();
 		}
     	public void runKernel()

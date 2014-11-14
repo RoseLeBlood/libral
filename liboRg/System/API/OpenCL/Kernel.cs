@@ -43,11 +43,11 @@ namespace System.API.OpenCL
 		{
 			cl.clSetKernelArg(RawHandle, (uint)iIndex, new IntPtr(intPtrSize), pBuffer.RawHandle);
 		}
-		public void SetArguments(uint iFromID = 0, params Buffer[] pBuffer)
+		public void SetArguments(params Buffer[] pBuffer)
 		{
 			int iToID = pBuffer.Length;
 
-			for (uint i = iFromID; i < iToID; i++)
+			for (uint i = 0; i < iToID; i++)
 			{
 					cl.clSetKernelArg(RawHandle, (uint)i, new IntPtr(intPtrSize), pBuffer[i].RawHandle);
 			}
