@@ -25,6 +25,12 @@ using System.API.Platform.Linux;
 
 namespace System.API.OpenCL
 {
+	/*
+	 * clWaitForEvents
+	 * clGetEventInfo
+	 * clGetEventProfilingInfo
+	 * 
+	 */
 	public class Event : OpenCLHandle
 	{
 		internal Event(string strName, IntPtr pEvent)
@@ -37,6 +43,10 @@ namespace System.API.OpenCL
 		public void Release()
 		{
 			cl.clReleaseEvent(m_pHandle);
+		}
+		public void Retain()
+		{
+			cl.clRetainEvent(m_pHandle);
 		}
 	}
 

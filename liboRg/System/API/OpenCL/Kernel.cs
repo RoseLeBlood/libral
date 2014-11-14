@@ -19,6 +19,7 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace System.API.OpenCL
 {
@@ -38,9 +39,18 @@ namespace System.API.OpenCL
 			Register(true);
 		}
 
-		public void SetArgumente(int iIndex, Buffer buffer)
+		public void SetArgument(int iIndex, Buffer pBuffer)
 		{
-			cl.clSetKernelArg(RawHandle, (uint)iIndex, new IntPtr(intPtrSize), buffer.RawHandle);
+			cl.clSetKernelArg(RawHandle, (uint)iIndex, new IntPtr(intPtrSize), pBuffer.RawHandle);
+		}
+		public void SetArguments(uint iFromID = 0, params Buffer[] pBuffer)
+		{
+			int iToID = pBuffer.Length;
+
+			for (uint i = iFromID; i < iToID; i++)
+			{
+					cl.clSetKernelArg(RawHandle, (uint)i, new IntPtr(intPtrSize), pBuffer[i].RawHandle);
+			}
 		}
 	}
 }
