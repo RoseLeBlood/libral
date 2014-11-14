@@ -22,6 +22,7 @@ using System;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.API.Platform.Linux;
+using System.IO;
 
 namespace System
 {
@@ -30,22 +31,54 @@ namespace System
 
 	}
 	[Serializable]
-	public class Handle : IHandle
+	public class Handle : Stream, IHandle
 	{
+		private MemoryStream m_pStream;
+		private Object m_pLock;
+
 		private bool m_bIsDisposed=false;
 		protected string m_strName;
 
 		[XmlAttribute("Name")]
 		public virtual string Name { get { return m_strName; } set { m_strName = value; } }
 
+		public override bool CanRead
+		{
+			get {  return m_pStream.CanRead; }
+		}
+
+		public override bool CanSeek
+		{
+			get { return m_pStream.CanSeek; }
+		}
+
+		public override bool CanWrite
+		{
+			get { return m_pStream.CanWrite; }
+		}
+
+		public override long Length
+		{
+			get { return m_pStream.Length; }
+		}
+
+		public override long Position
+		{
+			get { return m_pStream.Position; }
+			set { m_pStream.Position = value; }
+		}
+
 		internal Handle()
 		{
+			m_pStream = new MemoryStream();
+			m_pLock = new object();
 		}
 		public Handle(string name)
 		{
+			m_pStream = new MemoryStream();
 			m_strName = name;
 		}
-		public void Dispose()
+		public new void Dispose()
 		{
 			Dispose(true);
 			//GC.SupressFinalize(this);
@@ -57,14 +90,15 @@ namespace System
 
 		protected virtual void CleanUpManagedResources()
 		{
-
+			m_pStream.Dispose();
 		}
 		protected virtual void CleanUpUnManagedResources()
 		{
 
 		}
-		protected void Dispose(bool Diposing)
+		protected override void Dispose(bool Diposing)
 		{
+			base.Dispose(Diposing);
 			if (!m_bIsDisposed)
 			{
 				if (Diposing)
@@ -75,6 +109,50 @@ namespace System
 			}
 			m_bIsDisposed = true;
 			Application.Current.UnRegisterHandle(Name);
+		}
+			
+		public override void Flush()
+		{
+			lock (m_pLock)
+			{
+				m_pStream.Flush();
+			}
+		}
+
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			int read = 0;
+			lock (m_pLock)
+			{
+				read = m_pStream.Read(buffer, offset, count);
+			}
+			return read;
+		}
+
+		public override long Seek(long offset, SeekOrigin origin)
+		{
+			long seek = 0;
+			lock (m_pLock)
+			{
+				seek = m_pStream.Seek(offset, origin);
+			}
+			return seek;
+		}
+
+		public override void SetLength(long value)
+		{
+			lock (m_pLock)
+			{
+				m_pStream.SetLength(value);
+			}
+		}
+
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			lock (m_pLock)
+			{
+				m_pStream.Write(buffer, offset, count);
+			}
 		}
 	}
 	public class UnmanagedHandle : Handle

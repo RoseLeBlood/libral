@@ -2,5 +2,5 @@
 {
     unsigned int i = get_global_id(0);
 
-    c[i] = (a[i] + b[i]) * 2;
+    c[i] = (a[i] + b[i]);
 }    
