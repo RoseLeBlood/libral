@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{074CF9DC-6F37-43F8-B8FD-7AFF4F17466E}</ProjectGuid>
+    <ProjectGuid>{83C5CBE9-C514-4357-BAC4-BF9CBF3FDB42}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>SamplePartical</RootNamespace>
-    <AssemblyName>SamplePartical</AssemblyName>
+    <RootNamespace>SampleText</RootNamespace>
+    <AssemblyName>SampleText</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,9 +32,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Logic\Particle.cs" />
-    <Compile Include="Logic\Particles.cs" />
-    <Compile Include="Logic\OpenCLSytem.cs" />
+    <Compile Include="SampleTextGame.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -44,9 +42,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Logic\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Opencl.cl" />
+    <None Include="AuthenticHilton.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

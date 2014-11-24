@@ -23,9 +23,8 @@ using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
-using System;
 
-[assembly: AssemblyTitle("liboRg")]
+[assembly: AssemblyTitle("SampleText")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
@@ -45,4 +44,4 @@ using System;
 
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
-[assembly: CLSCompliant(false)]
+

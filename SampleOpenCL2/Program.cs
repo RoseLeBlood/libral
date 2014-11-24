@@ -24,15 +24,15 @@ namespace SampleOpenCL2
 {
 	class MainClass
 	{
-		private static Example m_pExample;
-
 		public static void Main(string[] args)
 		{
 			Application.Init("");
-			m_pExample = new Example("part1.cl");
 
-			m_pExample.popCorn();
-			m_pExample.runKernel();
+			ExampleCLGame mpGame = new ExampleCLGame();
+			Application.Run();
+			mpGame.Destroy();
+
+
 		}
 	}
 }

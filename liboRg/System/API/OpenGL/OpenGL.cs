@@ -40,6 +40,11 @@ namespace System.API.OpenGL
 		public static extern void glAccum(uint op, float value);
 		[DllImport(DllName)]
 		public extern static int glGetAttribLocation(IntPtr program, string name);
+		[DllImport(DllName)]
+		public extern static void glEnableVertexAttribArray(uint index);
+
+		[DllImport(DllName)]
+		public extern static void glVertexAttribPointer(int index, int size, uint type, bool normalized, int stride, int pointer);
 
 		[DllImport(DllName)]
 		public static extern void glAlphaFunc(uint func, float reference);
@@ -268,7 +273,7 @@ namespace System.API.OpenGL
 		[DllImport(DllName)]
 		public static extern void glGetProgramiv(IntPtr program, uint i, ref int res);
 		[DllImport(DllName)]
-		public static extern void glGetBooleanv(uint pname, boolean[] parameters);
+		public static extern void glGetBooleanv(uint pname, uint[] parameters);
 		[DllImport(DllName)]
 		public static extern void glGetClipPlane(uint plane, double[] equation);
 		[DllImport(DllName)]

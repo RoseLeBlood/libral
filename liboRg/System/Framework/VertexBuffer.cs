@@ -70,6 +70,14 @@ namespace System.Framework
 			gl.glBindBufferARB(gl.VboTarget.ArrayBuffer, glObject);
 			gl.glBufferDataARB(gl.VboTarget.ArrayBuffer, lenght, null, (gl.VboUsage) usage);
 		}
+		public void BindBuffer()
+		{
+			gl.glBindBufferARB(gl.VboTarget.ArrayBuffer, glObject);
+		}
+		public void EnableVertexAttribArray(uint attr)
+		{
+			gl.glEnableVertexAttribArray(attr);
+		}
 		public void SubData( VertexDataBuffer data, int offset )
 		{
 			byte[] d = data.ToArray();

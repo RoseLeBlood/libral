@@ -25,6 +25,35 @@ namespace System.API.OpenCL
 {
 	public partial class cl
 	{
+		[StructLayout(LayoutKind.Sequential)]
+		public struct ContextProperty
+		{
+			private static readonly ContextProperty _zero = new ContextProperty(0);
+
+			private readonly uint _propertyName;
+			private readonly IntPtr _propertyValue;
+
+			public ContextProperty(CL property, IntPtr value)
+			{
+				_propertyName = (uint)property;
+				_propertyValue = value;
+			}
+
+			public ContextProperty(CL property)
+			{
+				_propertyName = (uint)property;
+				_propertyValue = IntPtr.Zero;
+			}
+
+			public static ContextProperty Zero
+			{
+				get
+				{
+					return _zero;
+				}
+			}
+		}
+
 		public const string DllName = "libOpenCL.so";
 
 		public delegate void ProgramNotify(IntPtr pProgram, IntPtr user_data);
@@ -50,12 +79,9 @@ namespace System.API.OpenCL
 		public extern static unsafe IntPtr clCreateCommandQueue(IntPtr context, IntPtr device, uint properties, out uint errcode_ret);
 
 		[DllImport(DllName)]
-		public extern static unsafe IntPtr clCreateContext([MarshalAs(UnmanagedType.LPArray)] IntPtr[] properties, uint num_devices, 
+		public extern static unsafe IntPtr clCreateContext(IntPtr[] properties, uint num_devices, 
 			[MarshalAs(UnmanagedType.LPArray)] IntPtr[] devices, IntPtr pfn_notify, IntPtr user_data, out uint errcode_ret);
-
-		[DllImport(DllName)]
-		public extern static unsafe IntPtr clCreateContext(IntPtr properties, uint num_devices, 
-			[MarshalAs(UnmanagedType.LPArray)] IntPtr[] devices, IntPtr pfn_notify, IntPtr user_data, out uint errcode_ret);
+			
 
 		[DllImport(DllName)]
 		public extern static unsafe IntPtr clCreateContextFromType(IntPtr* properties, uint device_type, IntPtr pfn_notify, IntPtr user_data, out uint errcode_ret);

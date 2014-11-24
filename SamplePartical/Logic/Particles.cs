@@ -20,10 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using CL = System.API.OpenCL;
 
 namespace SamplePartical
 {
-	public class Particles : List<Particle>
+	public class Particles : Stack<Particle>
 	{
 	}
 }

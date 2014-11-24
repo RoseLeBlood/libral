@@ -84,6 +84,11 @@ namespace liboRg.Context
 		protected IGLNativeContext m_pNativeContext;
 		private   bool			   m_bDepthMark;
 
+		internal IGLNativeContext NativeContext
+		{
+			get { return m_pNativeContext; }
+		}
+
 		public Color ClearColor
 		{
 			get { return m_pClearColor; }

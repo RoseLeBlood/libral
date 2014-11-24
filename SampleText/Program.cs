@@ -1,5 +1,5 @@
 ﻿//
-//  GLUtil.cs
+//  Program.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,27 +19,18 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Runtime.InteropServices;
 
-namespace System.API.OpenGL
+namespace SampleText
 {
-	public partial class gl
+	class MainClass
 	{
-		public static string glGetShaderInfoLogARB(IntPtr shader, Int32 bufSize)
+		public static void Main(string[] args)
 		{
-			byte[] infoLog = new byte[bufSize];
-			gl.glGetShaderInfoLog(shader, bufSize, IntPtr.Zero, infoLog);
-			return System.Text.Encoding.UTF8.GetString(infoLog);
+			Application.Init("SampleText");
+
+			Game game = new SampleTextGame();
+			Application.Run();
+			game.Destroy();
 		}
-		public static string glGetProgramInfoLogARB(IntPtr program, Int32 bufSize)
-		{
-			byte[] infoLog = new byte[bufSize];
-			gl.glGetProgramInfoLog(program, bufSize, IntPtr.Zero, infoLog);
-			return System.Text.Encoding.UTF8.GetString(infoLog);
-		}
-
-
-
 	}
 }
-

@@ -19,15 +19,22 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
+using System.Runtime.InteropServices;
+using System.API.Platform.Linux;
+using liboRg.Context;
+using System.API.Platform;
 
 namespace System.API.OpenCL
 {
-
+	public delegate IntPtr XCurentContext();
 
 	public class Context : UnmanagedHandle
 	{
+
+
 		private uint m_iErrorCode;
 		private Devices m_pDevices;
+		private XCurentContext m_contextget;
 
 		public long NumDevices
 		{
@@ -44,7 +51,8 @@ namespace System.API.OpenCL
 			get { return (CL)m_iErrorCode; }
 		}
 
-		public Context(Device pDevice)
+
+		public Context(Device pDevice, Platform pPlatform, IGLNativeContext pContext)
 			: base("Context_of_" + pDevice.Name, IntPtr.Zero)
 		{
 			m_pDevices = new Devices();
@@ -54,14 +62,15 @@ namespace System.API.OpenCL
 			for (int i = 0; i < rawDevices.Length; i++)
 				rawDevices[i] = m_pDevices[i].RawHandle;
 
-			m_pHandle = cl.clCreateContext(IntPtr.Zero, 
+			m_pHandle = cl.clCreateContext(new IntPtr[] { (IntPtr)CL.CONTEXT_PLATFORM, pPlatform.RawHandle, IntPtr.Zero}, 
 				(uint)m_pDevices.Count, rawDevices, IntPtr.Zero, IntPtr.Zero, out m_iErrorCode);
-
 			cl.LoadExtensions();
+
+
 
 			Register(true);
 		}
-		public Context(string strName, Devices pDevices)
+		public Context(string strName, Devices pDevices, Platform pPlatform)
 			: base("clContext_" + strName, IntPtr.Zero)
 		{
 			m_pDevices = pDevices;
@@ -70,8 +79,20 @@ namespace System.API.OpenCL
 			for (int i = 0; i < rawDevices.Length; i++)
 				rawDevices[i] = pDevices[i].RawHandle;
 
-			m_pHandle = cl.clCreateContext(IntPtr.Zero, 
-				(uint)pDevices.Count, rawDevices, IntPtr.Zero, IntPtr.Zero, out m_iErrorCode);
+			IntPtr GL_CONTEXT_KHR = Marshal.AllocHGlobal(glxNativeContext.glXGetCurrentContext());
+			IntPtr GLX_DISPLAY_KHR = Marshal.AllocHGlobal(glxNativeContext.glXGetCurrentDisplay());;
+
+			IntPtr[] props = new IntPtr[]
+				{
+					(IntPtr)CL.CONTEXT_PLATFORM, pPlatform.RawHandle,
+					(IntPtr)CL.GL_CONTEXT_KHR, GL_CONTEXT_KHR, 
+					(IntPtr)CL.GLX_DISPLAY_KHR, GLX_DISPLAY_KHR,
+					IntPtr.Zero
+				};
+
+
+			m_pHandle = cl.clCreateContext(props, 
+			(uint)pDevices.Count, rawDevices, IntPtr.Zero, IntPtr.Zero, out m_iErrorCode);
 
 			cl.LoadExtensions();
 

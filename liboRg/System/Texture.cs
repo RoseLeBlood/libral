@@ -54,10 +54,12 @@ namespace System
 		RGB = (uint)GL.RGB,
 		BGR = (uint)GL.BGR,
 		RGBA = (uint)GL.RGBA,
-		BGRA = (uint)GL.BGRA
+		BGRA = (uint)GL.BGRA,
+		Alpha = (uint)GL.ALPHA,
 	}
 	public enum TextureInternalFormat : uint
 	{
+		Alpha = (uint)GL.ALPHA,
 		CompressedRed = (uint)GL.COMPRESSED_RED,
 		CompressedRedRGTC1 = (uint)GL.COMPRESSED_RED_RGTC1,
 		CompressedRG = (uint)GL.COMPRESSED_RG,
@@ -151,6 +153,17 @@ namespace System
 	}
 	public class Texture : GlHandle
 	{
+		protected Rectangle m_sDimension;
+
+		public Size Size
+		{
+			get { return m_sDimension.Size; }
+		}
+		public Rectangle Rectangle
+		{
+			get { return m_sDimension; }
+			set { m_sDimension = value; }
+		}
 		public Texture(string name) 
 			: base("tex_" + name, GlHandleType.Texture)
 		{
@@ -176,8 +189,14 @@ namespace System
 			gl.glTexParameteri( (uint)GL.TEXTURE_2D, (uint)GL.TEXTURE_MAG_FILTER, (int)GL.LINEAR );
 
 			gl.glGenerateMipmap( (uint)GL.TEXTURE_2D);
+			m_sDimension = pSize;
 
 			Register(true);
+		}
+		internal Texture()
+			: base("", GlHandleType.Texture)
+		{
+
 		}
 		~Texture()
 		{
@@ -229,6 +248,17 @@ namespace System
 			PopState(x);
 
 		}
+
+		public void Bind()
+		{
+			gl.glBindTexture( (uint)GL.TEXTURE_2D, m_iObject[0] );
+		}
+
+		public void UnBind()
+		{
+			gl.glBindTexture( (uint)GL.TEXTURE_2D, 0 );
+		}
+
 		public void SetBorderColor( Color color )
 		{
 			var x = PushState();

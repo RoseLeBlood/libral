@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleOpenCL", "SampleOpenC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleOpenCL2", "SampleOpenCL2\SampleOpenCL2.csproj", "{651DA41C-6244-4DFB-9605-3A0DC6692155}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleText", "SampleText\SampleText.csproj", "{83C5CBE9-C514-4357-BAC4-BF9CBF3FDB42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{651DA41C-6244-4DFB-9605-3A0DC6692155}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{651DA41C-6244-4DFB-9605-3A0DC6692155}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{651DA41C-6244-4DFB-9605-3A0DC6692155}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83C5CBE9-C514-4357-BAC4-BF9CBF3FDB42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83C5CBE9-C514-4357-BAC4-BF9CBF3FDB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83C5CBE9-C514-4357-BAC4-BF9CBF3FDB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83C5CBE9-C514-4357-BAC4-BF9CBF3FDB42}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8ED9F755-3E7B-456A-BC27-2CB17F9CB393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8ED9F755-3E7B-456A-BC27-2CB17F9CB393}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8ED9F755-3E7B-456A-BC27-2CB17F9CB393}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,7 +51,7 @@ Global
 		{D2CEBFB6-661B-42EE-8F66-4F78E0A1639B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = SampleTriangle\SampleTriangle.csproj
+		StartupItem = SampleText\SampleText.csproj
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = None

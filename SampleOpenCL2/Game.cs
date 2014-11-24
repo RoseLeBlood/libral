@@ -1,5 +1,5 @@
 ﻿//
-//  GLUtil.cs
+//  Game.cs
 //
 //  Author:
 //       Anna-Sophia Schröck <annasophia.schroeck@gmail.com>
@@ -19,27 +19,34 @@
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Runtime.InteropServices;
+using System.Common;
 
-namespace System.API.OpenGL
+namespace SampleOpenCL2
 {
-	public partial class gl
+	public class ExampleCLGame : Game
 	{
-		public static string glGetShaderInfoLogARB(IntPtr shader, Int32 bufSize)
+		private Example m_pExample;
+
+		public ExampleCLGame() : base(":0", 
+			new liboRg.Context.GameContextConfig(Screens.PrimaryScreen[(int)(Screens.PrimaryScreen.Modes.Count - 1)]),
+			"SampleOpenCL2", liboRg.Window.WindowStyle.Fixed)
 		{
-			byte[] infoLog = new byte[bufSize];
-			gl.glGetShaderInfoLog(shader, bufSize, IntPtr.Zero, infoLog);
-			return System.Text.Encoding.UTF8.GetString(infoLog);
+
 		}
-		public static string glGetProgramInfoLogARB(IntPtr program, Int32 bufSize)
+		public override void Create()
 		{
-			byte[] infoLog = new byte[bufSize];
-			gl.glGetProgramInfoLog(program, bufSize, IntPtr.Zero, infoLog);
-			return System.Text.Encoding.UTF8.GetString(infoLog);
+			base.Create();
+
+			m_pExample = new Example("part1.cl", this);
+			m_pExample.popCorn();
+			m_pExample.runKernel();
 		}
+		protected override bool Draw()
+		{
+			GameContext.Clear(liboRg.Context.Buffer.Color, Colors.Black);
 
-
-
+			return base.Draw();
+		}
 	}
 }
 

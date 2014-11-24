@@ -27,7 +27,7 @@ using CL = System.API.OpenCL;
 
 namespace SampleOpenCL2
 {
-  public class Example
+	public class Example 
   {
 		const int WORKGROUP_SIZE = 100;
 
@@ -36,9 +36,9 @@ namespace SampleOpenCL2
 		CL.Buffer	m_a, m_b, m_c;
 		CL.Kernel	m_pKernel;
 
-		public Example(string path)
+		public Example(string path, Game pGame) 
 		{
-			OpenCLEnvironment.SetupSingleDevice("*A*", OpenCLDeviceTyp.Cpu);
+			OpenCLEnvironment.SetupSingleDevice("*A*", OpenCLDeviceTyp.Cpu, pGame);
 			m_pCommandQueue = OpenCLEnvironment.CreateCommandQueue();
 			m_pProgram = OpenCLEnvironment.CreateProgramFromSource(System.IO.File.ReadAllText(path), "testProgramm");
 			m_pProgram.Build(0, null);

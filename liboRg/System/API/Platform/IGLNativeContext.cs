@@ -42,13 +42,14 @@ namespace System.API.Platform
 		Rectangle	   		Viewport 			{ get; set; }
 		VSyncMode	   		VScyn 				{ get; set; }
 
-
 		void Activate();
 		void DeActivate();
-
+	
 		void Present();
 		void CreateContext();
 
+		void MakeCurrent();
+		void MakeOutdated();
 
 		INativContextConfigs GetConfigs();
 	}

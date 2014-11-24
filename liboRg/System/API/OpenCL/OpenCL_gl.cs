@@ -67,10 +67,9 @@ namespace System.API.OpenCL
 		public extern static IntPtr clCreateFromGLTexture3D(IntPtr context,
 			uint flags, uint target, int  miplevel, uint texture, out uint         errcode_ret );
 
-
-
-		public delegate int GetGLContextInfoKHR(IntPtr properties, uint param_name,
-			uint param_value_size, IntPtr param_value, out uint param_value_size_ret);
+	
+		public delegate int GetGLContextInfoKHR(IntPtr[] properties, uint param_name,
+			int param_value_size, IntPtr[] param_value, out uint param_value_size_ret);
 
 		public static GetGLContextInfoKHR clGetGLContextInfoKHR;
 

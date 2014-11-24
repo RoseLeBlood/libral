@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.API.Platform;
 
 namespace System.API.OpenCL
 {
@@ -39,7 +40,7 @@ namespace System.API.OpenCL
 		private Platform m_pPlatform;
 		private OpenCLDeviceExtension m_pExtensions;
 
-		public cl.GetGLContextInfoKHR clGetGLContextInfoKHR;
+		//public cl.GetGLContextInfoKHR clGetGLContextInfoKHR;
 
 		public string DeviceName
 		{
@@ -95,9 +96,9 @@ namespace System.API.OpenCL
 			m_pExtensions = new OpenCLDeviceExtension(GetDeviceInfo(CL.DEVICE_EXTENSIONS));
 			Register();
 		}
-		public Context CreateContext()
+		public Context CreateContext(IGLNativeContext pContext)
 		{
-			return new Context(this);
+			return new Context(this, m_pPlatform, pContext);
 		}
 		public override string ToString()
 		{
@@ -149,9 +150,9 @@ namespace System.API.OpenCL
 					this.Add(x);
 				}
 		}
-		public Context CreateContext(string strName)
+		public Context CreateContext(string strName, Platform pPlatform)
 		{
-			return new Context(strName ,this);
+			return new Context(strName,this, pPlatform);
 		}
 	}
 }

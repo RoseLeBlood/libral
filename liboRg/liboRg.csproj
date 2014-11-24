@@ -35,6 +35,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="Mono.Simd" />
     <Reference Include="Microsoft.Build.Framework, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="SharpFont">
+      <HintPath>LIB\SharpFont.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -158,6 +161,14 @@
     <Compile Include="System\API\OpenCL\Events.cs" />
     <Compile Include="System\API\OpenCL\Kernel.cs" />
     <Compile Include="StringUtils.cs" />
+    <Compile Include="System\Framework\Render.cs" />
+    <Compile Include="System\Framework\IMesh.cs" />
+    <Compile Include="System\Framework\Material.cs" />
+    <Compile Include="System\Framework\Visual.cs" />
+    <Compile Include="System\API\Script\ScriptEngine.cs" />
+    <Compile Include="System\Framework\TextRenderer.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -168,7 +179,7 @@
     <Folder Include="System\Framework\OpenCL\" />
     <Folder Include="System\Framework\Meshes\" />
     <Folder Include="System\Framework\Meshes\OBJ\" />
-    <Folder Include="System\API\LUA\" />
+    <Folder Include="System\API\Script\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

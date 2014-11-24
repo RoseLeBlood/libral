@@ -133,11 +133,12 @@ namespace System
 					} while(m_handles.ContainsKey(name));
 				}
 				else if (m_handles.ContainsKey(name))
-					return false;
+				{
+					Application.Current.m_handles.Remove(name);	
+				}
 
 				handle.Name = name;
-				Console.WriteLine("RegisterHandle: {0}", handle.Name);
-
+				
 				Application.Current.m_handles.Add(handle.Name, handle);
 				ok = true;
 				

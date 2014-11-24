@@ -304,7 +304,7 @@ namespace System.API.Platform.Linux
 
 
 
-		[DllImport(DllName, EntryPoint = "glXGetCurrentContext")]
+		[DllImport(DllName, EntryPoint = "glXGetCurrentContext", CallingConvention = CallingConvention.StdCall)]
 		public static extern IntPtr glXGetCurrentContext();
 
 		[DllImport(DllName, EntryPoint = "glXMakeCurrent")]
@@ -336,6 +336,8 @@ namespace System.API.Platform.Linux
 		[DllImport(DllName, EntryPoint = "glXChooseFBConfig")]
 		unsafe public extern static IntPtr* glXChooseFBConfig(IntPtr dpy, int screen, int[] attriblist, out int fbount);
 
+		[DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+		public extern static IntPtr glXGetCurrentDisplay();
 
 		// Returns a pointer to an XVisualInfo structure.
 		[DllImport(DllName, EntryPoint = "glXGetVisualFromFBConfig")]

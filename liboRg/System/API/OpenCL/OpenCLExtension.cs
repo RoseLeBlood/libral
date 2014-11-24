@@ -125,6 +125,9 @@ namespace System.API.OpenCL
 		public bool Iskhr_gl_depth_images = false;
 		public bool Iskhr_gl_msaa_sharing = false;
 	
+
+		public bool Isamd_svm = false;
+
 		internal OpenCLDeviceExtension(string strExtension)
 		{
 			string[] extensions = strExtension.Split(new char[] { ' ' });
@@ -132,9 +135,11 @@ namespace System.API.OpenCL
 			foreach (string extension in extensions)
 			{
 				string extensionName = extension;
-				if (extensionName.StartsWith("public bool Is"))
+				if (extensionName.StartsWith("cl_"))
 					extensionName = extensionName.Substring(3);
-				var info = this.GetType().GetField("Is" + extensionName);
+				string name = "Is" + extensionName;
+
+				var info = this.GetType().GetField(name);
 				if (info != null)
 				{
 					info.SetValue(this, true);
@@ -149,7 +154,7 @@ namespace System.API.OpenCL
 			FieldInfo[] info = this.GetType().GetFields();
 			foreach (var item in info)
 				{
-					if ((bool)item.GetValue(this))
+					if ( ((bool)(item.GetValue(this))) == true)
 						strBuilder.Append(string.Format(" {0}", item.Name.Substring(2)));
 				}
 			return strBuilder.ToString();

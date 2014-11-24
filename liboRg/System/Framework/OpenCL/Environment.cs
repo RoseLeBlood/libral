@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.API.OpenCL;
+using System.API.Platform;
 
 namespace System.Framework.OpenCL
 {
@@ -33,7 +34,7 @@ namespace System.Framework.OpenCL
 			get { return m_pContext; }
 		}
 
-		public static void SetupSingleDevice(string strVendorFilter, OpenCLDeviceTyp deviceType)
+		public static void SetupSingleDevice(string strVendorFilter, OpenCLDeviceTyp deviceType, Game pGame)
 		{
 			Platforms platforms = new Platforms();
 			if (!strVendorFilter.Contains("*"))
@@ -59,11 +60,11 @@ namespace System.Framework.OpenCL
 			if (m_pDevice == null)
 				throw new System.Exception("No OpenCL Device found ");
 
-			m_pContext = m_pDevice.CreateContext();
+			m_pContext = m_pDevice.CreateContext(pGame.GameContext.NativeContext);
 		}
-		public static Context SetupSingleDeviceAndGetSystemContext(string strVendorFilter, OpenCLDeviceTyp deviceType)
+		public static Context SetupSingleDeviceAndGetSystemContext(string strVendorFilter, OpenCLDeviceTyp deviceType, Game pGame)
 		{
-			SetupSingleDevice(strVendorFilter, deviceType);
+			SetupSingleDevice(strVendorFilter, deviceType, pGame);
 			return m_pContext;
 		}
 
